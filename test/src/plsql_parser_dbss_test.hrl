@@ -1534,11 +1534,9 @@ END dbss_flashback;
         <Condition>
             <IfEnd>DBMS_DB_VERSION.version = 12 AND DBMS_DB_VERSION.release = 1</IfEnd>
         </Condition>
-        <Privileges>
-            <Privilege>
-                <Type>FLASHBACK ANY TABLE</Type>
-            </Privilege>
-        </Privileges>
+        <Privilege>
+            <Type>FLASHBACK ANY TABLE</Type>
+        </Privilege>
         <Name>cre_rstr_pnt</Name>
         <Parameter>
             <Name>p_sqls_cv_in_out</Name>
@@ -1590,11 +1588,9 @@ END dbss_flashback;
         <Condition>
             <IfEnd>DBMS_DB_VERSION.version > 12 OR DBMS_DB_VERSION.version = 12 AND DBMS_DB_VERSION.release > 1</IfEnd>
         </Condition>
-        <Privileges>
-            <Privilege>
-                <Type>FLASHBACK ANY TABLE</Type>
-            </Privilege>
-        </Privileges>
+        <Privilege>
+            <Type>FLASHBACK ANY TABLE</Type>
+        </Privilege>
         <Name>cre_rstr_pnt</Name>
         <Parameter>
             <Name>p_sqls_cv_in_out</Name>
@@ -1654,11 +1650,9 @@ END dbss_flashback;
         <Condition>
             <IfEnd>DBMS_DB_VERSION.version = 12 AND DBMS_DB_VERSION.release = 1</IfEnd>
         </Condition>
-        <Privileges>
-            <Privilege>
-                <Type>SYSDBA</Type>
-            </Privilege>
-        </Privileges>
+        <Privilege>
+            <Type>SYSDBA</Type>
+        </Privilege>
         <Name>cre_rstr_pnt_guar</Name>
         <Parameter>
             <Name>p_sqls_cv_in_out</Name>
@@ -1710,11 +1704,9 @@ END dbss_flashback;
         <Condition>
             <IfEnd>DBMS_DB_VERSION.version > 12 OR DBMS_DB_VERSION.version = 12 AND DBMS_DB_VERSION.release > 1</IfEnd>
         </Condition>
-        <Privileges>
-            <Privilege>
-                <Type>SYSDBA</Type>
-            </Privilege>
-        </Privileges>
+        <Privilege>
+            <Type>SYSDBA</Type>
+        </Privilege>
         <Name>cre_rstr_pnt_guar</Name>
         <Parameter>
             <Name>p_sqls_cv_in_out</Name>
@@ -1774,11 +1766,9 @@ END dbss_flashback;
         <Condition>
             <IfEnd>DBMS_DB_VERSION.version = 12 AND DBMS_DB_VERSION.release = 1</IfEnd>
         </Condition>
-        <Privileges>
-            <Privilege>
-                <Type>FLASHBACK ANY TABLE</Type>
-            </Privilege>
-        </Privileges>
+        <Privilege>
+            <Type>FLASHBACK ANY TABLE</Type>
+        </Privilege>
         <Name>cre_rstr_pnt_pres</Name>
         <Parameter>
             <Name>p_sqls_cv_in_out</Name>
@@ -1830,11 +1820,9 @@ END dbss_flashback;
         <Condition>
             <IfEnd>DBMS_DB_VERSION.version > 12 OR DBMS_DB_VERSION.version = 12 AND DBMS_DB_VERSION.release > 1</IfEnd>
         </Condition>
-        <Privileges>
-            <Privilege>
-                <Type>FLASHBACK ANY TABLE</Type>
-            </Privilege>
-        </Privileges>
+        <Privilege>
+            <Type>FLASHBACK ANY TABLE</Type>
+        </Privilege>
         <Name>cre_rstr_pnt_pres</Name>
         <Parameter>
             <Name>p_sqls_cv_in_out</Name>
@@ -1891,11 +1879,9 @@ END dbss_flashback;
         </Parameter>
     </Procedure>
     <Procedure>
-        <Privileges>
-            <Privilege>
-                <Type>SYSDBA</Type>
-            </Privilege>
-        </Privileges>
+        <Privilege>
+            <Type>SYSDBA</Type>
+        </Privilege>
         <Name>del_rstr_pnt</Name>
         <Parameter>
             <Name>p_sqls_cv_in_out</Name>
@@ -1936,11 +1922,9 @@ END dbss_flashback;
         </Parameter>
     </Procedure>
     <Procedure>
-        <Privileges>
-            <Privilege>
-                <Type>SYSDBA</Type>
-            </Privilege>
-        </Privileges>
+        <Privilege>
+            <Type>SYSDBA</Type>
+        </Privilege>
         <Name>del_rstr_pnts</Name>
         <Parameter>
             <Name>p_sqls_cv_in_out</Name>
@@ -1973,11 +1957,9 @@ END dbss_flashback;
         </Parameter>
     </Procedure>
     <Procedure>
-        <Privileges>
-            <Privilege>
-                <Type>SYSDBA</Type>
-            </Privilege>
-        </Privileges>
+        <Privilege>
+            <Type>SYSDBA</Type>
+        </Privilege>
         <Name>del_rstr_pnts_guar</Name>
         <Parameter>
             <Name>p_sqls_cv_in_out</Name>
@@ -2010,11 +1992,9 @@ END dbss_flashback;
         </Parameter>
     </Procedure>
     <Procedure>
-        <Privileges>
-            <Privilege>
-                <Type>FLASHBACK ANY TABLE</Type>
-            </Privilege>
-        </Privileges>
+        <Privilege>
+            <Type>FLASHBACK ANY TABLE</Type>
+        </Privilege>
         <Name>del_rstr_pnts_norm</Name>
         <Parameter>
             <Name>p_sqls_cv_in_out</Name>
@@ -2047,11 +2027,9 @@ END dbss_flashback;
         </Parameter>
     </Procedure>
     <Procedure>
-        <Privileges>
-            <Privilege>
-                <Type>FLASHBACK ANY TABLE</Type>
-            </Privilege>
-        </Privileges>
+        <Privilege>
+            <Type>FLASHBACK ANY TABLE</Type>
+        </Privilege>
         <Name>del_rstr_pnts_pres</Name>
         <Parameter>
             <Name>p_sqls_cv_in_out</Name>
@@ -2087,12 +2065,10 @@ END dbss_flashback;
         <Condition>
             <IfEnd>DBMS_DB_VERSION.version = 12 AND DBMS_DB_VERSION.release = 1</IfEnd>
         </Condition>
-        <Privileges>
-            <Privilege>
-                <Type>SELECT</Type>
-                <Object>v$restore_point</Object>
-            </Privilege>
-        </Privileges>
+        <Privilege>
+            <Type>SELECT</Type>
+            <Object>v$restore_point</Object>
+        </Privilege>
         <Name>get_rstr_pnts</Name>
         <Parameter>
             <Name>p_rstr_pnts_cv_out</Name>
@@ -2136,12 +2112,10 @@ END dbss_flashback;
         <Condition>
             <IfEnd>DBMS_DB_VERSION.version > 12 OR DBMS_DB_VERSION.version = 12 AND DBMS_DB_VERSION.release > 1</IfEnd>
         </Condition>
-        <Privileges>
-            <Privilege>
-                <Type>SELECT</Type>
-                <Object>v$restore_point</Object>
-            </Privilege>
-        </Privileges>
+        <Privilege>
+            <Type>SELECT</Type>
+            <Object>v$restore_point</Object>
+        </Privilege>
         <Name>get_rstr_pnts</Name>
         <Parameter>
             <Name>p_rstr_pnts_cv_out</Name>
@@ -2190,18 +2164,16 @@ END dbss_flashback;
         </Parameter>
     </Procedure>
     <Procedure>
-        <Privileges>
-            <Privilege>
-                <Type>SELECT</Type>
-                <Object>v$database</Object>
-            </Privilege>
-            <Privilege>
-                <Type>ALTER DATABASE</Type>
-            </Privilege>
-            <Privilege>
-                <Type>SET CONTAINER</Type>
-            </Privilege>
-        </Privileges>
+        <Privilege>
+            <Type>SELECT</Type>
+            <Object>v$database</Object>
+        </Privilege>
+        <Privilege>
+            <Type>ALTER DATABASE</Type>
+        </Privilege>
+        <Privilege>
+            <Type>SET CONTAINER</Type>
+        </Privilege>
         <Name>set_flashback_off</Name>
         <Parameter>
             <Name>p_sqls_cv_in_out</Name>
@@ -2234,18 +2206,16 @@ END dbss_flashback;
         </Parameter>
     </Procedure>
     <Procedure>
-        <Privileges>
-            <Privilege>
-                <Type>SELECT</Type>
-                <Object>v$database</Object>
-            </Privilege>
-            <Privilege>
-                <Type>ALTER DATABASE</Type>
-            </Privilege>
-            <Privilege>
-                <Type>SET CONTAINER</Type>
-            </Privilege>
-        </Privileges>
+        <Privilege>
+            <Type>SELECT</Type>
+            <Object>v$database</Object>
+        </Privilege>
+        <Privilege>
+            <Type>ALTER DATABASE</Type>
+        </Privilege>
+        <Privilege>
+            <Type>SET CONTAINER</Type>
+        </Privilege>
         <Name>set_flashback_on</Name>
         <Parameter>
             <Name>p_sqls_cv_in_out</Name>

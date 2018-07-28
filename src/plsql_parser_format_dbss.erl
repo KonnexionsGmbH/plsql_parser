@@ -474,10 +474,8 @@ fold(LOpts, _FunState, Ctx, #{objectPrivilegeAnnotation := PTree}, {objectPrivil
                          Ctx,
                          ?TABULATOR,
                          ?TABULATOR,
-                         ?TABULATOR,
                          "<Privilege>",
                          ?CHAR_NEWLINE,
-                         ?TABULATOR,
                          ?TABULATOR,
                          ?TABULATOR,
                          ?TABULATOR,
@@ -488,12 +486,10 @@ fold(LOpts, _FunState, Ctx, #{objectPrivilegeAnnotation := PTree}, {objectPrivil
                          ?TABULATOR,
                          ?TABULATOR,
                          ?TABULATOR,
-                         ?TABULATOR,
                          "<Object>",
                          maps:get(object@, PTree),
                          "</Object>",
                          ?CHAR_NEWLINE,
-                         ?TABULATOR,
                          ?TABULATOR,
                          ?TABULATOR,
                          "</Privilege>",
@@ -781,32 +777,6 @@ fold(_LOpts, _FunState, Ctx, _PTree, {plsqlUnit, Step} = _FoldState) ->
     ?CUSTOM_RESULT(RT);
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% privilegeAnnotationList
-% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-fold(LOpts, _FunState, Ctx, _PTree, {privilegeAnnotationList@_@, Step} = _FoldState) ->
-    ?CUSTOM_INIT(_FunState, Ctx, _PTree, _FoldState),
-    RT = case Step of
-             start -> lists:append(
-                 [
-                     Ctx,
-                     ?TABULATOR,
-                     ?TABULATOR,
-                     "<Privileges>",
-                     ?CHAR_NEWLINE
-                 ]);
-             _ -> lists:append(
-                 [
-                     Ctx,
-                     ?TABULATOR,
-                     ?TABULATOR,
-                     "</Privileges>",
-                     ?CHAR_NEWLINE
-                 ])
-         end,
-    ?CUSTOM_RESULT(RT);
-
-% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % procedureHeading
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -888,10 +858,8 @@ fold(LOpts, _FunState, Ctx, #{systemPrivilegeAnnotation := PTree}, {systemPrivil
                          Ctx,
                          ?TABULATOR,
                          ?TABULATOR,
-                         ?TABULATOR,
                          "<Privilege>",
                          ?CHAR_NEWLINE,
-                         ?TABULATOR,
                          ?TABULATOR,
                          ?TABULATOR,
                          ?TABULATOR,
@@ -899,7 +867,6 @@ fold(LOpts, _FunState, Ctx, #{systemPrivilegeAnnotation := PTree}, {systemPrivil
                          maps:get(privilegeType@, PTree),
                          "</Type>",
                          ?CHAR_NEWLINE,
-                         ?TABULATOR,
                          ?TABULATOR,
                          ?TABULATOR,
                          "</Privilege>",
