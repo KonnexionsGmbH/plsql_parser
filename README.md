@@ -1,6 +1,6 @@
 # plsql_parser - LALR grammar based PL/SQL parser
 
-[![Build Status](https://travis-ci.org/walter-weinmann/plsql_parser.svg?branch=master)](https://travis-ci.org/walter-weinmann/plsql_parser) [![Coverage Status](https://coveralls.io/repos/github/walter-weinmann/plsql_parser/badge.svg?branch=master)](https://coveralls.io/github/walter-weinmann/plsql_parser?branch=master)
+[![Build Status](https://travis-ci.org/k2informaticsgmbh/plsql_parser.svg?branch=master)](https://travis-ci.org/k2informaticsgmbh/plsql_parser) [![Coverage Status](https://coveralls.io/repos/github/k2informaticsgmbh/plsql_parser/badge.svg?branch=master)](https://coveralls.io/github/k2informaticsgmbh/plsql_parser?branch=master)
 
 **plsql_parser** is a production-ready SQL parser written in pure Erlang. **plsql_parser** is aligned to the Oracle PL/SQL language and enriched with some specific features.
 
@@ -107,7 +107,7 @@ END my_package;
 
 ## 2. Documentation
 
-The documentation for **plsql_parser** is available here: [Wiki](https://github.com/walter-weinmann/plsql_parser/wiki).
+The documentation for **plsql_parser** is available here: [Wiki](https://github.com/k2informaticsgmbh/plsql_parser/wiki).
 
 ## 3. Contributing
 
