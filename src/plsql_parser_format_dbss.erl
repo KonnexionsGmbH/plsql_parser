@@ -389,28 +389,6 @@ fold(_LOpts, _FunState, Ctx, _PTree, {functionArgCommaList@, Step} = _FoldState)
     ?CUSTOM_RESULT(RT);
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% functionHeading
-% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-fold(LOpts, _FunState, Ctx, #{functionHeading := PTree}, {functionHeading, Step} = _FoldState)
-    when is_map(PTree) ->
-    ?CUSTOM_INIT(_FunState, Ctx, PTree, _FoldState),
-    RT = case Step of
-             start -> lists:append(
-                 [
-                     Ctx,
-                     ?TABULATOR,
-                     ?TABULATOR,
-                     "<Name>",
-                     maps:get(name@, PTree),
-                     "</Name>",
-                     ?CHAR_NEWLINE
-                 ]);
-             _ -> Ctx
-         end,
-    ?CUSTOM_RESULT(RT);
-
-% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % functionLegacyAnnotation
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -531,13 +509,32 @@ fold(LOpts, _FunState, Ctx, #{packageItemConditional := PTree}, {packageItemCond
                _ -> "Procedure"
            end,
     RT = case Step of
-             start -> lists:append(
+             start ->
+                 Name = case Type of
+                            "Function" ->
+                                PackageFunctionDeclaration = maps:get(packageFunctionDeclaration, PackageItem),
+                                FunctionHeading@ = maps:get(functionHeading@, PackageFunctionDeclaration),
+                                FunctionHeading = maps:get(functionHeading, FunctionHeading@),
+                                maps:get(name@, FunctionHeading);
+                            _ ->
+                                PackageProcedureDeclaration = maps:get(packageProcedureDeclaration, PackageItem),
+                                ProcedureHeading@ = maps:get(procedureHeading@, PackageProcedureDeclaration),
+                                ProcedureHeading = maps:get(procedureHeading, ProcedureHeading@),
+                                maps:get(name@, ProcedureHeading)
+                        end,
+                 lists:append(
                  [
                      Ctx,
                      ?TABULATOR,
                      "<",
                      Type,
                      ">",
+                     ?CHAR_NEWLINE,
+                     ?TABULATOR,
+                     ?TABULATOR,
+                     "<Name>",
+                     Name,
+                     "</Name>",
                      ?CHAR_NEWLINE,
                      ?TABULATOR,
                      ?TABULATOR,
@@ -594,15 +591,34 @@ fold(LOpts, _FunState, Ctx, #{packageItemSimple := PTree}, {packageItemSimple, S
                _ -> "Procedure"
            end,
     RT = case Step of
-             start -> lists:append(
-                 [
-                     Ctx,
-                     ?TABULATOR,
-                     "<",
-                     Type,
-                     ">",
-                     ?CHAR_NEWLINE
-                 ]);
+             start ->
+                 Name = case Type of
+                            "Function" ->
+                                PackageFunctionDeclaration = maps:get(packageFunctionDeclaration, PackageItem),
+                                FunctionHeading@ = maps:get(functionHeading@, PackageFunctionDeclaration),
+                                FunctionHeading = maps:get(functionHeading, FunctionHeading@),
+                                maps:get(name@, FunctionHeading);
+                            _ ->
+                                PackageProcedureDeclaration = maps:get(packageProcedureDeclaration, PackageItem),
+                                ProcedureHeading@ = maps:get(procedureHeading@, PackageProcedureDeclaration),
+                                ProcedureHeading = maps:get(procedureHeading, ProcedureHeading@),
+                                maps:get(name@, ProcedureHeading)
+                        end,
+                 lists:append(
+                     [
+                         Ctx,
+                         ?TABULATOR,
+                         "<",
+                         Type,
+                         ">",
+                         ?CHAR_NEWLINE,
+                         ?TABULATOR,
+                         ?TABULATOR,
+                         "<Name>",
+                         Name,
+                         "</Name>",
+                         ?CHAR_NEWLINE
+                     ]);
              _ -> lists:append(
                  [
                      Ctx,
@@ -777,28 +793,6 @@ fold(_LOpts, _FunState, Ctx, _PTree, {plsqlUnit, Step} = _FoldState) ->
     ?CUSTOM_RESULT(RT);
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% procedureHeading
-% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-fold(LOpts, _FunState, Ctx, #{procedureHeading := PTree}, {procedureHeading, Step} = _FoldState)
-    when is_map(PTree) ->
-    ?CUSTOM_INIT(_FunState, Ctx, PTree, _FoldState),
-    RT = case Step of
-             start -> lists:append(
-                 [
-                     Ctx,
-                     ?TABULATOR,
-                     ?TABULATOR,
-                     "<Name>",
-                     maps:get(name@, PTree),
-                     "</Name>",
-                     ?CHAR_NEWLINE
-                 ]);
-             _ -> Ctx
-         end,
-    ?CUSTOM_RESULT(RT);
-
-% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % procedureLegacyAnnotation
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -963,6 +957,7 @@ fold(_LOpts, _FunState, Ctx, _PTree, {Rule, _Step}) when
     Rule == functionAnnotation;
     Rule == functionArg;
     Rule == functionArgCommaList;
+    Rule == functionHeading;
     Rule == invokerRightsClause;
     Rule == packageFunctionDeclaration;
     Rule == packageFunctionDeclarationAttribute;
@@ -978,6 +973,7 @@ fold(_LOpts, _FunState, Ctx, _PTree, {Rule, _Step}) when
     Rule == plsqlUnitList;
     Rule == privilegeAnnotationList@_@;
     Rule == procedureAnnotation;
+    Rule == procedureHeading;
     Rule == resultCacheClause;
     Rule == scalarExpression;
     Rule == scalarSubExpression;

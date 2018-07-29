@@ -50,10 +50,10 @@ end dbss_flashback;
 <Package xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:noNamespaceSchemaLocation='../../priv/dbss.xsd'>
     <Name>dbss_flashback</Name>
     <Function>
+        <Name>cre_restore_point_1</Name>
         <Condition>
             <If>myString = \"myString\"</If>
         </Condition>
-        <Name>cre_restore_point_1</Name>
         <Parameter>
             <Name>p_is_show_in</Name>
             <Mode>IN</Mode>
@@ -64,10 +64,10 @@ end dbss_flashback;
         </Return>
     </Function>
     <Procedure>
+        <Name>cre_restore_point_2</Name>
         <Condition>
             <Else></Else>
         </Condition>
-        <Name>cre_restore_point_2</Name>
         <Parameter>
             <Name>p_is_show_in</Name>
             <Mode>IN</Mode>
@@ -103,11 +103,11 @@ end dbss_flashback;
 <Package xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:noNamespaceSchemaLocation='../../priv/dbss.xsd'>
     <Name>dbss_flashback</Name>
     <Function>
+        <Name>cre_restore_point_1</Name>
         <Condition>
             <If>myString = \"myString\"</If>
         </Condition>
         <LegacyNameFunction>name_2_1</LegacyNameFunction>
-        <Name>cre_restore_point_1</Name>
         <Parameter>
             <LoggerToCharacter>FALSE</LoggerToCharacter>
             <Name>p_is_show_in</Name>
@@ -119,12 +119,12 @@ end dbss_flashback;
         </Return>
     </Function>
     <Procedure>
+        <Name>cre_restore_point_2</Name>
         <Condition>
             <Else></Else>
         </Condition>
         <LegacyNameFunction>name_3_1</LegacyNameFunction>
         <LegacyNameProcedure>name_3_2</LegacyNameProcedure>
-        <Name>cre_restore_point_2</Name>
         <Parameter>
             <Name>p_is_show_in</Name>
             <Mode>IN</Mode>
@@ -639,12 +639,12 @@ END dbss_flashback;
 <Package xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:noNamespaceSchemaLocation='../../priv/dbss.xsd'>
     <Name>wwe.dbss_flashback</Name>
     <Procedure>
+        <Name>cre_rstr_pnt</Name>
         <Condition>
             <IfEnd>DBMS_DB_VERSION.version = 12 AND DBMS_DB_VERSION.release = 1</IfEnd>
         </Condition>
         <LegacyNameFunction>dbss_f_cre_rstr_pnt_12_1</LegacyNameFunction>
         <LegacyNameProcedure>dbss_p_cre_rstr_pnt_12_1</LegacyNameProcedure>
-        <Name>cre_rstr_pnt</Name>
         <Parameter>
             <Name>p_sqls_cv_in_out</Name>
             <Mode>IN OUT</Mode>
@@ -692,12 +692,12 @@ END dbss_flashback;
         </Parameter>
     </Procedure>
     <Procedure>
+        <Name>cre_rstr_pnt</Name>
         <Condition>
             <IfEnd>DBMS_DB_VERSION.version > 12 OR DBMS_DB_VERSION.version = 12 AND DBMS_DB_VERSION.release > 1</IfEnd>
         </Condition>
         <LegacyNameFunction>dbss_f_cre_rstr_pnt_12_2</LegacyNameFunction>
         <LegacyNameProcedure>dbss_p_cre_rstr_pnt_12_2</LegacyNameProcedure>
-        <Name>cre_rstr_pnt</Name>
         <Parameter>
             <Name>p_sqls_cv_in_out</Name>
             <Mode>IN OUT</Mode>
@@ -753,12 +753,12 @@ END dbss_flashback;
         </Parameter>
     </Procedure>
     <Procedure>
+        <Name>cre_rstr_pnt_guar</Name>
         <Condition>
             <IfEnd>DBMS_DB_VERSION.version = 12 AND DBMS_DB_VERSION.release = 1</IfEnd>
         </Condition>
         <LegacyNameFunction>dbss_f_cre_rstr_pnt_guar_12_1</LegacyNameFunction>
         <LegacyNameProcedure>dbss_p_cre_rstr_pnt_guar_12_1</LegacyNameProcedure>
-        <Name>cre_rstr_pnt_guar</Name>
         <Parameter>
             <Name>p_sqls_cv_in_out</Name>
             <Mode>IN OUT</Mode>
@@ -806,12 +806,12 @@ END dbss_flashback;
         </Parameter>
     </Procedure>
     <Procedure>
+        <Name>cre_rstr_pnt_guar</Name>
         <Condition>
             <IfEnd>DBMS_DB_VERSION.version > 12 OR DBMS_DB_VERSION.version = 12 AND DBMS_DB_VERSION.release > 1</IfEnd>
         </Condition>
         <LegacyNameFunction>dbss_f_cre_rstr_pnt_guar_12_2</LegacyNameFunction>
         <LegacyNameProcedure>dbss_p_cre_rstr_pnt_guar_12_2</LegacyNameProcedure>
-        <Name>cre_rstr_pnt_guar</Name>
         <Parameter>
             <Name>p_sqls_cv_in_out</Name>
             <Mode>IN OUT</Mode>
@@ -867,12 +867,12 @@ END dbss_flashback;
         </Parameter>
     </Procedure>
     <Procedure>
+        <Name>cre_rstr_pnt_pres</Name>
         <Condition>
             <IfEnd>DBMS_DB_VERSION.version = 12 AND DBMS_DB_VERSION.release = 1</IfEnd>
         </Condition>
         <LegacyNameFunction>dbss_f_cre_rstr_pnt_pres_12_1</LegacyNameFunction>
         <LegacyNameProcedure>dbss_p_cre_rstr_pnt_pres_12_1</LegacyNameProcedure>
-        <Name>cre_rstr_pnt_pres</Name>
         <Parameter>
             <Name>p_sqls_cv_in_out</Name>
             <Mode>IN OUT</Mode>
@@ -920,12 +920,12 @@ END dbss_flashback;
         </Parameter>
     </Procedure>
     <Procedure>
+        <Name>cre_rstr_pnt_pres</Name>
         <Condition>
             <IfEnd>DBMS_DB_VERSION.version > 12 OR DBMS_DB_VERSION.version = 12 AND DBMS_DB_VERSION.release > 1</IfEnd>
         </Condition>
         <LegacyNameFunction>dbss_f_cre_rstr_pnt_pres_12_2</LegacyNameFunction>
         <LegacyNameProcedure>dbss_p_cre_rstr_pnt_pres_12_2</LegacyNameProcedure>
-        <Name>cre_rstr_pnt_pres</Name>
         <Parameter>
             <Name>p_sqls_cv_in_out</Name>
             <Mode>IN OUT</Mode>
@@ -1149,12 +1149,12 @@ END dbss_flashback;
         </Parameter>
     </Procedure>
     <Procedure>
+        <Name>get_rstr_pnts</Name>
         <Condition>
             <IfEnd>DBMS_DB_VERSION.version = 12 AND DBMS_DB_VERSION.release = 1</IfEnd>
         </Condition>
         <LegacyNameFunction>dbss_f_get_rstr_pnts_12_1</LegacyNameFunction>
         <LegacyNameProcedure>dbss_p_get_rstr_pnts_12_1</LegacyNameProcedure>
-        <Name>get_rstr_pnts</Name>
         <Parameter>
             <Name>p_rstr_pnts_cv_out</Name>
             <Mode>OUT</Mode>
@@ -1194,12 +1194,12 @@ END dbss_flashback;
         </Parameter>
     </Procedure>
     <Procedure>
+        <Name>get_rstr_pnts</Name>
         <Condition>
             <IfEnd>DBMS_DB_VERSION.version > 12 OR DBMS_DB_VERSION.version = 12 AND DBMS_DB_VERSION.release > 1</IfEnd>
         </Condition>
         <LegacyNameFunction>dbss_f_get_rstr_pnts_12_2</LegacyNameFunction>
         <LegacyNameProcedure>dbss_p_get_rstr_pnts_12_2</LegacyNameProcedure>
-        <Name>get_rstr_pnts</Name>
         <Parameter>
             <Name>p_rstr_pnts_cv_out</Name>
             <Mode>OUT</Mode>
@@ -1531,13 +1531,13 @@ END dbss_flashback;
 <Package xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:noNamespaceSchemaLocation='../../priv/dbss.xsd'>
     <Name>wwe.dbss_flashback</Name>
     <Procedure>
-        <Condition>
-            <IfEnd>DBMS_DB_VERSION.version = 12 AND DBMS_DB_VERSION.release = 1</IfEnd>
-        </Condition>
-        <Privilege>
-            <Type>FLASHBACK ANY TABLE</Type>
-        </Privilege>
         <Name>cre_rstr_pnt</Name>
+        <Condition>
+            <IfEnd>DBMS_DB_VERSION.version = 12 AND DBMS_DB_VERSION.release = 1</IfEnd>
+        </Condition>
+        <Privilege>
+            <Type>FLASHBACK ANY TABLE</Type>
+        </Privilege>
         <Parameter>
             <Name>p_sqls_cv_in_out</Name>
             <Mode>IN OUT</Mode>
@@ -1585,245 +1585,13 @@ END dbss_flashback;
         </Parameter>
     </Procedure>
     <Procedure>
-        <Condition>
-            <IfEnd>DBMS_DB_VERSION.version > 12 OR DBMS_DB_VERSION.version = 12 AND DBMS_DB_VERSION.release > 1</IfEnd>
-        </Condition>
-        <Privilege>
-            <Type>FLASHBACK ANY TABLE</Type>
-        </Privilege>
         <Name>cre_rstr_pnt</Name>
-        <Parameter>
-            <Name>p_sqls_cv_in_out</Name>
-            <Mode>IN OUT</Mode>
-            <DataType>dbss_type.sqls_cur</DataType>
-        </Parameter>
-        <Parameter>
-            <Name>p_rstr_pnt_in</Name>
-            <Mode>IN</Mode>
-            <DataType>v$restore_point.NAME%TYPE</DataType>
-            <DefaultValue>
-                <Expression>dbss_global.get_default_rstr_pnt()</Expression>
-            </DefaultValue>
-        </Parameter>
-        <Parameter>
-            <Name>p_is_clean_in</Name>
-            <Mode>IN</Mode>
-            <DataType>BOOLEAN</DataType>
-            <DefaultValue>
-                <Expression>FALSE</Expression>
-            </DefaultValue>
-        </Parameter>
-        <Parameter>
-            <Name>p_scn_in</Name>
-            <Mode>IN</Mode>
-            <DataType>NUMBER</DataType>
-            <DefaultValue>
-                <Expression>0</Expression>
-            </DefaultValue>
-        </Parameter>
-        <Parameter>
-            <Name>p_is_cursor_in</Name>
-            <Mode>IN</Mode>
-            <DataType>BOOLEAN</DataType>
-            <DefaultValue>
-                <Expression>dbss_global.get_default_is_cursor()</Expression>
-            </DefaultValue>
-        </Parameter>
-        <Parameter>
-            <Name>p_is_execute_in</Name>
-            <Mode>IN</Mode>
-            <DataType>BOOLEAN</DataType>
-            <DefaultValue>
-                <Expression>dbss_global.get_default_is_execute()</Expression>
-            </DefaultValue>
-        </Parameter>
-        <Parameter>
-            <Name>p_is_show_in</Name>
-            <Mode>IN</Mode>
-            <DataType>BOOLEAN</DataType>
-            <DefaultValue>
-                <Expression>dbss_global.get_default_is_show()</Expression>
-            </DefaultValue>
-        </Parameter>
-    </Procedure>
-    <Procedure>
-        <Condition>
-            <IfEnd>DBMS_DB_VERSION.version = 12 AND DBMS_DB_VERSION.release = 1</IfEnd>
-        </Condition>
-        <Privilege>
-            <Type>SYSDBA</Type>
-        </Privilege>
-        <Name>cre_rstr_pnt_guar</Name>
-        <Parameter>
-            <Name>p_sqls_cv_in_out</Name>
-            <Mode>IN OUT</Mode>
-            <DataType>dbss_type.sqls_cur</DataType>
-        </Parameter>
-        <Parameter>
-            <Name>p_rstr_pnt_in</Name>
-            <Mode>IN</Mode>
-            <DataType>v$restore_point.NAME%TYPE</DataType>
-            <DefaultValue>
-                <Expression>dbss_global.get_default_rstr_pnt()</Expression>
-            </DefaultValue>
-        </Parameter>
-        <Parameter>
-            <Name>p_scn_in</Name>
-            <Mode>IN</Mode>
-            <DataType>NUMBER</DataType>
-            <DefaultValue>
-                <Expression>0</Expression>
-            </DefaultValue>
-        </Parameter>
-        <Parameter>
-            <Name>p_is_cursor_in</Name>
-            <Mode>IN</Mode>
-            <DataType>BOOLEAN</DataType>
-            <DefaultValue>
-                <Expression>dbss_global.get_default_is_cursor()</Expression>
-            </DefaultValue>
-        </Parameter>
-        <Parameter>
-            <Name>p_is_execute_in</Name>
-            <Mode>IN</Mode>
-            <DataType>BOOLEAN</DataType>
-            <DefaultValue>
-                <Expression>dbss_global.get_default_is_execute()</Expression>
-            </DefaultValue>
-        </Parameter>
-        <Parameter>
-            <Name>p_is_show_in</Name>
-            <Mode>IN</Mode>
-            <DataType>BOOLEAN</DataType>
-            <DefaultValue>
-                <Expression>dbss_global.get_default_is_show()</Expression>
-            </DefaultValue>
-        </Parameter>
-    </Procedure>
-    <Procedure>
-        <Condition>
-            <IfEnd>DBMS_DB_VERSION.version > 12 OR DBMS_DB_VERSION.version = 12 AND DBMS_DB_VERSION.release > 1</IfEnd>
-        </Condition>
-        <Privilege>
-            <Type>SYSDBA</Type>
-        </Privilege>
-        <Name>cre_rstr_pnt_guar</Name>
-        <Parameter>
-            <Name>p_sqls_cv_in_out</Name>
-            <Mode>IN OUT</Mode>
-            <DataType>dbss_type.sqls_cur</DataType>
-        </Parameter>
-        <Parameter>
-            <Name>p_rstr_pnt_in</Name>
-            <Mode>IN</Mode>
-            <DataType>v$restore_point.NAME%TYPE</DataType>
-            <DefaultValue>
-                <Expression>dbss_global.get_default_rstr_pnt()</Expression>
-            </DefaultValue>
-        </Parameter>
-        <Parameter>
-            <Name>p_is_clean_in</Name>
-            <Mode>IN</Mode>
-            <DataType>BOOLEAN</DataType>
-            <DefaultValue>
-                <Expression>FALSE</Expression>
-            </DefaultValue>
-        </Parameter>
-        <Parameter>
-            <Name>p_scn_in</Name>
-            <Mode>IN</Mode>
-            <DataType>NUMBER</DataType>
-            <DefaultValue>
-                <Expression>0</Expression>
-            </DefaultValue>
-        </Parameter>
-        <Parameter>
-            <Name>p_is_cursor_in</Name>
-            <Mode>IN</Mode>
-            <DataType>BOOLEAN</DataType>
-            <DefaultValue>
-                <Expression>dbss_global.get_default_is_cursor()</Expression>
-            </DefaultValue>
-        </Parameter>
-        <Parameter>
-            <Name>p_is_execute_in</Name>
-            <Mode>IN</Mode>
-            <DataType>BOOLEAN</DataType>
-            <DefaultValue>
-                <Expression>dbss_global.get_default_is_execute()</Expression>
-            </DefaultValue>
-        </Parameter>
-        <Parameter>
-            <Name>p_is_show_in</Name>
-            <Mode>IN</Mode>
-            <DataType>BOOLEAN</DataType>
-            <DefaultValue>
-                <Expression>dbss_global.get_default_is_show()</Expression>
-            </DefaultValue>
-        </Parameter>
-    </Procedure>
-    <Procedure>
-        <Condition>
-            <IfEnd>DBMS_DB_VERSION.version = 12 AND DBMS_DB_VERSION.release = 1</IfEnd>
-        </Condition>
-        <Privilege>
-            <Type>FLASHBACK ANY TABLE</Type>
-        </Privilege>
-        <Name>cre_rstr_pnt_pres</Name>
-        <Parameter>
-            <Name>p_sqls_cv_in_out</Name>
-            <Mode>IN OUT</Mode>
-            <DataType>dbss_type.sqls_cur</DataType>
-        </Parameter>
-        <Parameter>
-            <Name>p_rstr_pnt_in</Name>
-            <Mode>IN</Mode>
-            <DataType>v$restore_point.NAME%TYPE</DataType>
-            <DefaultValue>
-                <Expression>dbss_global.get_default_rstr_pnt()</Expression>
-            </DefaultValue>
-        </Parameter>
-        <Parameter>
-            <Name>p_scn_in</Name>
-            <Mode>IN</Mode>
-            <DataType>NUMBER</DataType>
-            <DefaultValue>
-                <Expression>0</Expression>
-            </DefaultValue>
-        </Parameter>
-        <Parameter>
-            <Name>p_is_cursor_in</Name>
-            <Mode>IN</Mode>
-            <DataType>BOOLEAN</DataType>
-            <DefaultValue>
-                <Expression>dbss_global.get_default_is_cursor()</Expression>
-            </DefaultValue>
-        </Parameter>
-        <Parameter>
-            <Name>p_is_execute_in</Name>
-            <Mode>IN</Mode>
-            <DataType>BOOLEAN</DataType>
-            <DefaultValue>
-                <Expression>dbss_global.get_default_is_execute()</Expression>
-            </DefaultValue>
-        </Parameter>
-        <Parameter>
-            <Name>p_is_show_in</Name>
-            <Mode>IN</Mode>
-            <DataType>BOOLEAN</DataType>
-            <DefaultValue>
-                <Expression>dbss_global.get_default_is_show()</Expression>
-            </DefaultValue>
-        </Parameter>
-    </Procedure>
-    <Procedure>
         <Condition>
             <IfEnd>DBMS_DB_VERSION.version > 12 OR DBMS_DB_VERSION.version = 12 AND DBMS_DB_VERSION.release > 1</IfEnd>
         </Condition>
         <Privilege>
             <Type>FLASHBACK ANY TABLE</Type>
         </Privilege>
-        <Name>cre_rstr_pnt_pres</Name>
         <Parameter>
             <Name>p_sqls_cv_in_out</Name>
             <Mode>IN OUT</Mode>
@@ -1879,10 +1647,242 @@ END dbss_flashback;
         </Parameter>
     </Procedure>
     <Procedure>
+        <Name>cre_rstr_pnt_guar</Name>
+        <Condition>
+            <IfEnd>DBMS_DB_VERSION.version = 12 AND DBMS_DB_VERSION.release = 1</IfEnd>
+        </Condition>
         <Privilege>
             <Type>SYSDBA</Type>
         </Privilege>
+        <Parameter>
+            <Name>p_sqls_cv_in_out</Name>
+            <Mode>IN OUT</Mode>
+            <DataType>dbss_type.sqls_cur</DataType>
+        </Parameter>
+        <Parameter>
+            <Name>p_rstr_pnt_in</Name>
+            <Mode>IN</Mode>
+            <DataType>v$restore_point.NAME%TYPE</DataType>
+            <DefaultValue>
+                <Expression>dbss_global.get_default_rstr_pnt()</Expression>
+            </DefaultValue>
+        </Parameter>
+        <Parameter>
+            <Name>p_scn_in</Name>
+            <Mode>IN</Mode>
+            <DataType>NUMBER</DataType>
+            <DefaultValue>
+                <Expression>0</Expression>
+            </DefaultValue>
+        </Parameter>
+        <Parameter>
+            <Name>p_is_cursor_in</Name>
+            <Mode>IN</Mode>
+            <DataType>BOOLEAN</DataType>
+            <DefaultValue>
+                <Expression>dbss_global.get_default_is_cursor()</Expression>
+            </DefaultValue>
+        </Parameter>
+        <Parameter>
+            <Name>p_is_execute_in</Name>
+            <Mode>IN</Mode>
+            <DataType>BOOLEAN</DataType>
+            <DefaultValue>
+                <Expression>dbss_global.get_default_is_execute()</Expression>
+            </DefaultValue>
+        </Parameter>
+        <Parameter>
+            <Name>p_is_show_in</Name>
+            <Mode>IN</Mode>
+            <DataType>BOOLEAN</DataType>
+            <DefaultValue>
+                <Expression>dbss_global.get_default_is_show()</Expression>
+            </DefaultValue>
+        </Parameter>
+    </Procedure>
+    <Procedure>
+        <Name>cre_rstr_pnt_guar</Name>
+        <Condition>
+            <IfEnd>DBMS_DB_VERSION.version > 12 OR DBMS_DB_VERSION.version = 12 AND DBMS_DB_VERSION.release > 1</IfEnd>
+        </Condition>
+        <Privilege>
+            <Type>SYSDBA</Type>
+        </Privilege>
+        <Parameter>
+            <Name>p_sqls_cv_in_out</Name>
+            <Mode>IN OUT</Mode>
+            <DataType>dbss_type.sqls_cur</DataType>
+        </Parameter>
+        <Parameter>
+            <Name>p_rstr_pnt_in</Name>
+            <Mode>IN</Mode>
+            <DataType>v$restore_point.NAME%TYPE</DataType>
+            <DefaultValue>
+                <Expression>dbss_global.get_default_rstr_pnt()</Expression>
+            </DefaultValue>
+        </Parameter>
+        <Parameter>
+            <Name>p_is_clean_in</Name>
+            <Mode>IN</Mode>
+            <DataType>BOOLEAN</DataType>
+            <DefaultValue>
+                <Expression>FALSE</Expression>
+            </DefaultValue>
+        </Parameter>
+        <Parameter>
+            <Name>p_scn_in</Name>
+            <Mode>IN</Mode>
+            <DataType>NUMBER</DataType>
+            <DefaultValue>
+                <Expression>0</Expression>
+            </DefaultValue>
+        </Parameter>
+        <Parameter>
+            <Name>p_is_cursor_in</Name>
+            <Mode>IN</Mode>
+            <DataType>BOOLEAN</DataType>
+            <DefaultValue>
+                <Expression>dbss_global.get_default_is_cursor()</Expression>
+            </DefaultValue>
+        </Parameter>
+        <Parameter>
+            <Name>p_is_execute_in</Name>
+            <Mode>IN</Mode>
+            <DataType>BOOLEAN</DataType>
+            <DefaultValue>
+                <Expression>dbss_global.get_default_is_execute()</Expression>
+            </DefaultValue>
+        </Parameter>
+        <Parameter>
+            <Name>p_is_show_in</Name>
+            <Mode>IN</Mode>
+            <DataType>BOOLEAN</DataType>
+            <DefaultValue>
+                <Expression>dbss_global.get_default_is_show()</Expression>
+            </DefaultValue>
+        </Parameter>
+    </Procedure>
+    <Procedure>
+        <Name>cre_rstr_pnt_pres</Name>
+        <Condition>
+            <IfEnd>DBMS_DB_VERSION.version = 12 AND DBMS_DB_VERSION.release = 1</IfEnd>
+        </Condition>
+        <Privilege>
+            <Type>FLASHBACK ANY TABLE</Type>
+        </Privilege>
+        <Parameter>
+            <Name>p_sqls_cv_in_out</Name>
+            <Mode>IN OUT</Mode>
+            <DataType>dbss_type.sqls_cur</DataType>
+        </Parameter>
+        <Parameter>
+            <Name>p_rstr_pnt_in</Name>
+            <Mode>IN</Mode>
+            <DataType>v$restore_point.NAME%TYPE</DataType>
+            <DefaultValue>
+                <Expression>dbss_global.get_default_rstr_pnt()</Expression>
+            </DefaultValue>
+        </Parameter>
+        <Parameter>
+            <Name>p_scn_in</Name>
+            <Mode>IN</Mode>
+            <DataType>NUMBER</DataType>
+            <DefaultValue>
+                <Expression>0</Expression>
+            </DefaultValue>
+        </Parameter>
+        <Parameter>
+            <Name>p_is_cursor_in</Name>
+            <Mode>IN</Mode>
+            <DataType>BOOLEAN</DataType>
+            <DefaultValue>
+                <Expression>dbss_global.get_default_is_cursor()</Expression>
+            </DefaultValue>
+        </Parameter>
+        <Parameter>
+            <Name>p_is_execute_in</Name>
+            <Mode>IN</Mode>
+            <DataType>BOOLEAN</DataType>
+            <DefaultValue>
+                <Expression>dbss_global.get_default_is_execute()</Expression>
+            </DefaultValue>
+        </Parameter>
+        <Parameter>
+            <Name>p_is_show_in</Name>
+            <Mode>IN</Mode>
+            <DataType>BOOLEAN</DataType>
+            <DefaultValue>
+                <Expression>dbss_global.get_default_is_show()</Expression>
+            </DefaultValue>
+        </Parameter>
+    </Procedure>
+    <Procedure>
+        <Name>cre_rstr_pnt_pres</Name>
+        <Condition>
+            <IfEnd>DBMS_DB_VERSION.version > 12 OR DBMS_DB_VERSION.version = 12 AND DBMS_DB_VERSION.release > 1</IfEnd>
+        </Condition>
+        <Privilege>
+            <Type>FLASHBACK ANY TABLE</Type>
+        </Privilege>
+        <Parameter>
+            <Name>p_sqls_cv_in_out</Name>
+            <Mode>IN OUT</Mode>
+            <DataType>dbss_type.sqls_cur</DataType>
+        </Parameter>
+        <Parameter>
+            <Name>p_rstr_pnt_in</Name>
+            <Mode>IN</Mode>
+            <DataType>v$restore_point.NAME%TYPE</DataType>
+            <DefaultValue>
+                <Expression>dbss_global.get_default_rstr_pnt()</Expression>
+            </DefaultValue>
+        </Parameter>
+        <Parameter>
+            <Name>p_is_clean_in</Name>
+            <Mode>IN</Mode>
+            <DataType>BOOLEAN</DataType>
+            <DefaultValue>
+                <Expression>FALSE</Expression>
+            </DefaultValue>
+        </Parameter>
+        <Parameter>
+            <Name>p_scn_in</Name>
+            <Mode>IN</Mode>
+            <DataType>NUMBER</DataType>
+            <DefaultValue>
+                <Expression>0</Expression>
+            </DefaultValue>
+        </Parameter>
+        <Parameter>
+            <Name>p_is_cursor_in</Name>
+            <Mode>IN</Mode>
+            <DataType>BOOLEAN</DataType>
+            <DefaultValue>
+                <Expression>dbss_global.get_default_is_cursor()</Expression>
+            </DefaultValue>
+        </Parameter>
+        <Parameter>
+            <Name>p_is_execute_in</Name>
+            <Mode>IN</Mode>
+            <DataType>BOOLEAN</DataType>
+            <DefaultValue>
+                <Expression>dbss_global.get_default_is_execute()</Expression>
+            </DefaultValue>
+        </Parameter>
+        <Parameter>
+            <Name>p_is_show_in</Name>
+            <Mode>IN</Mode>
+            <DataType>BOOLEAN</DataType>
+            <DefaultValue>
+                <Expression>dbss_global.get_default_is_show()</Expression>
+            </DefaultValue>
+        </Parameter>
+    </Procedure>
+    <Procedure>
         <Name>del_rstr_pnt</Name>
+        <Privilege>
+            <Type>SYSDBA</Type>
+        </Privilege>
         <Parameter>
             <Name>p_sqls_cv_in_out</Name>
             <Mode>IN OUT</Mode>
@@ -1922,45 +1922,45 @@ END dbss_flashback;
         </Parameter>
     </Procedure>
     <Procedure>
-        <Privilege>
-            <Type>SYSDBA</Type>
-        </Privilege>
         <Name>del_rstr_pnts</Name>
-        <Parameter>
-            <Name>p_sqls_cv_in_out</Name>
-            <Mode>IN OUT</Mode>
-            <DataType>dbss_type.sqls_cur</DataType>
-        </Parameter>
-        <Parameter>
-            <Name>p_is_cursor_in</Name>
-            <Mode>IN</Mode>
-            <DataType>BOOLEAN</DataType>
-            <DefaultValue>
-                <Expression>dbss_global.get_default_is_cursor()</Expression>
-            </DefaultValue>
-        </Parameter>
-        <Parameter>
-            <Name>p_is_execute_in</Name>
-            <Mode>IN</Mode>
-            <DataType>BOOLEAN</DataType>
-            <DefaultValue>
-                <Expression>dbss_global.get_default_is_execute()</Expression>
-            </DefaultValue>
-        </Parameter>
-        <Parameter>
-            <Name>p_is_show_in</Name>
-            <Mode>IN</Mode>
-            <DataType>BOOLEAN</DataType>
-            <DefaultValue>
-                <Expression>dbss_global.get_default_is_show()</Expression>
-            </DefaultValue>
-        </Parameter>
-    </Procedure>
-    <Procedure>
         <Privilege>
             <Type>SYSDBA</Type>
         </Privilege>
+        <Parameter>
+            <Name>p_sqls_cv_in_out</Name>
+            <Mode>IN OUT</Mode>
+            <DataType>dbss_type.sqls_cur</DataType>
+        </Parameter>
+        <Parameter>
+            <Name>p_is_cursor_in</Name>
+            <Mode>IN</Mode>
+            <DataType>BOOLEAN</DataType>
+            <DefaultValue>
+                <Expression>dbss_global.get_default_is_cursor()</Expression>
+            </DefaultValue>
+        </Parameter>
+        <Parameter>
+            <Name>p_is_execute_in</Name>
+            <Mode>IN</Mode>
+            <DataType>BOOLEAN</DataType>
+            <DefaultValue>
+                <Expression>dbss_global.get_default_is_execute()</Expression>
+            </DefaultValue>
+        </Parameter>
+        <Parameter>
+            <Name>p_is_show_in</Name>
+            <Mode>IN</Mode>
+            <DataType>BOOLEAN</DataType>
+            <DefaultValue>
+                <Expression>dbss_global.get_default_is_show()</Expression>
+            </DefaultValue>
+        </Parameter>
+    </Procedure>
+    <Procedure>
         <Name>del_rstr_pnts_guar</Name>
+        <Privilege>
+            <Type>SYSDBA</Type>
+        </Privilege>
         <Parameter>
             <Name>p_sqls_cv_in_out</Name>
             <Mode>IN OUT</Mode>
@@ -1992,45 +1992,10 @@ END dbss_flashback;
         </Parameter>
     </Procedure>
     <Procedure>
-        <Privilege>
-            <Type>FLASHBACK ANY TABLE</Type>
-        </Privilege>
         <Name>del_rstr_pnts_norm</Name>
-        <Parameter>
-            <Name>p_sqls_cv_in_out</Name>
-            <Mode>IN OUT</Mode>
-            <DataType>dbss_type.sqls_cur</DataType>
-        </Parameter>
-        <Parameter>
-            <Name>p_is_cursor_in</Name>
-            <Mode>IN</Mode>
-            <DataType>BOOLEAN</DataType>
-            <DefaultValue>
-                <Expression>dbss_global.get_default_is_cursor()</Expression>
-            </DefaultValue>
-        </Parameter>
-        <Parameter>
-            <Name>p_is_execute_in</Name>
-            <Mode>IN</Mode>
-            <DataType>BOOLEAN</DataType>
-            <DefaultValue>
-                <Expression>dbss_global.get_default_is_execute()</Expression>
-            </DefaultValue>
-        </Parameter>
-        <Parameter>
-            <Name>p_is_show_in</Name>
-            <Mode>IN</Mode>
-            <DataType>BOOLEAN</DataType>
-            <DefaultValue>
-                <Expression>dbss_global.get_default_is_show()</Expression>
-            </DefaultValue>
-        </Parameter>
-    </Procedure>
-    <Procedure>
         <Privilege>
             <Type>FLASHBACK ANY TABLE</Type>
         </Privilege>
-        <Name>del_rstr_pnts_pres</Name>
         <Parameter>
             <Name>p_sqls_cv_in_out</Name>
             <Mode>IN OUT</Mode>
@@ -2062,6 +2027,42 @@ END dbss_flashback;
         </Parameter>
     </Procedure>
     <Procedure>
+        <Name>del_rstr_pnts_pres</Name>
+        <Privilege>
+            <Type>FLASHBACK ANY TABLE</Type>
+        </Privilege>
+        <Parameter>
+            <Name>p_sqls_cv_in_out</Name>
+            <Mode>IN OUT</Mode>
+            <DataType>dbss_type.sqls_cur</DataType>
+        </Parameter>
+        <Parameter>
+            <Name>p_is_cursor_in</Name>
+            <Mode>IN</Mode>
+            <DataType>BOOLEAN</DataType>
+            <DefaultValue>
+                <Expression>dbss_global.get_default_is_cursor()</Expression>
+            </DefaultValue>
+        </Parameter>
+        <Parameter>
+            <Name>p_is_execute_in</Name>
+            <Mode>IN</Mode>
+            <DataType>BOOLEAN</DataType>
+            <DefaultValue>
+                <Expression>dbss_global.get_default_is_execute()</Expression>
+            </DefaultValue>
+        </Parameter>
+        <Parameter>
+            <Name>p_is_show_in</Name>
+            <Mode>IN</Mode>
+            <DataType>BOOLEAN</DataType>
+            <DefaultValue>
+                <Expression>dbss_global.get_default_is_show()</Expression>
+            </DefaultValue>
+        </Parameter>
+    </Procedure>
+    <Procedure>
+        <Name>get_rstr_pnts</Name>
         <Condition>
             <IfEnd>DBMS_DB_VERSION.version = 12 AND DBMS_DB_VERSION.release = 1</IfEnd>
         </Condition>
@@ -2069,7 +2070,6 @@ END dbss_flashback;
             <Type>SELECT</Type>
             <Object>v$restore_point</Object>
         </Privilege>
-        <Name>get_rstr_pnts</Name>
         <Parameter>
             <Name>p_rstr_pnts_cv_out</Name>
             <Mode>OUT</Mode>
@@ -2109,6 +2109,7 @@ END dbss_flashback;
         </Parameter>
     </Procedure>
     <Procedure>
+        <Name>get_rstr_pnts</Name>
         <Condition>
             <IfEnd>DBMS_DB_VERSION.version > 12 OR DBMS_DB_VERSION.version = 12 AND DBMS_DB_VERSION.release > 1</IfEnd>
         </Condition>
@@ -2116,7 +2117,6 @@ END dbss_flashback;
             <Type>SELECT</Type>
             <Object>v$restore_point</Object>
         </Privilege>
-        <Name>get_rstr_pnts</Name>
         <Parameter>
             <Name>p_rstr_pnts_cv_out</Name>
             <Mode>OUT</Mode>
@@ -2164,6 +2164,7 @@ END dbss_flashback;
         </Parameter>
     </Procedure>
     <Procedure>
+        <Name>set_flashback_off</Name>
         <Privilege>
             <Type>SELECT</Type>
             <Object>v$database</Object>
@@ -2174,7 +2175,6 @@ END dbss_flashback;
         <Privilege>
             <Type>SET CONTAINER</Type>
         </Privilege>
-        <Name>set_flashback_off</Name>
         <Parameter>
             <Name>p_sqls_cv_in_out</Name>
             <Mode>IN OUT</Mode>
@@ -2206,6 +2206,7 @@ END dbss_flashback;
         </Parameter>
     </Procedure>
     <Procedure>
+        <Name>set_flashback_on</Name>
         <Privilege>
             <Type>SELECT</Type>
             <Object>v$database</Object>
@@ -2216,7 +2217,6 @@ END dbss_flashback;
         <Privilege>
             <Type>SET CONTAINER</Type>
         </Privilege>
-        <Name>set_flashback_on</Name>
         <Parameter>
             <Name>p_sqls_cv_in_out</Name>
             <Mode>IN OUT</Mode>
