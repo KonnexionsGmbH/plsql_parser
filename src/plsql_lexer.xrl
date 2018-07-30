@@ -62,7 +62,9 @@ Rules.
 (/\*([^*]|[\r\n]|(\*+([^*/]|[\r\n])))*\*+/)         : skip_token.
 
 % line comments
-((\-\-\s).*[\n])                                    : skip_token.
+(--(\s.*[\r\n]+|[\r\n]+))                                          : skip_token.
+%(--\n)                                          : skip_token.
+%(--\r\n)                                          : skip_token.
 
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 Erlang code.
@@ -100,11 +102,6 @@ match_any(TokenChars, TokenLen, _TokenLine, []) ->
     {token, {'NAME', TokenLen, TokenChars}};
 match_any(TokenChars, TokenLen, TokenLine, [{P, T} | TPs]) ->
     case re:run(TokenChars, P, [{capture, first, list}]) of
-        {match, [_]} ->
-            if (T =:= 'FUNS') orelse
-                (T =:= 'UFUN') ->
-                {token, {T, TokenLine, list_to_atom(TokenChars)}};
-                true -> {token, {T, TokenLine}}
-            end;
+        {match, [_]} -> {token, {T, TokenLine}};
         nomatch -> match_any(TokenChars, TokenLen, TokenLine, TPs)
     end.
