@@ -656,6 +656,8 @@ procedureLegacyAnnotation ::= '--<>' 'LEGACY_NAME_PROCEDURE' '=' NAME
 /* =============================================================================
 parameterAnnotation -> '--<>' LOGGER_TO_CHARACTER '=' FALSE : #{parameterAnnotation => #{type@ => unwrap_2_list('$2'),
                                                                                          value@ => unwrap_2_list('$4')}}.
+parameterAnnotation -> '--<>' LOGGER_TO_CHARACTER '=' NONE  : #{parameterAnnotation => #{type@ => unwrap_2_list('$2'),
+                                                                                         value@ => unwrap_2_list('$4')}}.
 
 parameterDeclaration -> NAME               dataType         : #{parameterDeclaration => #{name@ => unwrap_2_list('$1'),
                                                                                           dataType@ => '$2'}}.
@@ -696,7 +698,7 @@ unitKind -> TRIGGER   : unwrap_2_list('$1').
 unitKind -> TYPE      : unwrap_2_list('$1').
 ============================================================================= */
 
-parameterAnnotation ::= '--<>' 'LOGGER_TO_CHARACTER' '=' 'FALSE'
+parameterAnnotation ::= '--<>' 'LOGGER_TO_CHARACTER' '=' ( 'FALSE' | 'NONE' )
 
 parameterDeclaration ::= NAME ( 'IN'? dataType default? )
                             | ( 'IN'? 'OUT' 'NOCOPY'? dataType )

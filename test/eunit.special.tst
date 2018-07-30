@@ -161,8 +161,10 @@ Function function_name_1
 --<> legacy_name_function = name_31
 --<> legacy_name_procedure = name_32
 Procedure procedure_name_1 (
+               --<> logger_to_character = none
+               parameter_1 in out date,
                --<> logger_to_character = false
-               parameter_1 in out date
+               parameter_2 in out date
           )
          ;
 End

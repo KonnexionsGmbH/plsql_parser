@@ -788,6 +788,8 @@ procedureLegacyAnnotation -> '--<>' LEGACY_NAME_PROCEDURE '=' NAME : #{procedure
 
 parameterAnnotation -> '--<>' LOGGER_TO_CHARACTER '=' FALSE : #{parameterAnnotation => #{type@ => unwrap_2_list('$2'),
                                                                                          value@ => unwrap_2_list('$4')}}.
+parameterAnnotation -> '--<>' LOGGER_TO_CHARACTER '=' NONE : #{parameterAnnotation => #{type@ => unwrap_2_list('$2'),
+                                                                                         value@ => unwrap_2_list('$4')}}.
 
 parameterDeclaration -> NAME               dataType         : #{parameterDeclaration => #{name@ => unwrap_2_list('$1'),
                                                                                           dataType@ => '$2'}}.
