@@ -149,8 +149,10 @@ Function function_name_1
 --<> legacy_name_function = name_31
 --<> legacy_name_procedure = name_32
 Procedure procedure_name_1 (
+               --<> logger_to_character = none
+               parameter_1 in out date,
                --<> logger_to_character = false
-               parameter_1 in out date
+               parameter_2 in out date
           )
          ;
 End
@@ -523,6 +525,32 @@ Procedure procedure_name_1
           ;
 End
 ;
+".
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Comments.
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+"
+CREATE OR REPLACE PACKAGE package_1
+IS
+    /*
+       comment
+    */
+    FUNCTION function_1
+        RETURN DATE;
+
+--    FUNCTION function_2 (param_1 DATE)
+--        RETURN BOOLEAN;
+--
+--    FUNCTION function_3 (
+--        param_1                               DATE,
+--        param_2                        IN     DATE,
+--        param_3                        IN OUT DATE,
+--        param_4                           OUT DATE)
+--        RETURN BOOLEAN;
+END package_1;
+/
 ".
 
 %% -----------------------------------------------------------------------------

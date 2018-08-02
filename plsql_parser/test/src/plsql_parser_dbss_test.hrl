@@ -109,7 +109,7 @@ end dbss_flashback;
         </Condition>
         <LegacyNameFunction>name_2_1</LegacyNameFunction>
         <Parameter>
-            <LoggerToCharacter>FALSE</LoggerToCharacter>
+            <LoggerToCharacter>false</LoggerToCharacter>
             <Name>p_is_show_in</Name>
             <Mode>IN</Mode>
             <DataType>CHAR</DataType>

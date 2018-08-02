@@ -852,6 +852,23 @@ create_code(dataType = Rule) ->
                 ]),
             lists:append(
                 [
+                    lists:nth(rand:uniform(Name_Length), Name),
+                    ".",
+                    lists:nth(rand:uniform(Name_Length), Name),
+                    ".",
+                    lists:nth(rand:uniform(Name_Length), Name)
+                ]),
+            lists:append(
+                [
+                    lists:nth(rand:uniform(Name_Length), Name),
+                    ".",
+                    lists:nth(rand:uniform(Name_Length), Name),
+                    ".",
+                    lists:nth(rand:uniform(Name_Length), Name),
+                    "%Type"
+                ]),
+            lists:append(
+                [
                     "Nchar(",
                     lists:nth(rand:uniform(Intnum_Length), Intnum),
                     ")"

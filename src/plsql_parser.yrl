@@ -537,6 +537,8 @@ procedureLegacyAnnotation -> '--<>' LEGACY_NAME_PROCEDURE '=' NAME : #{procLegac
 
 parameterAnnotation -> '--<>' LOGGER_TO_CHARACTER '=' FALSE : #{parameterAnnotation => #{type@ => unwrap_2_list('$2'),
                                                                                          value@ => unwrap_2_list('$4')}}.
+parameterAnnotation -> '--<>' LOGGER_TO_CHARACTER '=' NONE : #{parameterAnnotation => #{type@ => unwrap_2_list('$2'),
+                                                                                         value@ => unwrap_2_list('$4')}}.
 
 parameterDeclaration -> NAME               dataType         : #{paramName => name(['$1']), paramType => '$2'}.
 parameterDeclaration -> NAME               dataType default : maps_merge([#{paramName => name(['$1']), paramType => '$2'}, '$3']).

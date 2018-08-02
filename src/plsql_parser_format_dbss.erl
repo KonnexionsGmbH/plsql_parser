@@ -645,7 +645,7 @@ fold(LOpts, _FunState, Ctx, #{parameterAnnotation := PTree}, {parameterAnnotatio
                      ?TABULATOR,
                      ?TABULATOR,
                      "<LoggerToCharacter>",
-                     maps:get(value@, PTree),
+                     string:lowercase(maps:get(value@, PTree)),
                      "</LoggerToCharacter>",
                      ?CHAR_NEWLINE
                  ]);
