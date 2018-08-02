@@ -103,7 +103,7 @@ Nonterminals
 
 Terminals
  '$ELSE'
- '$ELSIF'
+ '$ELSEIF'
  '$END'
  '$IF'
  '$THEN'
@@ -376,8 +376,8 @@ packageItem -> packageFunctionDeclaration  : '$1'.
 packageItem -> packageProcedureDeclaration : '$1'.
 
 packageItemConditional -> '$ELSE'                     packageItem '$END' : #{else => '$2', 'end' => true}.
-packageItemConditional -> '$ELSIF' expression '$THEN' packageItem        : #{elseif => '$2', then => '$4'}.
-packageItemConditional -> '$ELSIF' expression '$THEN' packageItem '$END' : #{elseif => '$2', then => '$4', 'end' => true}.
+packageItemConditional -> '$ELSEIF' expression '$THEN' packageItem        : #{elseif => '$2', then => '$4'}.
+packageItemConditional -> '$ELSEIF' expression '$THEN' packageItem '$END' : #{elseif => '$2', then => '$4', 'end' => true}.
 packageItemConditional -> '$IF'    expression '$THEN' packageItem        : #{'if' => '$2', then => '$4'}.
 packageItemConditional -> '$IF'    expression '$THEN' packageItem '$END' : #{'if' => '$2', then => '$4', 'end' => true}.
 
@@ -719,9 +719,12 @@ Erlang code.
 %%                          parser helper functions
 %%------------------------------------------------------------------------------
 
-name([Name]) -> unwrap_2_list(Name);
-name([Name|Names]) ->
-    unwrap_2_list(Name) ++ "." ++ name(Names).
+name([Name]) when is_list(Name) -> Name;
+name([Name]) when is_tuple(Name) -> unwrap_2_list(Name);
+name([Name|Names]) when is_tuple(Name) ->
+    name([unwrap_2_list(Name)|Names]);
+name([Name|Names]) when is_list(Name) ->
+    Name ++ "." ++ name(Names).
 
 maps_merge(Maps) when is_list(Maps) -> maps_merge(Maps, #{}).
 maps_merge([], Map) -> Map;
