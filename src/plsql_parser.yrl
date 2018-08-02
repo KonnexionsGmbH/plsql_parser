@@ -91,6 +91,7 @@ Nonterminals
  pkgSrcTail
  pkgSrcOptShareAttr
  name
+ optParams
 .
 
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -372,29 +373,17 @@ objectPrivilegeType -> WRITE                     : unwrap_2_list('$1').
 packageItem -> packageFunctionDeclaration  : '$1'.
 packageItem -> packageProcedureDeclaration : '$1'.
 
-packageItemConditional -> '$ELSE'                     packageItem  '$END' : #{packageItemConditional => #{start@ => unwrap_2_list('$1'),
-                                                                                                          packageItem@ => '$2',
-                                                                                                          end@ => unwrap_2_list('$3')}}.
-packageItemConditional -> '$ELSIF' expression '$THEN' packageItem         : #{packageItemConditional => #{start@ => unwrap_2_list('$1'),
-                                                                                                          expression@ => '$2',
-                                                                                                          packageItem@ => '$4'}}.
-packageItemConditional -> '$ELSIF' expression '$THEN' packageItem  '$END' : #{packageItemConditional => #{start@ => unwrap_2_list('$1'),
-                                                                                                          expression@ => '$2',
-                                                                                                          packageItem@ => '$4',
-                                                                                                          end@ => unwrap_2_list('$5')}}.
-packageItemConditional -> '$IF'    expression '$THEN' packageItem         : #{packageItemConditional => #{start@ => unwrap_2_list('$1'),
-                                                                                                          expression@ => '$2',
-                                                                                                          packageItem@ => '$4'}}.
-packageItemConditional -> '$IF'    expression '$THEN' packageItem  '$END' : #{packageItemConditional => #{start@ => unwrap_2_list('$1'),
-                                                                                                          expression@ => '$2',
-                                                                                                          packageItem@ => '$4',
-                                                                                                          end@ => unwrap_2_list('$5')}}.
+packageItemConditional -> '$ELSE'                     packageItem '$END' : #{else => '$2', 'end' => true}.
+packageItemConditional -> '$ELSIF' expression '$THEN' packageItem        : #{elseif => '$2', then => '$4'}.
+packageItemConditional -> '$ELSIF' expression '$THEN' packageItem '$END' : #{elseif => '$2', then => '$4', 'end' => true}.
+packageItemConditional -> '$IF'    expression '$THEN' packageItem        : #{'if' => '$2', then => '$4'}.
+packageItemConditional -> '$IF'    expression '$THEN' packageItem '$END' : #{'if' => '$2', then => '$4', 'end' => true}.
 
-packageItemSimple -> packageItem : #{packageItemSimple => #{packageItem@ => '$1'}}.
+packageItemSimple -> packageItem : '$1'.
 
-plsqlPackageSourceAttribute -> accessibleByClause     : #{plsqlPackageSourceAttribute => '$1'}.
-plsqlPackageSourceAttribute -> defaultCollationClause : #{plsqlPackageSourceAttribute => '$1'}.
-plsqlPackageSourceAttribute -> invokerRightsClause    : #{plsqlPackageSourceAttribute => '$1'}.
+plsqlPackageSourceAttribute -> accessibleByClause     : '$1'.
+plsqlPackageSourceAttribute -> defaultCollationClause : '$1'.
+plsqlPackageSourceAttribute -> invokerRightsClause    : '$1'.
 
 systemPrivilegeType -> ALTER DATABASE         : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2')]).
 systemPrivilegeType -> ALTER SESSION          : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2')]).
@@ -422,46 +411,33 @@ systemPrivilegeType -> UNLIMITED TABLESPACE   : lists:append([unwrap_2_list('$1'
 
 %% Level 07 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-accessibleByClause -> ACCESSIBLE BY accessorCommaList : #{accessibleByClause => #{accessorCommaList@ => '$3'}}.
+accessibleByClause -> ACCESSIBLE BY accessorCommaList : #{accessibleBy => '$3'}.
 
 defaultCollationClause -> DEFAULT COLLATION USING_NLS_COMP : #{defaultCollationClause => lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2'), " ", unwrap_2_list('$3')])}.
 
 invokerRightsClause -> AUTHID CURRENT_USER : #{invokerRightsClause => unwrap_2_list('$2')}.
 invokerRightsClause -> AUTHID DEFINER      : #{invokerRightsClause => unwrap_2_list('$2')}.
 
-packageFunctionDeclaration ->                    functionHeading                                         ';' : #{packageFunctionDeclaration  => #{functionHeading@ => '$1'}}.
-packageFunctionDeclaration ->                    functionHeading packageFunctionDeclarationAttributeList ';' : #{packageFunctionDeclaration  => #{functionHeading@ => '$1',
-                                                                                                                                                  packageFunctionDeclarationAttributeList@ => '$2'}}.
-packageFunctionDeclaration -> functionAnnotation functionHeading                                         ';' : #{packageFunctionDeclaration  => #{functionAnnotation@ => '$1',
-                                                                                                                                                  functionHeading@ => '$2'}}.
-packageFunctionDeclaration -> functionAnnotation functionHeading packageFunctionDeclarationAttributeList ';' : #{packageFunctionDeclaration  => #{functionAnnotation@ => '$1',
-                                                                                                                                                  functionHeading@ => '$2',
-                                                                                                                                                  packageFunctionDeclarationAttributeList@ => '$3'}}.
+packageFunctionDeclaration ->                    functionHeading                                         ';' : '$1'.
+packageFunctionDeclaration ->                    functionHeading packageFunctionDeclarationAttributeList ';' : maps_merge(['$1', #{attrs => '$2'}]).
+packageFunctionDeclaration -> functionAnnotation functionHeading                                         ';' : maps_merge(['$1', '$2']).
+packageFunctionDeclaration -> functionAnnotation functionHeading packageFunctionDeclarationAttributeList ';' : maps_merge(['$1', '$2', #{declAttrs => '$3'}]).
 
-packageProcedureDeclaration ->                     procedureHeading                    ';' : #{packageProcedureDeclaration  => #{procedureHeading@ => '$1'}}.
-packageProcedureDeclaration ->                     procedureHeading accessibleByClause ';' : #{packageProcedureDeclaration  => #{procedureHeading@ => '$1',
-                                                                                                                                 accessibleByClause@ => '$2'}}.
-packageProcedureDeclaration -> procedureAnnotation procedureHeading                    ';' : #{packageProcedureDeclaration  => #{procedureAnnotation@ => '$1',
-                                                                                                                                 procedureHeading@ => '$2'}}.
-packageProcedureDeclaration -> procedureAnnotation procedureHeading accessibleByClause ';' : #{packageProcedureDeclaration  => #{procedureAnnotation@ => '$1',
-                                                                                                                                 procedureHeading@ => '$2',
-                                                                                                                                 accessibleByClause@ => '$3'}}.
+packageProcedureDeclaration ->                     procedureHeading                    ';' : '$1'.
+packageProcedureDeclaration ->                     procedureHeading accessibleByClause ';' : #{procedureHeading@ => '$1', accessibleByClause@ => '$2'}.
+packageProcedureDeclaration -> procedureAnnotation procedureHeading                    ';' : #{procedureAnnotation@ => '$1', procedureHeading@ => '$2'}.
+packageProcedureDeclaration -> procedureAnnotation procedureHeading accessibleByClause ';' : #{procedureAnnotation@ => '$1', procedureHeading@ => '$2', accessibleByClause@ => '$3'}.
 
 %% Level 08 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 accessorCommaList -> accessor                       : ['$1'].
 accessorCommaList -> accessor ',' accessorCommaList : ['$1' | '$3'].
 
-functionAnnotation -> functionLegacyAnnotation                         : #{functionAnnotation => #{functionLegacyAnnotation@ => '$1'}}.
-functionAnnotation -> functionLegacyAnnotation privilegeAnnotationList : #{functionAnnotation => #{functionLegacyAnnotation@ => '$1',
-                                                                                                   privilegeAnnotationList@ => '$2'}}.
-functionAnnotation -> privilegeAnnotationList                          : #{functionAnnotation => #{privilegeAnnotationList@ => '$1'}}.
+functionAnnotation -> functionLegacyAnnotation                         : #{functionLegacyAnnotation => '$1'}.
+functionAnnotation -> functionLegacyAnnotation privilegeAnnotationList : #{functionLegacyAnnotation => '$1', privilegeAnnotationList => '$2'}.
+functionAnnotation -> privilegeAnnotationList                          : #{privilegeAnnotationList => '$1'}.
 
-functionHeading -> FUNCTION NAME                                       RETURN dataType : #{functionHeading => #{name@ => unwrap_2_list('$2'),
-                                                                                                                return@ => '$4'}}.
-functionHeading -> FUNCTION NAME '(' parameterDeclarationCommaList ')' RETURN dataType : #{functionHeading => #{name@ => unwrap_2_list('$2'),
-                                                                                                                parameterDeclarationCommaList@ => '$4',
-                                                                                                                return@ => '$7'}}.
+functionHeading -> FUNCTION NAME optParams RETURN dataType : maps_merge([#{function => name(['$2']), return => '$5'}, '$3']).
 
 packageFunctionDeclarationAttributeList -> packageFunctionDeclarationAttribute                                         : ['$1'].
 packageFunctionDeclarationAttributeList -> packageFunctionDeclarationAttribute packageFunctionDeclarationAttributeList : ['$1' | '$2'].
@@ -479,9 +455,10 @@ procedureAnnotation -> functionLegacyAnnotation                                 
 procedureAnnotation -> procedureLegacyAnnotation                                                   : #{procedureAnnotation => #{procedureLegacyAnnotation@ => '$1'}}.
 procedureAnnotation -> privilegeAnnotationList                                                     : #{procedureAnnotation => #{privilegeAnnotationList@ => '$1'}}.
 
-procedureHeading -> PROCEDURE NAME                                       : #{procedureHeading => #{name@ => unwrap_2_list('$2')}}.
-procedureHeading -> PROCEDURE NAME '(' parameterDeclarationCommaList ')' : #{procedureHeading => #{name@ => unwrap_2_list('$2'),
-                                                                                                   parameterDeclarationCommaList@ => '$4'}}.
+procedureHeading -> PROCEDURE NAME optParams : maps_merge([#{procName => name(['$2'])}, '$3']).
+
+optParams -> '$empty'                              : #{}.
+optParams -> '(' parameterDeclarationCommaList ')' : #{params => '$2'}.
 
 %% Level 09 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -492,142 +469,57 @@ accessor -> unitKind          NAME : #{accessor => #{unitKind@ => '$1',
 accessor -> unitKind NAME '.' NAME : #{accessor => #{unitKind@ => '$1',
                                                      name@ => lists:append([unwrap_2_list('$2'), ".", unwrap_2_list('$4')])}}.
 
-dataType -> BFILE                                                            : #{dataType => #{class@ => sql,
-                                                                                               type@ => unwrap_2_list('$1')}}.
-dataType -> BINARY_DOUBLE                                                    : #{dataType => #{class@ => sql,
-                                                                                               type@ => unwrap_2_list('$1')}}.
-dataType -> BINARY_FLOAT                                                     : #{dataType => #{class@ => sql,
-                                                                                               type@ => unwrap_2_list('$1')}}.
-dataType -> BINARY_INTEGER                                                   : #{dataType => #{class@ => plsql,
-                                                                                               type@ => unwrap_2_list('$1')}}.
-dataType -> BLOB                                                             : #{dataType => #{class@ => sql,
-                                                                                               type@ => unwrap_2_list('$1')}}.
-dataType -> BOOLEAN                                                          : #{dataType => #{class@ => plsql,
-                                                                                               type@ => unwrap_2_list('$1')}}.
-dataType -> CHAR                                                             : #{dataType => #{class@ => sql,
-                                                                                               type@ => unwrap_2_list('$1')}}.
-dataType -> CHAR          '(' INTNUM            ')'                          : #{dataType => #{class@ => sql,
-                                                                                               type@ => unwrap_2_list('$1'),
-                                                                                               size@ => unwrap_2_list('$3')}}.
-dataType -> CHAR          '(' INTNUM     BYTE   ')'                          : #{dataType => #{class@ => sql,
-                                                                                               type@ => unwrap_2_list('$1'),
-                                                                                               size@ => unwrap_2_list('$3'),
-                                                                                               sizeType@ => unwrap_2_list('$4')}}.
-dataType -> CHAR          '(' INTNUM     CHAR   ')'                          : #{dataType => #{class@ => sql,
-                                                                                               type@ => unwrap_2_list('$1'),
-                                                                                               size@ => unwrap_2_list('$3'),
-                                                                                               sizeType@ => unwrap_2_list('$4')}}.
-dataType -> CLOB                                                             : #{dataType => #{class@ => sql,
-                                                                                               type@ => unwrap_2_list('$1')}}.
-dataType -> DATE                                                             : #{dataType => #{class@ => sql,
-                                                                                               type@ => unwrap_2_list('$1')}}.
-dataType -> FLOAT                                                            : #{dataType => #{class@ => sql,
-                                                                                               type@ => unwrap_2_list('$1')}}.
-dataType -> FLOAT         '(' INTNUM            ')'                          : #{dataType => #{class@ => sql,
-                                                                                               type@ => unwrap_2_list('$1'),
-                                                                                               precision@ =>  unwrap_2_list('$3')}}.
-dataType -> INTERVAL DAY                            TO SECOND                : #{dataType => #{class@ => sql,
-                                                                                               type@ => "INTERVAL DAY"}}.
-dataType -> INTERVAL DAY  '(' INTNUM            ')' TO SECOND                : #{dataType => #{class@ => sql,
-                                                                                               type@ => "INTERVAL DAY",
-                                                                                               dayPrecision@ => unwrap_2_list('$4')}}.
-dataType -> INTERVAL DAY                            TO SECOND '(' INTNUM ')' : #{dataType => #{class@ => sql,
-                                                                                               type@ => "INTERVAL DAY",
-                                                                                               secondPrecision@ => unwrap_2_list('$6')}}.
-dataType -> INTERVAL DAY  '(' INTNUM            ')' TO SECOND '(' INTNUM ')' : #{dataType => #{class@ => sql,
-                                                                                               type@ => "INTERVAL DAY",
-                                                                                               dayPrecision@ => unwrap_2_list('$4'),
-                                                                                               secondPrecision@ => unwrap_2_list('$9')}}.
-dataType -> INTERVAL YEAR                           TO MONTH                 : #{dataType => #{class@ => sql,
-                                                                                               type@ => "INTERVAL YEAR"}}.
-dataType -> INTERVAL YEAR '(' INTNUM            ')' TO MONTH                 : #{dataType => #{class@ => sql,
-                                                                                               type@ => "INTERVAL YEAR",
-                                                                                               precision@ => unwrap_2_list('$4')}}.
-dataType -> LONG RAW                                                         : #{dataType => #{class@ => sql,
-                                                                                               type@ => "LONG RAW"}}.
-dataType -> NAME                                                             : #{dataType => #{class@ => user_defined,
-                                                                                               type@ => unwrap_2_list('$1')}}.
-dataType -> NAME          '%ROWTYPE'                                         : #{dataType => #{class@ => user_defined,
-                                                                                               type@ => unwrap_2_list('$1'),
-                                                                                               attribute@ => unwrap_2_list('$2')}}.
-dataType -> NAME          '%TYPE'                                            : #{dataType => #{class@ => user_defined,
-                                                                                               type@ => unwrap_2_list('$1'),
-                                                                                               attribute@ => unwrap_2_list('$2')}}.
-dataType -> NAME '.' NAME                                                    : #{dataType => #{class@ => user_defined,
-                                                                                               type@ => lists:append([unwrap_2_list('$1'), ".", unwrap_2_list('$3')])}}.
-dataType -> NAME '.' NAME '%TYPE'                                            : #{dataType => #{class@ => user_defined,
-                                                                                               type@ => lists:append([unwrap_2_list('$1'), ".", unwrap_2_list('$3')]),
-                                                                                               attribute@ => unwrap_2_list('$4')}}.
-dataType -> NCHAR         '(' INTNUM            ')'                          : #{dataType => #{class@ => sql,
-                                                                                               type@ => unwrap_2_list('$1'),
-                                                                                               size@ => unwrap_2_list('$3')}}.
-dataType -> NCLOB                                                            : #{dataType => #{class@ => sql,
-                                                                                               type@ => unwrap_2_list('$1')}}.
-dataType -> NUMBER                                                           : #{dataType => #{class@ => sql,
-                                                                                               type@ => unwrap_2_list('$1')}}.
-dataType -> NUMBER        '(' INTNUM            ')'                          : #{dataType => #{class@ => sql,
-                                                                                               type@ => unwrap_2_list('$1'),
-                                                                                               precision@ => unwrap_2_list('$3')}}.
-dataType -> NUMBER        '(' INTNUM ',' INTNUM ')'                          : #{dataType => #{class@ => sql,
-                                                                                               type@ => unwrap_2_list('$1'),
-                                                                                               precision@ => unwrap_2_list('$3'),
-                                                                                               scale@ =>  unwrap_2_list('$5')}}.
-dataType -> NVARCHAR2     '(' INTNUM            ')'                          : #{dataType => #{class@ => sql,
-                                                                                               type@ => unwrap_2_list('$1'),
-                                                                                               size@ => unwrap_2_list('$3')}}.
-dataType -> PLS_INTEGER                                                      : #{dataType => #{class@ => plsql,
-                                                                                               type@ => unwrap_2_list('$1')}}.
-dataType -> RAW           '(' INTNUM            ')'                          : #{dataType => #{class@ => sql,
-                                                                                               type@ => unwrap_2_list('$1'),
-                                                                                               size@ => unwrap_2_list('$3')}}.
-dataType -> REF CURSOR                                                       : #{dataType => #{class@ => plsql,
-                                                                                               type@ => "REF CURSOR"}}.
-dataType -> ROWID                                                            : #{dataType => #{class@ => sql,
-                                                                                               type@ => unwrap_2_list('$1')}}.
-dataType -> TIMESTAMP                                                        : #{dataType => #{class@ => sql,
-                                                                                               type@ => unwrap_2_list('$1')}}.
-dataType -> TIMESTAMP                               WITH       TIME ZONE     : #{dataType => #{class@ => sql,
-                                                                                               type@ => unwrap_2_list('$1'),
-                                                                                               timeZone@ => true}}.
-dataType -> TIMESTAMP                               WITH LOCAL TIME ZONE     : #{dataType => #{class@ => sql,
-                                                                                               type@ => unwrap_2_list('$1'),
-                                                                                               timeZone@ => true,
-                                                                                               local@ => true}}.
-dataType -> TIMESTAMP     '(' INTNUM            ')'                          : #{dataType => #{class@ => sql,
-                                                                                               type@ => unwrap_2_list('$1'),
-                                                                                               precision@ => unwrap_2_list('$3')}}.
-dataType -> TIMESTAMP     '(' INTNUM            ')' WITH       TIME ZONE     : #{dataType => #{class@ => sql,
-                                                                                               type@ => unwrap_2_list('$1'),
-                                                                                               precision@ => unwrap_2_list('$3'),
-                                                                                               timeZone@ => true}}.
-dataType -> TIMESTAMP     '(' INTNUM            ')' WITH LOCAL TIME ZONE     : #{dataType => #{class@ => sql,
-                                                                                               type@ => unwrap_2_list('$1'),
-                                                                                               precision@ => unwrap_2_list('$3'),
-                                                                                               timeZone@ => true,
-                                                                                               local@ => true}}.
-dataType -> UROWID                                                           : #{dataType => #{class@ => sql,
-                                                                                               type@ => unwrap_2_list('$1')}}.
-dataType -> UROWID        '(' INTNUM            ')'                          : #{dataType => #{class@ => sql,
-                                                                                               type@ => unwrap_2_list('$1'),
-                                                                                               size@ => unwrap_2_list('$3')}}.
-dataType -> VARCHAR2                                                         : #{dataType => #{class@ => sql,
-                                                                                               type@ => unwrap_2_list('$1')}}.
-dataType -> VARCHAR2      '(' INTNUM            ')'                          : #{dataType => #{class@ => sql,
-                                                                                               type@ => unwrap_2_list('$1'),
-                                                                                               size@ => unwrap_2_list('$3')}}.
-dataType -> VARCHAR2      '(' INTNUM BYTE       ')'                          : #{dataType => #{class@ => sql,
-                                                                                               type@ => unwrap_2_list('$1'),
-                                                                                               size@ => unwrap_2_list('$3'),
-                                                                                               sizeType@ => unwrap_2_list('$4')}}.
-dataType -> VARCHAR2      '(' INTNUM CHAR       ')'                          : #{dataType => #{class@ => sql,
-                                                                                               type@ => unwrap_2_list('$1'),
-                                                                                               size@ => unwrap_2_list('$3'),
-                                                                                               sizeType@ => unwrap_2_list('$4')}}.
-dataType -> XMLTYPE                                                          : #{dataType => #{class@ => sql,
-                                                                                               type@ => unwrap_2_list('$1')}}.
+dataType -> BINARY_INTEGER                                                   : #{class => plsql, dataType => unwrap_2_list('$1')}.
+dataType -> BOOLEAN                                                          : #{class => plsql, dataType => unwrap_2_list('$1')}.
+dataType -> REF CURSOR                                                       : #{class => plsql, dataType => "REF CURSOR"}.
+dataType -> PLS_INTEGER                                                      : #{class => plsql, dataType => unwrap_2_list('$1')}.
+dataType -> NAME                                                             : #{class => user_defined, dataType => name(['$1'])}.
+dataType -> NAME          '%ROWTYPE'                                         : #{class => user_defined, dataType => name(['$1']), attribute => unwrap_2_list('$2')}.
+dataType -> NAME          '%TYPE'                                            : #{class => user_defined, dataType => name(['$1']), attribute => unwrap_2_list('$2')}.
+dataType -> NAME '.' NAME                                                    : #{class => user_defined, dataType => name(['$1', '$3'])}.
+dataType -> NAME '.' NAME '%TYPE'                                            : #{class => user_defined, dataType => name(['$1', '$3']), attribute => unwrap_2_list('$4')}.
+dataType -> BFILE                                                            : #{class => sql, dataType => unwrap_2_list('$1')}.
+dataType -> BINARY_DOUBLE                                                    : #{class => sql, dataType => unwrap_2_list('$1')}.
+dataType -> BINARY_FLOAT                                                     : #{class => sql, dataType => unwrap_2_list('$1')}.
+dataType -> BLOB                                                             : #{class => sql, dataType => unwrap_2_list('$1')}.
+dataType -> CHAR                                                             : #{class => sql, dataType => unwrap_2_list('$1')}.
+dataType -> CHAR          '(' INTNUM            ')'                          : #{class => sql, dataType => unwrap_2_list('$1'), size => unwrap_2_list('$3')}.
+dataType -> CHAR          '(' INTNUM     BYTE   ')'                          : #{class => sql, dataType => unwrap_2_list('$1'), size => unwrap_2_list('$3'), sizeType => unwrap_2_list('$4')}.
+dataType -> CHAR          '(' INTNUM     CHAR   ')'                          : #{class => sql, dataType => unwrap_2_list('$1'), size => unwrap_2_list('$3'), sizeType => unwrap_2_list('$4')}.
+dataType -> CLOB                                                             : #{class => sql, dataType => unwrap_2_list('$1')}.
+dataType -> DATE                                                             : #{class => sql, dataType => unwrap_2_list('$1')}.
+dataType -> FLOAT                                                            : #{class => sql, dataType => unwrap_2_list('$1')}.
+dataType -> FLOAT         '(' INTNUM            ')'                          : #{class => sql, dataType => unwrap_2_list('$1'), precision =>  unwrap_2_list('$3')}.
+dataType -> INTERVAL DAY                            TO SECOND                : #{class => sql, dataType => "INTERVAL DAY"}.
+dataType -> INTERVAL DAY  '(' INTNUM            ')' TO SECOND                : #{class => sql, dataType => "INTERVAL DAY", dayPrecision => unwrap_2_list('$4')}.
+dataType -> INTERVAL DAY                            TO SECOND '(' INTNUM ')' : #{class => sql, dataType => "INTERVAL DAY", secondPrecision => unwrap_2_list('$6')}.
+dataType -> INTERVAL DAY  '(' INTNUM            ')' TO SECOND '(' INTNUM ')' : #{class => sql, dataType => "INTERVAL DAY", dayPrecision => unwrap_2_list('$4'), secondPrecision => unwrap_2_list('$9')}.
+dataType -> INTERVAL YEAR                           TO MONTH                 : #{class => sql, dataType => "INTERVAL YEAR"}.
+dataType -> INTERVAL YEAR '(' INTNUM            ')' TO MONTH                 : #{class => sql, dataType => "INTERVAL YEAR", precision => unwrap_2_list('$4')}.
+dataType -> LONG RAW                                                         : #{class => sql, dataType => "LONG RAW"}.
+dataType -> NCHAR         '(' INTNUM            ')'                          : #{class => sql, dataType => unwrap_2_list('$1'), size => unwrap_2_list('$3')}.
+dataType -> NCLOB                                                            : #{class => sql, dataType => unwrap_2_list('$1')}.
+dataType -> NUMBER                                                           : #{class => sql, dataType => unwrap_2_list('$1')}.
+dataType -> NUMBER        '(' INTNUM            ')'                          : #{class => sql, dataType => unwrap_2_list('$1'), precision => unwrap_2_list('$3')}.
+dataType -> NUMBER        '(' INTNUM ',' INTNUM ')'                          : #{class => sql, dataType => unwrap_2_list('$1'), precision => unwrap_2_list('$3'), scale =>  unwrap_2_list('$5')}.
+dataType -> NVARCHAR2     '(' INTNUM            ')'                          : #{class => sql, dataType => unwrap_2_list('$1'), size => unwrap_2_list('$3')}.
+dataType -> RAW           '(' INTNUM            ')'                          : #{class => sql, dataType => unwrap_2_list('$1'), size => unwrap_2_list('$3')}.
+dataType -> ROWID                                                            : #{class => sql, dataType => unwrap_2_list('$1')}.
+dataType -> TIMESTAMP                                                        : #{class => sql, dataType => unwrap_2_list('$1')}.
+dataType -> TIMESTAMP                               WITH       TIME ZONE     : #{class => sql, dataType => unwrap_2_list('$1'), timeZone => true}.
+dataType -> TIMESTAMP                               WITH LOCAL TIME ZONE     : #{class => sql, dataType => unwrap_2_list('$1'), timeZone => true, local => true}.
+dataType -> TIMESTAMP     '(' INTNUM            ')'                          : #{class => sql, dataType => unwrap_2_list('$1'), precision => unwrap_2_list('$3')}.
+dataType -> TIMESTAMP     '(' INTNUM            ')' WITH       TIME ZONE     : #{class => sql, dataType => unwrap_2_list('$1'), precision => unwrap_2_list('$3'), timeZone => true}.
+dataType -> TIMESTAMP     '(' INTNUM            ')' WITH LOCAL TIME ZONE     : #{class => sql, dataType => unwrap_2_list('$1'), precision => unwrap_2_list('$3'), timeZone => true, local => true}.
+dataType -> UROWID                                                           : #{class => sql, dataType => unwrap_2_list('$1')}.
+dataType -> UROWID        '(' INTNUM            ')'                          : #{class => sql, dataType => unwrap_2_list('$1'), size => unwrap_2_list('$3')}.
+dataType -> VARCHAR2                                                         : #{class => sql, dataType => unwrap_2_list('$1')}.
+dataType -> VARCHAR2      '(' INTNUM            ')'                          : #{class => sql, dataType => unwrap_2_list('$1'), size => unwrap_2_list('$3')}.
+dataType -> VARCHAR2      '(' INTNUM BYTE       ')'                          : #{class => sql, dataType => unwrap_2_list('$1'), size => unwrap_2_list('$3'), sizeType => unwrap_2_list('$4')}.
+dataType -> VARCHAR2      '(' INTNUM CHAR       ')'                          : #{class => sql, dataType => unwrap_2_list('$1'), size => unwrap_2_list('$3'), sizeType => unwrap_2_list('$4')}.
+dataType -> XMLTYPE                                                          : #{class => sql, dataType => unwrap_2_list('$1')}.
 
-functionLegacyAnnotation -> '--<>' LEGACY_NAME_FUNCTION '=' NAME : #{functionLegacyAnnotation => #{type@ => unwrap_2_list('$2'),
-                                                                                                   value@ => unwrap_2_list('$4')}}.
+functionLegacyAnnotation -> '--<>' LEGACY_NAME_FUNCTION '=' NAME : #{funLegacyAnnoType => unwrap_2_list('$2'), value => unwrap_2_list('$4')}.
 
 packageFunctionDeclarationAttribute -> accessibleByClause    : #{packageFunctionDeclarationAttribute => '$1'}.
 packageFunctionDeclarationAttribute -> DETERMINISTIC         : #{packageFunctionDeclarationAttribute => unwrap_2_list('$1')}.
@@ -650,32 +542,14 @@ procedureLegacyAnnotation -> '--<>' LEGACY_NAME_PROCEDURE '=' NAME : #{procedure
 parameterAnnotation -> '--<>' LOGGER_TO_CHARACTER '=' FALSE : #{parameterAnnotation => #{type@ => unwrap_2_list('$2'),
                                                                                          value@ => unwrap_2_list('$4')}}.
 
-parameterDeclaration -> NAME               dataType         : #{parameterDeclaration => #{name@ => unwrap_2_list('$1'),
-                                                                                          dataType@ => '$2'}}.
-parameterDeclaration -> NAME               dataType default : #{parameterDeclaration => #{name@ => unwrap_2_list('$1'),
-                                                                                          dataType@ => '$2',
-                                                                                          default@ => '$3'}}.
-parameterDeclaration -> NAME IN            dataType         : #{parameterDeclaration => #{name@ => unwrap_2_list('$1'),
-                                                                                          mode@ => unwrap_2_list('$2'),
-                                                                                          dataType@ => '$3'}}.
-parameterDeclaration -> NAME IN            dataType default : #{parameterDeclaration => #{name@ => unwrap_2_list('$1'),
-                                                                                          mode@ => unwrap_2_list('$2'),
-                                                                                          dataType@ => '$3',
-                                                                                          default@ => '$4'}}.
-parameterDeclaration -> NAME    OUT        dataType         : #{parameterDeclaration => #{name@ => unwrap_2_list('$1'),
-                                                                                          mode@ => unwrap_2_list('$2'),
-                                                                                          dataType@ => '$3'}}.
-parameterDeclaration -> NAME    OUT NOCOPY dataType         : #{parameterDeclaration => #{name@ => unwrap_2_list('$1'),
-                                                                                          mode@ => unwrap_2_list('$2'),
-                                                                                          nocopy@ => unwrap_2_list('$3'),
-                                                                                          dataType@ => '$4'}}.
-parameterDeclaration -> NAME IN OUT        dataType         : #{parameterDeclaration => #{name@ => unwrap_2_list('$1'),
-                                                                                          mode@ => "IN OUT",
-                                                                                          dataType@ => '$4'}}.
-parameterDeclaration -> NAME IN OUT NOCOPY dataType         : #{parameterDeclaration => #{name@ => unwrap_2_list('$1'),
-                                                                                          mode@ => "IN OUT",
-                                                                                          nocopy@ => unwrap_2_list('$4'),
-                                                                                          dataType@ => '$5'}}.
+parameterDeclaration -> NAME               dataType         : #{paramName => name(['$1']), dataType => '$2'}.
+parameterDeclaration -> NAME               dataType default : #{paramName => name(['$1']), dataType => '$2', default@ => '$3'}.
+parameterDeclaration -> NAME IN            dataType         : #{paramName => name(['$1']), mode => unwrap_2_list('$2'), dataType => '$3'}.
+parameterDeclaration -> NAME IN            dataType default : #{paramName => name(['$1']), mode => unwrap_2_list('$2'), dataType => '$3', default => '$4'}.
+parameterDeclaration -> NAME    OUT        dataType         : #{paramName => name(['$1']), mode => unwrap_2_list('$2'), dataType => '$3'}.
+parameterDeclaration -> NAME    OUT NOCOPY dataType         : #{paramName => name(['$1']), mode => unwrap_2_list('$2'), nocopy => unwrap_2_list('$3'), dataType => '$4'}.
+parameterDeclaration -> NAME IN OUT        dataType         : #{paramName => name(['$1']), mode => "IN OUT", dataType => '$4'}.
+parameterDeclaration -> NAME IN OUT NOCOPY dataType         : #{paramName => name(['$1']), mode => "IN OUT", nocopy => unwrap_2_list('$4'), dataType => '$5'}.
 
 unitKind -> FUNCTION  : unwrap_2_list('$1').
 unitKind -> PACKAGE   : unwrap_2_list('$1').

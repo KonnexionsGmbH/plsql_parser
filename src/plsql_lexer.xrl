@@ -26,15 +26,15 @@ Definitions.
 Rules.
 
 % $ELSE / $ELSIF / $END / $IF / $THEN
-(\$[Ee][Ll][Ss][Ee])                                : {token, {'ELSE',      TokenLine}}.
-(\$[Ee][Ll][Ss][Ii][Ff])                            : {token, {'ELSEIF',    TokenLine}}.
-(\$[Ee][Nn][Dd])                                    : {token, {'END',       TokenLine}}.
-(\$[Ii][Ff])                                        : {token, {'IF',        TokenLine}}.
-(\$[Tt][Hh][Ee][Nn])                                : {token, {'THEN',      TokenLine}}.
+(\$[Ee][Ll][Ss][Ee])                                : {token, {'$ELSE',     TokenLine}}.
+(\$[Ee][Ll][Ss][Ii][Ff])                            : {token, {'$ELSEIF',   TokenLine}}.
+(\$[Ee][Nn][Dd])                                    : {token, {'$END',      TokenLine}}.
+(\$[Ii][Ff])                                        : {token, {'$IF',       TokenLine}}.
+(\$[Tt][Hh][Ee][Nn])                                : {token, {'$THEN',     TokenLine}}.
 
 % %ROWTYPE / %TYPE
-(%[Rr][Oo][Ww][Tt][Yy][Pp][Ee])                     : {token, {'ROWTYPE',   TokenLine}}.
-(%[Tt][Yy][Pp][Ee])                                 : {token, {'TYPE',      TokenLine}}.
+(%[Rr][Oo][Ww][Tt][Yy][Pp][Ee])                     : {token, {'%ROWTYPE',  TokenLine}}.
+(%[Tt][Yy][Pp][Ee])                                 : {token, {'%TYPE',     TokenLine}}.
 
 % strings
 (\'([^\']*(\'\')*)*\')                              : {token, {'STRING', TokenLine, TokenChars}}.
