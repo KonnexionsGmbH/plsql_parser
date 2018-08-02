@@ -92,6 +92,8 @@ Nonterminals
  pkgSrcOptShareAttr
  name
  optParams
+ binary_expression
+ binary_operation
 .
 
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -312,8 +314,8 @@ pkgSrcOptShareAttr -> sharingClause                                 : #{sharingC
 pkgSrcOptShareAttr -> plsqlPackageSourceAttributeList               : #{plsqlPackageSourceAttributeList => '$1'}.
 pkgSrcOptShareAttr -> sharingClause plsqlPackageSourceAttributeList : #{sharingClause => '$1', plsqlPackageSourceAttributeList => '$2'}.
 
-pkgSrcTail -> AS packageItemList endOptName : maps_merge([#{asIs => name(['$1']), packageItemList => '$2'}, '$3']).
-pkgSrcTail -> IS packageItemList endOptName : maps_merge([#{asIs => name(['$1']), packageItemList => '$2'}, '$3']).
+pkgSrcTail -> AS packageItemList endOptName : maps_merge([#{asIs => name(['$1']), items => '$2'}, '$3']).
+pkgSrcTail -> IS packageItemList endOptName : maps_merge([#{asIs => name(['$1']), items => '$2'}, '$3']).
 
 endOptName -> END      : #{}.
 endOptName -> END NAME : #{nameend => unwrap_2_list('$2')}.
@@ -329,7 +331,7 @@ objectPrivilegeAnnotation -> '--<>' OBJECT_PRIVILEGE objectPrivilegeType '=' NAM
                                                                                                                               object@ => unwrap_2_list('$5'),
                                                                                                                               privilegeType@ => '$3'}}.
 objectPrivilegeAnnotation -> '--<>' OBJECT_PRIVILEGE objectPrivilegeType '=' NAME '.' NAME : #{objectPrivilegeAnnotation => #{type@ => unwrap_2_list('$2'),
-                                                                                                                              object@ => lists:append([unwrap_2_list('$5'), ".", unwrap_2_list('$7')]),
+                                                                                                                              object@ => name(['$5','$7']),
                                                                                                                               privilegeType@ => '$3'}}.
 
 packageItemList -> packageItemSimple                      : ['$1'].
@@ -424,36 +426,31 @@ packageFunctionDeclaration -> functionAnnotation functionHeading                
 packageFunctionDeclaration -> functionAnnotation functionHeading packageFunctionDeclarationAttributeList ';' : maps_merge(['$1', '$2', #{declAttrs => '$3'}]).
 
 packageProcedureDeclaration ->                     procedureHeading                    ';' : '$1'.
-packageProcedureDeclaration ->                     procedureHeading accessibleByClause ';' : #{procedureHeading@ => '$1', accessibleByClause@ => '$2'}.
-packageProcedureDeclaration -> procedureAnnotation procedureHeading                    ';' : #{procedureAnnotation@ => '$1', procedureHeading@ => '$2'}.
-packageProcedureDeclaration -> procedureAnnotation procedureHeading accessibleByClause ';' : #{procedureAnnotation@ => '$1', procedureHeading@ => '$2', accessibleByClause@ => '$3'}.
+packageProcedureDeclaration ->                     procedureHeading accessibleByClause ';' : maps_merge(['$1', '$2']).
+packageProcedureDeclaration -> procedureAnnotation procedureHeading                    ';' : maps_merge(['$1', '$2']).
+packageProcedureDeclaration -> procedureAnnotation procedureHeading accessibleByClause ';' : maps_merge(['$1', '$2', '$3']).
 
 %% Level 08 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 accessorCommaList -> accessor                       : ['$1'].
 accessorCommaList -> accessor ',' accessorCommaList : ['$1' | '$3'].
 
-functionAnnotation -> functionLegacyAnnotation                         : #{functionLegacyAnnotation => '$1'}.
-functionAnnotation -> functionLegacyAnnotation privilegeAnnotationList : #{functionLegacyAnnotation => '$1', privilegeAnnotationList => '$2'}.
-functionAnnotation -> privilegeAnnotationList                          : #{privilegeAnnotationList => '$1'}.
+functionAnnotation -> functionLegacyAnnotation                         : '$1'.
+functionAnnotation -> functionLegacyAnnotation privilegeAnnotationList : maps_merge(['$1', #{privilegeAnnotations => '$2'}]).
+functionAnnotation -> privilegeAnnotationList                          : #{privilegeAnnotations => '$1'}.
 
 functionHeading -> FUNCTION NAME optParams RETURN dataType : maps_merge([#{function => name(['$2']), return => '$5'}, '$3']).
 
 packageFunctionDeclarationAttributeList -> packageFunctionDeclarationAttribute                                         : ['$1'].
 packageFunctionDeclarationAttributeList -> packageFunctionDeclarationAttribute packageFunctionDeclarationAttributeList : ['$1' | '$2'].
 
-procedureAnnotation -> functionLegacyAnnotation  procedureLegacyAnnotation privilegeAnnotationList : #{procedureAnnotation => #{functionLegacyAnnotation@ => '$1',
-                                                                                                                                procedureLegacyAnnotation@ => '$2',
-                                                                                                                                privilegeAnnotationList@ => '$3'}}.
-procedureAnnotation -> functionLegacyAnnotation  procedureLegacyAnnotation                         : #{procedureAnnotation => #{functionLegacyAnnotation@ => '$1',
-                                                                                                                                procedureLegacyAnnotation@ => '$2'}}.
-procedureAnnotation -> functionLegacyAnnotation  privilegeAnnotationList                           : #{procedureAnnotation => #{functionLegacyAnnotation@ => '$1',
-                                                                                                                                privilegeAnnotationList@ => '$2'}}.
-procedureAnnotation -> procedureLegacyAnnotation privilegeAnnotationList                           : #{procedureAnnotation => #{procedureLegacyAnnotation@ => '$1',
-                                                                                                                                privilegeAnnotationList@ => '$2'}}.
-procedureAnnotation -> functionLegacyAnnotation                                                    : #{procedureAnnotation => #{functionLegacyAnnotation@ => '$1'}}.
-procedureAnnotation -> procedureLegacyAnnotation                                                   : #{procedureAnnotation => #{procedureLegacyAnnotation@ => '$1'}}.
-procedureAnnotation -> privilegeAnnotationList                                                     : #{procedureAnnotation => #{privilegeAnnotationList@ => '$1'}}.
+procedureAnnotation -> functionLegacyAnnotation procedureLegacyAnnotation privilegeAnnotationList : maps_merge(['$1', '$2', #{privilegeAnnotations => '$3'}]).
+procedureAnnotation -> functionLegacyAnnotation procedureLegacyAnnotation                         : maps_merge(['$1', '$2']).
+procedureAnnotation -> functionLegacyAnnotation privilegeAnnotationList                           : maps_merge(['$1', #{privilegeAnnotations => '$2'}]).
+procedureAnnotation -> procedureLegacyAnnotation privilegeAnnotationList                          : maps_merge(['$1', #{privilegeAnnotations => '$2'}]).
+procedureAnnotation -> functionLegacyAnnotation                                                   : '$1'.
+procedureAnnotation -> procedureLegacyAnnotation                                                  : '$1'.
+procedureAnnotation -> privilegeAnnotationList                                                    : #{privilegeAnnotations => '$1'}.
 
 procedureHeading -> PROCEDURE NAME optParams : maps_merge([#{procName => name(['$2'])}, '$3']).
 
@@ -471,7 +468,7 @@ accessor -> unitKind NAME '.' NAME : #{accessor => #{unitKind@ => '$1',
 
 dataType -> BINARY_INTEGER                                                   : #{class => plsql, dataType => unwrap_2_list('$1')}.
 dataType -> BOOLEAN                                                          : #{class => plsql, dataType => unwrap_2_list('$1')}.
-dataType -> REF CURSOR                                                       : #{class => plsql, dataType => "REF CURSOR"}.
+dataType -> REF CURSOR                                                       : #{class => plsql, dataType => <<"REF CURSOR">>}.
 dataType -> PLS_INTEGER                                                      : #{class => plsql, dataType => unwrap_2_list('$1')}.
 dataType -> NAME                                                             : #{class => user_defined, dataType => name(['$1'])}.
 dataType -> NAME          '%ROWTYPE'                                         : #{class => user_defined, dataType => name(['$1']), attribute => unwrap_2_list('$2')}.
@@ -490,13 +487,13 @@ dataType -> CLOB                                                             : #
 dataType -> DATE                                                             : #{class => sql, dataType => unwrap_2_list('$1')}.
 dataType -> FLOAT                                                            : #{class => sql, dataType => unwrap_2_list('$1')}.
 dataType -> FLOAT         '(' INTNUM            ')'                          : #{class => sql, dataType => unwrap_2_list('$1'), precision =>  unwrap_2_list('$3')}.
-dataType -> INTERVAL DAY                            TO SECOND                : #{class => sql, dataType => "INTERVAL DAY"}.
-dataType -> INTERVAL DAY  '(' INTNUM            ')' TO SECOND                : #{class => sql, dataType => "INTERVAL DAY", dayPrecision => unwrap_2_list('$4')}.
-dataType -> INTERVAL DAY                            TO SECOND '(' INTNUM ')' : #{class => sql, dataType => "INTERVAL DAY", secondPrecision => unwrap_2_list('$6')}.
-dataType -> INTERVAL DAY  '(' INTNUM            ')' TO SECOND '(' INTNUM ')' : #{class => sql, dataType => "INTERVAL DAY", dayPrecision => unwrap_2_list('$4'), secondPrecision => unwrap_2_list('$9')}.
-dataType -> INTERVAL YEAR                           TO MONTH                 : #{class => sql, dataType => "INTERVAL YEAR"}.
-dataType -> INTERVAL YEAR '(' INTNUM            ')' TO MONTH                 : #{class => sql, dataType => "INTERVAL YEAR", precision => unwrap_2_list('$4')}.
-dataType -> LONG RAW                                                         : #{class => sql, dataType => "LONG RAW"}.
+dataType -> INTERVAL DAY                            TO SECOND                : #{class => sql, dataType => <<"INTERVAL DAY">>}.
+dataType -> INTERVAL DAY  '(' INTNUM            ')' TO SECOND                : #{class => sql, dataType => <<"INTERVAL DAY">>, dayPrecision => unwrap_2_list('$4')}.
+dataType -> INTERVAL DAY                            TO SECOND '(' INTNUM ')' : #{class => sql, dataType => <<"INTERVAL DAY">>, secondPrecision => unwrap_2_list('$6')}.
+dataType -> INTERVAL DAY  '(' INTNUM            ')' TO SECOND '(' INTNUM ')' : #{class => sql, dataType => <<"INTERVAL DAY">>, dayPrecision => unwrap_2_list('$4'), secondPrecision => unwrap_2_list('$9')}.
+dataType -> INTERVAL YEAR                           TO MONTH                 : #{class => sql, dataType => <<"INTERVAL YEAR">>}.
+dataType -> INTERVAL YEAR '(' INTNUM            ')' TO MONTH                 : #{class => sql, dataType => <<"INTERVAL YEAR">>, precision => unwrap_2_list('$4')}.
+dataType -> LONG RAW                                                         : #{class => sql, dataType => <<"LONG RAW">>}.
 dataType -> NCHAR         '(' INTNUM            ')'                          : #{class => sql, dataType => unwrap_2_list('$1'), size => unwrap_2_list('$3')}.
 dataType -> NCLOB                                                            : #{class => sql, dataType => unwrap_2_list('$1')}.
 dataType -> NUMBER                                                           : #{class => sql, dataType => unwrap_2_list('$1')}.
@@ -519,7 +516,7 @@ dataType -> VARCHAR2      '(' INTNUM BYTE       ')'                          : #
 dataType -> VARCHAR2      '(' INTNUM CHAR       ')'                          : #{class => sql, dataType => unwrap_2_list('$1'), size => unwrap_2_list('$3'), sizeType => unwrap_2_list('$4')}.
 dataType -> XMLTYPE                                                          : #{class => sql, dataType => unwrap_2_list('$1')}.
 
-functionLegacyAnnotation -> '--<>' LEGACY_NAME_FUNCTION '=' NAME : #{funLegacyAnnoType => unwrap_2_list('$2'), value => unwrap_2_list('$4')}.
+functionLegacyAnnotation -> '--<>' LEGACY_NAME_FUNCTION '=' NAME : #{funLegacyAnnoType => unwrap_2_list('$2'), funLegacyAnnoValue => unwrap_2_list('$4')}.
 
 packageFunctionDeclarationAttribute -> accessibleByClause    : #{packageFunctionDeclarationAttribute => '$1'}.
 packageFunctionDeclarationAttribute -> DETERMINISTIC         : #{packageFunctionDeclarationAttribute => unwrap_2_list('$1')}.
@@ -530,26 +527,25 @@ packageFunctionDeclarationAttribute -> resultCacheClause     : #{packageFunction
 parameterDeclarationCommaList -> parameterDeclarationHelper                                   : ['$1'].
 parameterDeclarationCommaList -> parameterDeclarationHelper ',' parameterDeclarationCommaList : ['$1' | '$3'].
 
-parameterDeclarationHelper ->                     parameterDeclaration : #{parameterDeclarationHelper => #{parameterDeclaration@ => '$1'}}.
-parameterDeclarationHelper -> parameterAnnotation parameterDeclaration : #{parameterDeclarationHelper => #{parameterAnnotation@ => '$1',
-                                                                                                           parameterDeclaration@ => '$2'}}.
+parameterDeclarationHelper ->                     parameterDeclaration : '$1'.
+parameterDeclarationHelper -> parameterAnnotation parameterDeclaration : maps_merge(['$1', '$2']).
 
-procedureLegacyAnnotation -> '--<>' LEGACY_NAME_PROCEDURE '=' NAME : #{procedureLegacyAnnotation => #{type@ => unwrap_2_list('$2'),
-                                                                                                      value@ => unwrap_2_list('$4')}}.
+procedureLegacyAnnotation -> '--<>' LEGACY_NAME_PROCEDURE '=' NAME : #{procLegacyAnnoType => unwrap_2_list('$2'),
+                                                                       procLegacyAnnovalue => unwrap_2_list('$4')}.
 
 %% Level 10 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 parameterAnnotation -> '--<>' LOGGER_TO_CHARACTER '=' FALSE : #{parameterAnnotation => #{type@ => unwrap_2_list('$2'),
                                                                                          value@ => unwrap_2_list('$4')}}.
 
-parameterDeclaration -> NAME               dataType         : #{paramName => name(['$1']), dataType => '$2'}.
-parameterDeclaration -> NAME               dataType default : #{paramName => name(['$1']), dataType => '$2', default@ => '$3'}.
-parameterDeclaration -> NAME IN            dataType         : #{paramName => name(['$1']), mode => unwrap_2_list('$2'), dataType => '$3'}.
-parameterDeclaration -> NAME IN            dataType default : #{paramName => name(['$1']), mode => unwrap_2_list('$2'), dataType => '$3', default => '$4'}.
-parameterDeclaration -> NAME    OUT        dataType         : #{paramName => name(['$1']), mode => unwrap_2_list('$2'), dataType => '$3'}.
-parameterDeclaration -> NAME    OUT NOCOPY dataType         : #{paramName => name(['$1']), mode => unwrap_2_list('$2'), nocopy => unwrap_2_list('$3'), dataType => '$4'}.
-parameterDeclaration -> NAME IN OUT        dataType         : #{paramName => name(['$1']), mode => "IN OUT", dataType => '$4'}.
-parameterDeclaration -> NAME IN OUT NOCOPY dataType         : #{paramName => name(['$1']), mode => "IN OUT", nocopy => unwrap_2_list('$4'), dataType => '$5'}.
+parameterDeclaration -> NAME               dataType         : #{paramName => name(['$1']), paramType => '$2'}.
+parameterDeclaration -> NAME               dataType default : maps_merge([#{paramName => name(['$1']), paramType => '$2'}, '$3']).
+parameterDeclaration -> NAME IN            dataType         : #{paramName => name(['$1']), mode => unwrap_2_list('$2'), paramType => '$3'}.
+parameterDeclaration -> NAME IN            dataType default : maps_merge([#{paramName => name(['$1']), mode => unwrap_2_list('$2'), paramType => '$3'}, '$4']).
+parameterDeclaration -> NAME    OUT        dataType         : #{paramName => name(['$1']), mode => unwrap_2_list('$2'), paramType => '$3'}.
+parameterDeclaration -> NAME    OUT NOCOPY dataType         : #{paramName => name(['$1']), mode => unwrap_2_list('$2'), nocopy => unwrap_2_list('$3'), paramType => '$4'}.
+parameterDeclaration -> NAME IN OUT        dataType         : #{paramName => name(['$1']), mode => <<"IN OUT">>, paramType => '$4'}.
+parameterDeclaration -> NAME IN OUT NOCOPY dataType         : #{paramName => name(['$1']), mode => <<"IN OUT">>, nocopy => unwrap_2_list('$4'), paramType => '$5'}.
 
 unitKind -> FUNCTION  : unwrap_2_list('$1').
 unitKind -> PACKAGE   : unwrap_2_list('$1').
@@ -559,49 +555,30 @@ unitKind -> TYPE      : unwrap_2_list('$1').
 
 %% Level 11 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-default -> ':='    expression : #{default => #{type@ => unwrap_2_list('$1'),
-                                               value@ => '$2'}}.
-default -> DEFAULT expression : #{default => #{type@ => unwrap_2_list('$1'),
-                                               value@ => '$2'}}.
+default -> ':='    expression : #{default => #{type => unwrap_2_list('$1'), value => '$2'}}.
+default -> DEFAULT expression : #{default => #{type => unwrap_2_list('$1'), value => '$2'}}.
 
-expression -> columnRef                        : #{expression => '$1'}.
-expression -> functionRef                      : #{expression => '$1'}.
-expression -> literal                          : #{expression => '$1'}.
-expression -> NULLX                            : #{expression => 'NULL'}.
-expression -> parameterRef                     : #{expression => '$1'}.
-expression -> '(' expression ')'               : #{expression => #{operator@ => '(',
-                                                                   expression@ => '$2'}}.
-expression -> 'NOT'                 expression : #{expression => #{operator@ => 'NOT',
-                                                                   expression@ => '$2'}}.
-expression -> unaryAddOrSubtract    expression : #{expression => #{operator@ => '$1',
-                                                                   expression@ => '$2'}}.
-expression -> expression 'AND'      expression : #{expression => #{operator@ => 'AND',
-                                                                   expressionLeft@ => '$1',
-                                                                   expressionRight@ => '$3'}}.
-expression -> expression 'OR'       expression : #{expression => #{operator@ => 'OR',
-                                                                   expressionLeft@ => '$1',
-                                                                   expressionRight@ => '$3'}}.
-expression -> expression '+'        expression : #{expression => #{operator@ => '+',
-                                                                   expressionLeft@ => '$1',
-                                                                   expressionRight@ => '$3'}}.
-expression -> expression '-'        expression : #{expression => #{operator@ => '-',
-                                                                   expressionLeft@ => '$1',
-                                                                   expressionRight@ => '$3'}}.
-expression -> expression '/'        expression : #{expression => #{operator@ => '/',
-                                                                   expressionLeft@ => '$1',
-                                                                   expressionRight@ => '$3'}}.
-expression -> expression '*'        expression : #{expression => #{operator@ => '*',
-                                                                   expressionLeft@ => '$1',
-                                                                   expressionRight@ => '$3'}}.
-expression -> expression '||'       expression : #{expression => #{operator@ => '||',
-                                                                   expressionLeft@ => '$1',
-                                                                   expressionRight@ => '$3'}}.
-expression -> expression '='        expression : #{expression => #{operator@ => '=',
-                                                                   expressionLeft@ => '$1',
-                                                                   expressionRight@ => '$3'}}.
-expression -> expression COMPARISON expression : #{expression => #{operator@ => unwrap_2_atom('$2'),
-                                                                   expressionLeft@ => '$1',
-                                                                   expressionRight@ => '$3'}}.
+expression -> columnRef                        : '$1'.
+expression -> functionRef                      : '$1'.
+expression -> literal                          : '$1'.
+expression -> NULLX                            : 'NULLX'.
+expression -> parameterRef                     : '$1'.
+expression -> '(' expression ')'               : #{operator => '(', operand => '$2'}.
+expression -> 'NOT'                 expression : #{operator => 'NOT', operand => '$2'}.
+expression -> unaryAddOrSubtract    expression : #{operator => '$1', operand => '$2'}.
+expression -> binary_expression                : '$1'.
+
+binary_expression -> expression binary_operation expression : #{operator => '$2', operandLeft => '$1', operandRight => '$3'}.
+
+binary_operation -> 'AND'       : 'AND'.
+binary_operation -> 'OR'        : 'OR'.
+binary_operation -> '+'         : '+'.
+binary_operation -> '-'         : '-'.
+binary_operation -> '/'         : '/'.
+binary_operation -> '*'         : '*'.
+binary_operation -> '||'        : '||'.
+binary_operation -> '='         : '='.
+binary_operation -> COMPARISON  : unwrap_2_atom('$1').
 
 parallelEnabledClause -> PARALLEL_ENABLED '(' PARTITION NAME BY ANY                                              ')' : #{parallelEnabledClause => #{name@ => unwrap_2_list('$4'),
                                                                                                                                                     type@ => unwrap_2_list('$6')}}.
@@ -624,18 +601,18 @@ parallelEnabledClause -> PARALLEL_ENABLED '(' PARTITION NAME BY VALUE '(' column
                                                                                                                                                     columnRefCommaList@ => ['$8']}}.
 
 pipelinedClause -> PIPELINED                   USING          NAME : #{pipelinedClause => #{implementationPackage@ => unwrap_2_list('$3')}}.
-pipelinedClause -> PIPELINED                   USING NAME '.' NAME : #{pipelinedClause => #{implementationPackage@ => lists:append([unwrap_2_list('$3'), ".", unwrap_2_list('$5')])}}.
+pipelinedClause -> PIPELINED                   USING NAME '.' NAME : #{pipelinedClause => #{implementationPackage@ => name(['$3','$5'])}}.
 pipelinedClause -> PIPELINED ROW   POLYMORPHIC USING          NAME : #{pipelinedClause => #{type@ => unwrap_2_list('$2'),
                                                                                             implementationPackage@ => unwrap_2_list('$5')}}.
 pipelinedClause -> PIPELINED ROW   POLYMORPHIC USING NAME '.' NAME : #{pipelinedClause => #{type@ => unwrap_2_list('$2'),
-                                                                                            implementationPackage@ => lists:append([unwrap_2_list('$5'), ".", unwrap_2_list('$7')])}}.
+                                                                                            implementationPackage@ => name(['$5','$7'])}}.
 pipelinedClause -> PIPELINED TABLE POLYMORPHIC USING          NAME : #{pipelinedClause => #{type@ => unwrap_2_list('$2'),
                                                                                             implementationPackage@ => unwrap_2_list('$5')}}.
 pipelinedClause -> PIPELINED TABLE POLYMORPHIC USING NAME '.' NAME : #{pipelinedClause => #{type@ => unwrap_2_list('$2'),
-                                                                                            implementationPackage@ => lists:append([unwrap_2_list('$5'), ".", unwrap_2_list('$7')])}}.
+                                                                                            implementationPackage@ => name(['$5', '$7'])}}.
 
-resultCacheClause -> RESULT_CACHE                                       : #{resultCacheClause => #{dataSourceCommaList@ => {}}}.
-resultCacheClause -> RESULT_CACHE RELIES_ON '(' dataSourceCommaList ')' : #{resultCacheClause => #{dataSourceCommaList@ => '$4'}}.
+resultCacheClause -> RESULT_CACHE                                       : #{resultCache => []}.
+resultCacheClause -> RESULT_CACHE RELIES_ON '(' dataSourceCommaList ')' : #{resultCache => '$4'}.
 
 %% Level 12 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -699,7 +676,7 @@ functionArgCommaList -> functionArg ',' functionArgCommaList : ['$1' | '$3'].
 
 %% Level 16 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-functionArg -> expression            : #{value => '$1'}.
+functionArg -> expression            : '$1'.
 functionArg -> NAME '=>' expression  : #{name => unwrap_2_list('$1'), value => '$3'}.
 
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

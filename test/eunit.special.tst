@@ -29,18 +29,6 @@ Create
 Package
 package_name
 As
-Function function_name_1
-         Return Clob
-         ;
-End
-;
-".
-
-"
-Create
-Package
-package_name
-As
 Function function_name_1 (parameter_name_02 Binary_double := expression_name_1)
          Return Clob
          ;
@@ -53,7 +41,7 @@ Create
 Package
 package_name
 As
-Function function_name_1 (parameter_name_02 Binary_double := expression_name_1 =  expression_name_2)
+Function function_name_1 (parameter_name_02 Binary_double := expression_name_1 = expression_name_2)
          Return Clob
          ;
 End
