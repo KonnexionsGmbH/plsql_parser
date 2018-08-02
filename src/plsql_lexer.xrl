@@ -26,15 +26,15 @@ Definitions.
 Rules.
 
 % $ELSE / $ELSIF / $END / $IF / $THEN
-(\$[Ee][Ll][Ss][Ee])                                : {token, {list_to_atom(string:uppercase(TokenChars)), TokenLine}}.
-(\$[Ee][Ll][Ss][Ii][Ff])                            : {token, {list_to_atom(string:uppercase(TokenChars)), TokenLine}}.
-(\$[Ee][Nn][Dd])                                    : {token, {list_to_atom(string:uppercase(TokenChars)), TokenLine}}.
-(\$[Ii][Ff])                                        : {token, {list_to_atom(string:uppercase(TokenChars)), TokenLine}}.
-(\$[Tt][Hh][Ee][Nn])                                : {token, {list_to_atom(string:uppercase(TokenChars)), TokenLine}}.
+(\$[Ee][Ll][Ss][Ee])                                : {token, {'ELSE',      TokenLine}}.
+(\$[Ee][Ll][Ss][Ii][Ff])                            : {token, {'ELSEIF',    TokenLine}}.
+(\$[Ee][Nn][Dd])                                    : {token, {'END',       TokenLine}}.
+(\$[Ii][Ff])                                        : {token, {'IF',        TokenLine}}.
+(\$[Tt][Hh][Ee][Nn])                                : {token, {'THEN',      TokenLine}}.
 
 % %ROWTYPE / %TYPE
-(%[Rr][Oo][Ww][Tt][Yy][Pp][Ee])                     : {token, {list_to_atom(string:uppercase(TokenChars)), TokenLine}}.
-(%[Tt][Yy][Pp][Ee])                                 : {token, {list_to_atom(string:uppercase(TokenChars)), TokenLine}}.
+(%[Rr][Oo][Ww][Tt][Yy][Pp][Ee])                     : {token, {'ROWTYPE',   TokenLine}}.
+(%[Tt][Yy][Pp][Ee])                                 : {token, {'TYPE',      TokenLine}}.
 
 % strings
 (\'([^\']*(\'\')*)*\')                              : {token, {'STRING', TokenLine, TokenChars}}.
@@ -45,7 +45,7 @@ Rules.
 ([=\|\-\+\*\/\(\)\,\.\;]|(\|\|)|(:=)|(=>)|(\-\-<>)) : {token, {list_to_atom(TokenChars), TokenLine}}.
 
 % names
-[A-Za-z][A-Za-z0-9_\$@~]*                           : match_any(TokenChars, TokenLen, TokenLine, ?TOKENPATTERNS).
+[A-Za-z][A-Za-z0-9_\$@~]*                           : match_any(TokenChars, TokenLen, TokenLine).
 
 % parameters
 (\:[A-Za-z0-9_\.][A-Za-z0-9_\.]*)                   : {token, {'PARAMETER', TokenLine, TokenChars}}.
@@ -95,6 +95,9 @@ Erlang code.
 -include("plsql_lexer.hrl").
 
 reserved_keywords() -> [T || {_, T} <- ?TOKENPATTERNS].
+
+match_any(TokenChars, TokenLen, TokenLine) ->
+    match_any(TokenChars, TokenLen, TokenLine, ?TOKENPATTERNS).
 
 match_any(TokenChars, TokenLen, _TokenLine, []) ->
     {token, {'NAME', TokenLen, TokenChars}};
