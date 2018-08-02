@@ -518,17 +518,22 @@ dataType -> LONG RAW                                                         : #
                                                                                                type@ => "LONG RAW'"}}.
 dataType -> NAME                                                             : #{dataType => #{class@ => user_defined,
                                                                                                type@ => unwrap_2_list('$1')}}.
-dataType -> NAME          '%ROWTYPE'                                         : #{dataType => #{class@ => user_defined,
+dataType -> NAME                   '%ROWTYPE'                                : #{dataType => #{class@ => user_defined,
                                                                                                type@ => unwrap_2_list('$1'),
                                                                                                attribute@ => unwrap_2_list('$2')}}.
-dataType -> NAME          '%TYPE'                                            : #{dataType => #{class@ => user_defined,
+dataType -> NAME                   '%TYPE'                                   : #{dataType => #{class@ => user_defined,
                                                                                                type@ => unwrap_2_list('$1'),
                                                                                                attribute@ => unwrap_2_list('$2')}}.
 dataType -> NAME '.' NAME                                                    : #{dataType => #{class@ => user_defined,
                                                                                                type@ => lists:append([unwrap_2_list('$1'), ".", unwrap_2_list('$3')])}}.
-dataType -> NAME '.' NAME '%TYPE'                                            : #{dataType => #{class@ => user_defined,
+dataType -> NAME '.' NAME          '%TYPE'                                   : #{dataType => #{class@ => user_defined,
                                                                                                type@ => lists:append([unwrap_2_list('$1'), ".", unwrap_2_list('$3')]),
                                                                                                attribute@ => unwrap_2_list('$4')}}.
+dataType -> NAME '.' NAME '.' NAME                                           : #{dataType => #{class@ => user_defined,
+                                                                                               type@ => lists:append([unwrap_2_list('$1'), ".", unwrap_2_list('$3'), ".", unwrap_2_list('$5')])}}.
+dataType -> NAME '.' NAME '.' NAME '%TYPE'                                   : #{dataType => #{class@ => user_defined,
+                                                                                               type@ => lists:append([unwrap_2_list('$1'), ".", unwrap_2_list('$3'), ".", unwrap_2_list('$5')]),
+                                                                                               attribute@ => unwrap_2_list('$6')}}.
 dataType -> NCHAR         '(' INTNUM            ')'                          : #{dataType => #{class@ => sql,
                                                                                                type@ => unwrap_2_list('$1'),
                                                                                                size@ => unwrap_2_list('$3')}}.
@@ -633,7 +638,7 @@ dataType ::= 'BFILE'
            | ( 'INTERVAL' 'YEAR' ( '(' INTNUM ')' )? 'TO' 'MONTH' )
            | ( 'LONG' 'RAW' )
            | ( NAME ( '%ROWTYPE' | '%TYPE' )? )
-           | ( ( NAME '.' )? NAME '%TYPE'? )
+           | ( ( ( NAME '.' )?  NAME '.' )? NAME '%TYPE'? )
            | ( ( 'NCHAR' | 'NVARCHAR2' | 'RAW' ) '(' INTNUM ')' )
            | 'NCLOB'
            | ( 'NUMBER' ( '(' INTNUM ( ',' INTNUM )? ')' )? )

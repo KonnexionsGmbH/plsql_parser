@@ -623,19 +623,24 @@ Accessor04.                                 Accessor ::= UnitKind "NAME" "." "NA
 --                                                                                                precision@ => unwrap_2_list('$4')}}.
 -- dataType -> LONG RAW                                                         : #{dataType => #{class@ => sql,
 --                                                                                                type@ => "LONG RAW'"}}.
--- dataType -> "NAME"                                                             : #{dataType => #{class@ => user_defined,
+-- dataType -> NAME                                                             : #{dataType => #{class@ => user_defined,
 --                                                                                                type@ => unwrap_2_list('$1')}}.
--- dataType -> "NAME"          '%ROWTYPE'                                         : #{dataType => #{class@ => user_defined,
+-- dataType -> NAME                   '%ROWTYPE'                                : #{dataType => #{class@ => user_defined,
 --                                                                                                type@ => unwrap_2_list('$1'),
 --                                                                                                attribute@ => unwrap_2_list('$2')}}.
--- dataType -> "NAME"          '%TYPE'                                            : #{dataType => #{class@ => user_defined,
+-- dataType -> NAME                   '%TYPE'                                   : #{dataType => #{class@ => user_defined,
 --                                                                                                type@ => unwrap_2_list('$1'),
 --                                                                                                attribute@ => unwrap_2_list('$2')}}.
--- dataType -> "NAME" '.' "NAME"                                                    : #{dataType => #{class@ => user_defined,
+-- dataType -> NAME '.' NAME                                                    : #{dataType => #{class@ => user_defined,
 --                                                                                                type@ => lists:append([unwrap_2_list('$1'), ".", unwrap_2_list('$3')])}}.
--- dataType -> "NAME" '.' "NAME" '%TYPE'                                            : #{dataType => #{class@ => user_defined,
+-- dataType -> NAME '.' NAME          '%TYPE'                                   : #{dataType => #{class@ => user_defined,
 --                                                                                                type@ => lists:append([unwrap_2_list('$1'), ".", unwrap_2_list('$3')]),
 --                                                                                                attribute@ => unwrap_2_list('$4')}}.
+-- dataType -> NAME '.' NAME                                                    : #{dataType => #{class@ => user_defined,
+--                                                                                                type@ => lists:append([unwrap_2_list('$1'), ".", unwrap_2_list('$3')])}}.
+-- dataType -> NAME '.' NAME '.' NAME '%TYPE'                                   : #{dataType => #{class@ => user_defined,
+--                                                                                                type@ => lists:append([unwrap_2_list('$1'), ".", unwrap_2_list('$3'), ".", unwrap_2_list('$5')]),
+--                                                                                                attribute@ => unwrap_2_list('$6')}}.
 -- dataType -> NCHAR         '(' INTNUM            ')'                          : #{dataType => #{class@ => sql,
 --                                                                                                type@ => unwrap_2_list('$1'),
 --                                                                                                size@ => unwrap_2_list('$3')}}.
@@ -726,33 +731,35 @@ DataType19.                                 DataType ::= "INTERVAL" "YEAR"      
 DataType20.                                 DataType ::= "INTERVAL" "YEAR" "(" "INTNUM"            ")" "TO" "MONTH"                   ;
 DataType21.                                 DataType ::= "LONG" "RAW"                                                                 ;
 DataType22.                                 DataType ::= "NAME"                                                                       ;
-DataType23.                                 DataType ::= "NAME"            "%ROWTYPE"                                                 ;
-DataType24.                                 DataType ::= "NAME"            "%TYPE"                                                    ;
+DataType23.                                 DataType ::= "NAME"                       "%ROWTYPE"                                      ;
+DataType24.                                 DataType ::= "NAME"                       "%TYPE"                                         ;
 DataType25.                                 DataType ::= "NAME" "." "NAME"                                                            ;
-DataType26.                                 DataType ::= "NAME" "." "NAME" "%TYPE"                                                    ;
-DataType27.                                 DataType ::= "NCHAR"         "(" "INTNUM"              ")"                                ;
-DataType28.                                 DataType ::= "NCLOB"                                                                      ;
-DataType29.                                 DataType ::= "NUMBER"                                                                     ;
-DataType30.                                 DataType ::= "NUMBER"        "(" "INTNUM"              ")"                                ;
-DataType31.                                 DataType ::= "NUMBER"        "(" "INTNUM" "," "INTNUM" ")"                                ;
-DataType32.                                 DataType ::= "NVARCHAR2"     "(" "INTNUM"              ")"                                ;
-DataType33.                                 DataType ::= "PLS_INTEGER"                                                                ;
-DataType34.                                 DataType ::= "RAW"           "(" "INTNUM"              ")"                                ;
-DataType35.                                 DataType ::= "REF" "CURSOR"                                                               ;
-DataType36.                                 DataType ::= "ROWID"                                                                      ;
-DataType37.                                 DataType ::= "TIMESTAMP"                                                                  ;
-DataType38.                                 DataType ::= "TIMESTAMP"                                   "WITH"         "TIME" "ZONE"   ;
-DataType39.                                 DataType ::= "TIMESTAMP"                                   "WITH" "LOCAL" "TIME" "ZONE"   ;
-DataType40.                                 DataType ::= "TIMESTAMP"     "(" "INTNUM"              ")"                                ;
-DataType41.                                 DataType ::= "TIMESTAMP"     "(" "INTNUM"              ")" "WITH"         "TIME" "ZONE"   ;
-DataType42.                                 DataType ::= "TIMESTAMP"     "(" "INTNUM"              ")" "WITH" "LOCAL" "TIME" "ZONE"   ;
-DataType43.                                 DataType ::= "UROWID"                                                                     ;
-DataType44.                                 DataType ::= "UROWID"        "(" "INTNUM"              ")"                                ;
-DataType45.                                 DataType ::= "VARCHAR2"                                                                   ;
-DataType46.                                 DataType ::= "VARCHAR2"      "(" "INTNUM"              ")"                                ;
-DataType47.                                 DataType ::= "VARCHAR2"      "(" "INTNUM" "BYTE"       ")"                                ;
-DataType48.                                 DataType ::= "VARCHAR2"      "(" "INTNUM" "CHAR"       ")"                                ;
-DataType49.                                 DataType ::= "XMLTYPE"                                                                    ;
+DataType26.                                 DataType ::= "NAME" "." "NAME"            "%TYPE"                                         ;
+DataType27.                                 DataType ::= "NAME" "." "NAME" "." "NAME"                                                 ;
+DataType28.                                 DataType ::= "NAME" "." "NAME" "." "NAME" "%TYPE"                                         ;
+DataType29.                                 DataType ::= "NCHAR"         "(" "INTNUM"              ")"                                ;
+DataType30.                                 DataType ::= "NCLOB"                                                                      ;
+DataType31.                                 DataType ::= "NUMBER"                                                                     ;
+DataType32.                                 DataType ::= "NUMBER"        "(" "INTNUM"              ")"                                ;
+DataType33.                                 DataType ::= "NUMBER"        "(" "INTNUM" "," "INTNUM" ")"                                ;
+DataType34.                                 DataType ::= "NVARCHAR2"     "(" "INTNUM"              ")"                                ;
+DataType35.                                 DataType ::= "PLS_INTEGER"                                                                ;
+DataType36.                                 DataType ::= "RAW"           "(" "INTNUM"              ")"                                ;
+DataType37.                                 DataType ::= "REF" "CURSOR"                                                               ;
+DataType38.                                 DataType ::= "ROWID"                                                                      ;
+DataType39.                                 DataType ::= "TIMESTAMP"                                                                  ;
+DataType40.                                 DataType ::= "TIMESTAMP"                                   "WITH"         "TIME" "ZONE"   ;
+DataType41.                                 DataType ::= "TIMESTAMP"                                   "WITH" "LOCAL" "TIME" "ZONE"   ;
+DataType42.                                 DataType ::= "TIMESTAMP"     "(" "INTNUM"              ")"                                ;
+DataType43.                                 DataType ::= "TIMESTAMP"     "(" "INTNUM"              ")" "WITH"         "TIME" "ZONE"   ;
+DataType44.                                 DataType ::= "TIMESTAMP"     "(" "INTNUM"              ")" "WITH" "LOCAL" "TIME" "ZONE"   ;
+DataType45.                                 DataType ::= "UROWID"                                                                     ;
+DataType46.                                 DataType ::= "UROWID"        "(" "INTNUM"              ")"                                ;
+DataType47.                                 DataType ::= "VARCHAR2"                                                                   ;
+DataType48.                                 DataType ::= "VARCHAR2"      "(" "INTNUM"              ")"                                ;
+DataType49.                                 DataType ::= "VARCHAR2"      "(" "INTNUM" "BYTE"       ")"                                ;
+DataType50.                                 DataType ::= "VARCHAR2"      "(" "INTNUM" "CHAR"       ")"                                ;
+DataType51.                                 DataType ::= "XMLTYPE"                                                                    ;
 
 -- functionLegacyAnnotation -> '--<>' LEGACY_NAME_FUNCTION '=' "NAME" : #{functionLegacyAnnotation => #{type@ => unwrap_2_list('$2'),
 --                                                                                                    value@ => unwrap_2_list('$4')}}.
