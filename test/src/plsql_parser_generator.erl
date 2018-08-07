@@ -2675,7 +2675,7 @@ create_code(resultCacheClause = Rule) ->
                         ]);
                     _ -> []
                 end
-            || _ <- lists:seq(1, ?MAX_BASIC * 2)
+            || _ <- lists:seq(1, ?MAX_BASIC div 10)
         ],
     store_code(Rule, Code, ?MAX_BASIC, false),
     ?CREATE_CODE_END;

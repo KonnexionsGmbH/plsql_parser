@@ -219,18 +219,18 @@ plsqlPackageSource -> NAME '.' NAME sharingClause plsqlPackageSourceAttributeLis
                                                                                                                                           packageItemList@ => '$7',
                                                                                                                                           packageNameEnd@ => unwrap_2_list('$9')}}.
 
-privilegeRoleAnnotationListList -> objectPrivilegeAnnotation                                 : ['$1'].
-privilegeRoleAnnotationListList -> objectPrivilegeAnnotation privilegeRoleAnnotationListList : ['$1' | '$2'].
-privilegeRoleAnnotationListList -> roleAnnotation                                            : ['$1'].
-privilegeRoleAnnotationListList -> roleAnnotation            privilegeRoleAnnotationListList : ['$1' | '$2'].
-privilegeRoleAnnotationListList -> systemPrivilegeAnnotation                                 : ['$1'].
-privilegeRoleAnnotationListList -> systemPrivilegeAnnotation privilegeRoleAnnotationListList : ['$1' | '$2'].
+privilegeRoleAnnotationList -> objectPrivilegeAnnotation                             : ['$1'].
+privilegeRoleAnnotationList -> objectPrivilegeAnnotation privilegeRoleAnnotationList : ['$1' | '$2'].
+privilegeRoleAnnotationList -> roleAnnotation                                        : ['$1'].
+privilegeRoleAnnotationList -> roleAnnotation            privilegeRoleAnnotationList : ['$1' | '$2'].
+privilegeRoleAnnotationList -> systemPrivilegeAnnotation                             : ['$1'].
+privilegeRoleAnnotationList -> systemPrivilegeAnnotation privilegeRoleAnnotationList : ['$1' | '$2'].
 ============================================================================= */
 
 plsqlPackageSource ::= ( NAME '.' )? NAME sharingClause? plsqlPackageSourceAttribute*
                                      ( 'IS' | 'AS' ) ( packageItemSimple | packageItemConditional )+ 'END' ( NAME )?
                                      
-privilegeRoleAnnotationListList ::= ( objectPrivilegeAnnotation | roleAnnotation | systemPrivilegeAnnotation )+
+privilegeRoleAnnotationList ::= ( objectPrivilegeAnnotation | roleAnnotation | systemPrivilegeAnnotation )+
 
 /* =============================================================================
 objectPrivilegeAnnotation -> '--<>' OBJECT_PRIVILEGE objectPrivilegeType '=' NAME          : #{objectPrivilegeAnnotation => #{type@ => unwrap_2_list('$2'),
@@ -448,15 +448,15 @@ procedureHeading -> PROCEDURE NAME '(' parameterDeclarationCommaList ')' : #{pro
                                                                                                    parameterDeclarationCommaList@ => '$4'}}.
 ============================================================================= */
 
-functionAnnotation ::= ( functionLegacyAnnotation privilegeRoleAnnotationListList? )
-                     |                            privilegeRoleAnnotationListList
+functionAnnotation ::= ( functionLegacyAnnotation privilegeRoleAnnotationList? )
+                     |                            privilegeRoleAnnotationList
 
 functionHeading ::= 'FUNCTION' NAME ( '(' ( parameterAnnotation? parameterDeclaration )+ ')' )?
                                'RETURN' dataType
 
-procedureAnnotation ::= ( functionLegacyAnnotation  procedureLegacyAnnotation? privilegeRoleAnnotationListList? )
-                      | (                           procedureLegacyAnnotation  privilegeRoleAnnotationListList? )
-                      |                                                        privilegeRoleAnnotationListList
+procedureAnnotation ::= ( functionLegacyAnnotation  procedureLegacyAnnotation? privilegeRoleAnnotationList? )
+                      | (                           procedureLegacyAnnotation  privilegeRoleAnnotationList? )
+                      |                                                        privilegeRoleAnnotationList
 
 procedureHeading ::= 'PROCEDURE' NAME ( '(' ( parameterAnnotation? parameterDeclaration )+ ')' )?
 

@@ -513,9 +513,9 @@ AccessorCommaList01.                        AccessorCommaList ::= Accessor      
 AccessorCommaList02.                        AccessorCommaList ::= Accessor "," AccessorCommaList ;
 
 -- functionAnnotation ->                          privilegeRoleAnnotationList : #{functionAnnotation => #{privilegeRoleAnnotationList@ => '$1'}}.
--- functionAnnotation -> functionLegacyAnnotation                                 : #{functionAnnotation => #{functionLegacyAnnotation@ => '$1'}}.
+-- functionAnnotation -> functionLegacyAnnotation                             : #{functionAnnotation => #{functionLegacyAnnotation@ => '$1'}}.
 -- functionAnnotation -> functionLegacyAnnotation privilegeRoleAnnotationList : #{functionAnnotation => #{functionLegacyAnnotation@ => '$1',
---                                                                                                            privilegeRoleAnnotationList@ => '$2'}}.
+--                                                                                                        privilegeRoleAnnotationList@ => '$2'}}.
 
 FunctionAnnotation01.                       FunctionAnnotation ::=                          PrivilegeRoleAnnotationList ;
 FunctionAnnotation02.                       FunctionAnnotation ::= FunctionLegacyAnnotation                             ;
