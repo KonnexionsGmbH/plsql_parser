@@ -117,7 +117,8 @@ eunit_test_source(Source) ->
             io:format(user, "~n", []),
             io:format(user, ?MODULE_STRING ++
             " : -------------------------------------------> Statement error reason:~n~p~n~n",
-                [Reason]);
+                [Reason]),
+            erlang:error(Reason);
         {ok, Result} ->
             io:format(user, "~n", []),
             io:format(user, ?MODULE_STRING ++
@@ -148,7 +149,8 @@ eunit_test_source(Source) ->
                 [Reason]),
             io:format(user, ?MODULE_STRING ++
             " : -------------------------------------------> Current stacktrace:~n~p~n~n",
-                [Stacktrace])
+                [Stacktrace]),
+            erlang:error(Reason)
     end.
 
 %%------------------------------------------------------------------------------
@@ -170,8 +172,7 @@ tests_gen([], _SelTests, Acc) ->
 tests_gen([{I, T} | Tests], SelTests, Acc) ->
     case lists:member(I, SelTests) of
         true ->
-            tests_gen(Tests, SelTests,
-                [{I, fun() ->
-                    {timeout, ?TIMEOUT, eunit_test_source(T)} end} | Acc]);
+            tests_gen(Tests, SelTests, [{I, fun() ->
+                {timeout, ?TIMEOUT, eunit_test_source(T)} end} | Acc]);
         _ -> Acc
     end.

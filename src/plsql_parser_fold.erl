@@ -101,8 +101,7 @@ fold_i(Fun, LOpts, FunState, Ctx, #{accessor := _Value} = PTree) ->
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % accessorCommaList & columnRefCommaList & dataSourceCommaList & 
 % functionArgCommaList & packageItemList & parameterDeclarationCommaList & 
-% plsqlPackageSourceAttributeList & plsqlUnit & privilegeAnnotationList & 
-% roleAnnotationList
+% plsqlPackageSourceAttributeList & plsqlUnit & privilegeRoleAnnotationList
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 fold_i(Fun, LOpts, FunState, Ctx, {Rule, Pos, PTree})
@@ -110,7 +109,7 @@ fold_i(Fun, LOpts, FunState, Ctx, {Rule, Pos, PTree})
          Rule == dataSourceCommaList;Rule == functionArgCommaList;
          Rule == packageItemList; Rule == parameterDeclarationCommaList;
          Rule == plsqlPackageSourceAttributeList;Rule == plsqlUnit;
-         Rule == privilegeAnnotationList;Rule == roleAnnotationList ->
+         Rule == privilegeRoleAnnotationList ->
     ?FOLD_INIT(FunState, Ctx, PTree),
     NewCtxS = Fun(LOpts, FunState, Ctx, PTree, {Rule, start, Pos}),
     NewCtx1 = fold_i(Fun, LOpts, FunState, NewCtxS, PTree),
@@ -299,21 +298,14 @@ fold_i(Fun, LOpts, FunState, Ctx, #{functionAnnotation := Value} = PTree) ->
                           maps:get(functionLegacyAnnotation@, Value));
                   _ -> NewCtxS
               end,
-    NewCtx2 = case maps:is_key(privilegeAnnotationList@, Value) of
+    NewCtx2 = case maps:is_key(privilegeRoleAnnotationList@, Value) of
                   true ->
                       fold_i(Fun, LOpts, FunState, NewCtx1,
-                          {privilegeAnnotationList@_@,
-                              maps:get(privilegeAnnotationList@, Value)});
+                          {privilegeRoleAnnotationList@_@,
+                              maps:get(privilegeRoleAnnotationList@, Value)});
                   _ -> NewCtx1
               end,
-    NewCtx3 = case maps:is_key(roleAnnotationList@, Value) of
-                  true ->
-                      fold_i(Fun, LOpts, FunState, NewCtx2,
-                          {roleAnnotationList@_@,
-                              maps:get(roleAnnotationList@, Value)});
-                  _ -> NewCtx2
-              end,
-    NewCtxE = Fun(LOpts, FunState, NewCtx3, PTree, {Rule, 'end'}),
+    NewCtxE = Fun(LOpts, FunState, NewCtx2, PTree, {Rule, 'end'}),
     ?FOLD_RESULT(NewCtxE);
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -753,16 +745,16 @@ fold_i(Fun, LOpts, FunState, Ctx, [#{plsqlUnit := Value} = PTree]) ->
     ?FOLD_RESULT(NewCtxE);
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% privilegeAnnotationList@_@
+% privilegeRoleAnnotationList@_@
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-fold_i(Fun, LOpts, FunState, Ctx, {privilegeAnnotationList@_@, Value} =
+fold_i(Fun, LOpts, FunState, Ctx, {privilegeRoleAnnotationList@_@, Value} =
     PTree) ->
     ?FOLD_INIT(FunState, Ctx, PTree),
-    Rule = privilegeAnnotationList@_@,
+    Rule = privilegeRoleAnnotationList@_@,
     NewCtxS = Fun(LOpts, FunState, Ctx, PTree, {Rule, start}),
     NewCtx1 = list_elem_ext_rule(Fun, LOpts, FunState, NewCtxS,
-        privilegeAnnotationList, Value),
+        privilegeRoleAnnotationList, Value),
     NewCtxE = Fun(LOpts, FunState, NewCtx1, PTree, {Rule, 'end'}),
     ?FOLD_RESULT(NewCtxE);
 
@@ -786,21 +778,14 @@ fold_i(Fun, LOpts, FunState, Ctx, #{procedureAnnotation := Value} = PTree) ->
                           maps:get(procedureLegacyAnnotation@, Value));
                   _ -> NewCtx1
               end,
-    NewCtx3 = case maps:is_key(privilegeAnnotationList@, Value) of
+    NewCtx3 = case maps:is_key(privilegeRoleAnnotationList@, Value) of
                   true ->
                       fold_i(Fun, LOpts, FunState, NewCtx2,
-                          {privilegeAnnotationList@_@,
-                              maps:get(privilegeAnnotationList@, Value)});
+                          {privilegeRoleAnnotationList@_@,
+                              maps:get(privilegeRoleAnnotationList@, Value)});
                   _ -> NewCtx2
               end,
-    NewCtx4 = case maps:is_key(roleAnnotationList@, Value) of
-                  true ->
-                      fold_i(Fun, LOpts, FunState, NewCtx3,
-                          {roleAnnotationList@_@,
-                              maps:get(roleAnnotationList@, Value)});
-                  _ -> NewCtx3
-              end,
-    NewCtxE = Fun(LOpts, FunState, NewCtx4, PTree, {Rule, 'end'}),
+    NewCtxE = Fun(LOpts, FunState, NewCtx3, PTree, {Rule, 'end'}),
     ?FOLD_RESULT(NewCtxE);
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -867,19 +852,6 @@ fold_i(Fun, LOpts, FunState, Ctx, #{roleAnnotation := _Value} = PTree) ->
     Rule = roleAnnotation,
     NewCtxS = Fun(LOpts, FunState, Ctx, PTree, {Rule, start}),
     NewCtxE = Fun(LOpts, FunState, NewCtxS, PTree, {Rule, 'end'}),
-    ?FOLD_RESULT(NewCtxE);
-
-% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% roleAnnotationList@_@
-% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-fold_i(Fun, LOpts, FunState, Ctx, {roleAnnotationList@_@, Value} = PTree) ->
-    ?FOLD_INIT(FunState, Ctx, PTree),
-    Rule = roleAnnotationList@_@,
-    NewCtxS = Fun(LOpts, FunState, Ctx, PTree, {Rule, start}),
-    NewCtx1 = list_elem_ext_rule(Fun, LOpts, FunState, NewCtxS,
-        roleAnnotationList, Value),
-    NewCtxE = Fun(LOpts, FunState, NewCtx1, PTree, {Rule, 'end'}),
     ?FOLD_RESULT(NewCtxE);
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -88,7 +88,8 @@ finalize(_Params, Ctx)
 % columnRef
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-fold(_LOpts, _FunState, Ctx, #{columnRef := PTree}, {columnRef, Step} = _FoldState)
+fold(_LOpts, _FunState, Ctx, #{columnRef := PTree}, {columnRef, Step} =
+    _FoldState)
     when is_list(PTree) ->
     ?CUSTOM_INIT(_FunState, Ctx, PTree, _FoldState),
     RT = case Step of
@@ -104,7 +105,8 @@ fold(_LOpts, _FunState, Ctx, #{columnRef := PTree}, {columnRef, Step} = _FoldSta
 % columnRefCommaList@
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-fold(_LOpts, _FunState, Ctx, _PTree, {columnRefCommaList@, Step} = _FoldState) ->
+fold(_LOpts, _FunState, Ctx, _PTree, {columnRefCommaList@, Step} =
+    _FoldState) ->
     ?CUSTOM_INIT(_FunState, Ctx, _PTree, _FoldState),
     RT = case Step of
              start -> Ctx ++ case is_last_tag_open(Ctx) of
@@ -122,7 +124,8 @@ fold(_LOpts, _FunState, Ctx, _PTree, {columnRefCommaList@, Step} = _FoldState) -
 % dataSourceCommaList@
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-fold(_LOpts, _FunState, Ctx, _PTree, {dataSourceCommaList@, Step} = _FoldState) ->
+fold(_LOpts, _FunState, Ctx, _PTree, {dataSourceCommaList@, Step} =
+    _FoldState) ->
     ?CUSTOM_INIT(_FunState, Ctx, _PTree, _FoldState),
     RT = case Step of
              start -> Ctx ++ "(";
@@ -292,7 +295,8 @@ fold(LOpts, _FunState, Ctx, #{default := PTree}, {default, Step} = _FoldState)
 % defaultValue@_@
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-fold(LOpts, _FunState, Ctx, #{defaultValue@_@ := PTree}, {defaultValue@_@, Step} = _FoldState) ->
+fold(LOpts, _FunState, Ctx, #{defaultValue@_@ := PTree},
+    {defaultValue@_@, Step} = _FoldState) ->
     ?CUSTOM_INIT(_FunState, Ctx, PTree, _FoldState),
     Expression = maps:get(expression, PTree),
     Type = case is_map(Expression) andalso maps:is_key(string, Expression) of
@@ -326,7 +330,8 @@ fold(LOpts, _FunState, Ctx, #{defaultValue@_@ := PTree}, {defaultValue@_@, Step}
 % expression
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-fold(_LOpts, _FunState, Ctx, #{expression := PTree}, {expression, Step} = _FoldState)
+fold(_LOpts, _FunState, Ctx, #{expression := PTree}, {expression, Step} =
+    _FoldState)
     when is_atom(PTree) ->
     ?CUSTOM_INIT(_FunState, Ctx, PTree, _FoldState),
     RT = case Step of
@@ -338,7 +343,8 @@ fold(_LOpts, _FunState, Ctx, #{expression := PTree}, {expression, Step} = _FoldS
              _ -> Ctx
          end,
     ?CUSTOM_RESULT(RT);
-fold(_LOpts, _FunState, Ctx, #{expression := PTree}, {expression, Step} = _FoldState)
+fold(_LOpts, _FunState, Ctx, #{expression := PTree}, {expression, Step} =
+    _FoldState)
     when is_map(PTree) ->
     ?CUSTOM_INIT(_FunState, Ctx, PTree, _FoldState),
     Operator = case maps:is_key(operator@, PTree) of
@@ -362,7 +368,8 @@ fold(_LOpts, _FunState, Ctx, #{expression := PTree}, {expression, Step} = _FoldS
 % functionArg
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-fold(_LOpts, _FunState, Ctx, #{functionArg := PTree}, {functionArg, Step} = _FoldState)
+fold(_LOpts, _FunState, Ctx, #{functionArg := PTree}, {functionArg, Step} =
+    _FoldState)
     when map_size(PTree) == 2 ->
     ?CUSTOM_INIT(_FunState, Ctx, PTree, _FoldState),
     RT = case Step of
@@ -380,7 +387,8 @@ fold(_LOpts, _FunState, Ctx, #{functionArg := PTree}, {functionArg, Step} = _Fol
 % functionArgCommaList@
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-fold(_LOpts, _FunState, Ctx, _PTree, {functionArgCommaList@, Step} = _FoldState) ->
+fold(_LOpts, _FunState, Ctx, _PTree, {functionArgCommaList@, Step} =
+    _FoldState) ->
     ?CUSTOM_INIT(_FunState, Ctx, _PTree, _FoldState),
     RT = case Step of
              start -> Ctx ++ "(";
@@ -392,7 +400,8 @@ fold(_LOpts, _FunState, Ctx, _PTree, {functionArgCommaList@, Step} = _FoldState)
 % functionLegacyAnnotation
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-fold(LOpts, _FunState, Ctx, #{functionLegacyAnnotation := PTree}, {functionLegacyAnnotation, Step} = _FoldState) ->
+fold(LOpts, _FunState, Ctx, #{functionLegacyAnnotation := PTree},
+    {functionLegacyAnnotation, Step} = _FoldState) ->
     ?CUSTOM_INIT(_FunState, Ctx, PTree, _FoldState),
     RT = case Step of
              start -> lists:append(
@@ -413,7 +422,8 @@ fold(LOpts, _FunState, Ctx, #{functionLegacyAnnotation := PTree}, {functionLegac
 % functionRef
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-fold(_LOpts, _FunState, Ctx, #{functionRef := PTree}, {functionRef, Step} = _FoldState)
+fold(_LOpts, _FunState, Ctx, #{functionRef := PTree}, {functionRef, Step} =
+    _FoldState)
     when is_map(PTree) ->
     ?CUSTOM_INIT(_FunState, Ctx, PTree, _FoldState),
     RT = case Step of
@@ -443,7 +453,8 @@ fold(_LOpts, _FunState, Ctx, #{literal := PTree}, {literal, Step} = _FoldState)
 % objectPrivilegeAnnotation
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-fold(LOpts, _FunState, Ctx, #{objectPrivilegeAnnotation := PTree}, {objectPrivilegeAnnotation, Step} = _FoldState) ->
+fold(LOpts, _FunState, Ctx, #{objectPrivilegeAnnotation := PTree},
+    {objectPrivilegeAnnotation, Step} = _FoldState) ->
     ?CUSTOM_INIT(_FunState, Ctx, PTree, _FoldState),
     RT = case Step of
              start ->
@@ -500,7 +511,8 @@ fold(_LOpts, _FunState, Ctx, PTree, {operator, Step} = _FoldState)
 % packageItemConditional
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-fold(LOpts, _FunState, Ctx, #{packageItemConditional := PTree}, {packageItemConditional, Step} = _FoldState)
+fold(LOpts, _FunState, Ctx, #{packageItemConditional := PTree},
+    {packageItemConditional, Step} = _FoldState)
     when is_map(PTree) ->
     ?CUSTOM_INIT(_FunState, Ctx, PTree, _FoldState),
     PackageItem = maps:get(packageItem@, PTree),
@@ -512,60 +524,68 @@ fold(LOpts, _FunState, Ctx, #{packageItemConditional := PTree}, {packageItemCond
              start ->
                  Name = case Type of
                             "Function" ->
-                                PackageFunctionDeclaration = maps:get(packageFunctionDeclaration, PackageItem),
-                                FunctionHeading@ = maps:get(functionHeading@, PackageFunctionDeclaration),
-                                FunctionHeading = maps:get(functionHeading, FunctionHeading@),
+                                PackageFunctionDeclaration =
+                                    maps:get(packageFunctionDeclaration,
+                                        PackageItem),
+                                FunctionHeading@ = maps:get(functionHeading@,
+                                    PackageFunctionDeclaration),
+                                FunctionHeading =
+                                    maps:get(functionHeading, FunctionHeading@),
                                 maps:get(name@, FunctionHeading);
                             _ ->
-                                PackageProcedureDeclaration = maps:get(packageProcedureDeclaration, PackageItem),
-                                ProcedureHeading@ = maps:get(procedureHeading@, PackageProcedureDeclaration),
-                                ProcedureHeading = maps:get(procedureHeading, ProcedureHeading@),
+                                PackageProcedureDeclaration =
+                                    maps:get(packageProcedureDeclaration,
+                                        PackageItem),
+                                ProcedureHeading@ = maps:get(procedureHeading@,
+                                    PackageProcedureDeclaration),
+                                ProcedureHeading = maps:get(procedureHeading,
+                                    ProcedureHeading@),
                                 maps:get(name@, ProcedureHeading)
                         end,
                  lists:append(
-                 [
-                     Ctx,
-                     ?TABULATOR,
-                     "<",
-                     Type,
-                     ">",
-                     ?CHAR_NEWLINE,
-                     ?TABULATOR,
-                     ?TABULATOR,
-                     "<Name>",
-                     Name,
-                     "</Name>",
-                     ?CHAR_NEWLINE,
-                     ?TABULATOR,
-                     ?TABULATOR,
-                     "<Condition>",
-                     ?CHAR_NEWLINE,
-                     ?TABULATOR,
-                     ?TABULATOR,
-                     ?TABULATOR,
-                     "<",
-                     case {maps:get(start@, PTree), maps:is_key(end@,
-                         PTree) == true} of
-                         {"$IF", false} -> "If";
-                         {"$IF", true} -> "IfEnd";
-                         {"$ELSIF", false} -> "ElsIf";
-                         {"$ELSIF", true} -> "ElsIfEnd";
-                         _ -> "Else"
-                     end,
-                     ">",
-                     case maps:get(start@, PTree) of
-                         "$ELSE" -> lists:append(
-                             [
-                                 "</Else>",
-                                 ?CHAR_NEWLINE,
-                                 ?TABULATOR,
-                                 ?TABULATOR,
-                                 "</Condition>",
-                                 ?CHAR_NEWLINE
-                             ]);
-                         _ -> []
-                     end
-                 ]);
+                     [
+                         Ctx,
+                         ?TABULATOR,
+                         "<",
+                         Type,
+                         ">",
+                         ?CHAR_NEWLINE,
+                         ?TABULATOR,
+                         ?TABULATOR,
+                         "<Name>",
+                         Name,
+                         "</Name>",
+                         ?CHAR_NEWLINE,
+                         ?TABULATOR,
+                         ?TABULATOR,
+                         "<Condition>",
+                         ?CHAR_NEWLINE,
+                         ?TABULATOR,
+                         ?TABULATOR,
+                         ?TABULATOR,
+                         "<",
+                         case {maps:get(start@, PTree), maps:is_key(end@,
+                             PTree) == true} of
+                             {"$IF", false} -> "If";
+                             {"$IF", true} -> "IfEnd";
+                             {"$ELSIF", false} -> "ElsIf";
+                             {"$ELSIF", true} -> "ElsIfEnd";
+                             _ -> "Else"
+                         end,
+                         ">",
+                         case maps:get(start@, PTree) of
+                             "$ELSE" -> lists:append(
+                                 [
+                                     "</Else>",
+                                     ?CHAR_NEWLINE,
+                                     ?TABULATOR,
+                                     ?TABULATOR,
+                                     "</Condition>",
+                                     ?CHAR_NEWLINE
+                                 ]);
+                             _ -> []
+                         end
+                     ]);
              _ -> lists:append(
                  [
                      Ctx,
@@ -582,7 +602,8 @@ fold(LOpts, _FunState, Ctx, #{packageItemConditional := PTree}, {packageItemCond
 % packageItemSimple
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-fold(LOpts, _FunState, Ctx, #{packageItemSimple := PTree}, {packageItemSimple, Step} = _FoldState)
+fold(LOpts, _FunState, Ctx, #{packageItemSimple := PTree},
+    {packageItemSimple, Step} = _FoldState)
     when is_map(PTree) ->
     ?CUSTOM_INIT(_FunState, Ctx, PTree, _FoldState),
     PackageItem = maps:get(packageItem@, PTree),
@@ -594,14 +615,22 @@ fold(LOpts, _FunState, Ctx, #{packageItemSimple := PTree}, {packageItemSimple, S
              start ->
                  Name = case Type of
                             "Function" ->
-                                PackageFunctionDeclaration = maps:get(packageFunctionDeclaration, PackageItem),
-                                FunctionHeading@ = maps:get(functionHeading@, PackageFunctionDeclaration),
-                                FunctionHeading = maps:get(functionHeading, FunctionHeading@),
+                                PackageFunctionDeclaration =
+                                    maps:get(packageFunctionDeclaration,
+                                        PackageItem),
+                                FunctionHeading@ = maps:get(functionHeading@,
+                                    PackageFunctionDeclaration),
+                                FunctionHeading =
+                                    maps:get(functionHeading, FunctionHeading@),
                                 maps:get(name@, FunctionHeading);
                             _ ->
-                                PackageProcedureDeclaration = maps:get(packageProcedureDeclaration, PackageItem),
-                                ProcedureHeading@ = maps:get(procedureHeading@, PackageProcedureDeclaration),
-                                ProcedureHeading = maps:get(procedureHeading, ProcedureHeading@),
+                                PackageProcedureDeclaration =
+                                    maps:get(packageProcedureDeclaration,
+                                        PackageItem),
+                                ProcedureHeading@ = maps:get(procedureHeading@,
+                                    PackageProcedureDeclaration),
+                                ProcedureHeading = maps:get(procedureHeading,
+                                    ProcedureHeading@),
                                 maps:get(name@, ProcedureHeading)
                         end,
                  lists:append(
@@ -635,7 +664,8 @@ fold(LOpts, _FunState, Ctx, #{packageItemSimple := PTree}, {packageItemSimple, S
 % parameterAnnotation
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-fold(LOpts, _FunState, Ctx, #{parameterAnnotation := PTree}, {parameterAnnotation, Step} = _FoldState) ->
+fold(LOpts, _FunState, Ctx, #{parameterAnnotation := PTree},
+    {parameterAnnotation, Step} = _FoldState) ->
     ?CUSTOM_INIT(_FunState, Ctx, PTree, _FoldState),
     RT = case Step of
              start -> lists:append(
@@ -657,7 +687,8 @@ fold(LOpts, _FunState, Ctx, #{parameterAnnotation := PTree}, {parameterAnnotatio
 % parameterDeclaration
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-fold(LOpts, _FunState, Ctx, #{parameterDeclaration := PTree}, {parameterDeclaration, Step} = _FoldState)
+fold(LOpts, _FunState, Ctx, #{parameterDeclaration := PTree},
+    {parameterDeclaration, Step} = _FoldState)
     when is_map(PTree) ->
     ?CUSTOM_INIT(_FunState, Ctx, PTree, _FoldState),
     RT = case Step of
@@ -696,7 +727,8 @@ fold(LOpts, _FunState, Ctx, #{parameterDeclaration := PTree}, {parameterDeclarat
 % parameterDeclarationCommaList
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-fold(LOpts, _FunState, Ctx, PTree, {parameterDeclarationCommaList, Step, _Pos} = _FoldState)
+fold(LOpts, _FunState, Ctx, PTree, {parameterDeclarationCommaList, Step, _Pos} =
+    _FoldState)
     when is_map(PTree) ->
     ?CUSTOM_INIT(_FunState, Ctx, PTree, _FoldState),
     RT = case Step of
@@ -723,7 +755,8 @@ fold(LOpts, _FunState, Ctx, PTree, {parameterDeclarationCommaList, Step, _Pos} =
 % parameterRef
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-fold(_LOpts, _FunState, Ctx, #{parameterRef := PTree}, {parameterRef, Step} = _FoldState)
+fold(_LOpts, _FunState, Ctx, #{parameterRef := PTree}, {parameterRef, Step} =
+    _FoldState)
     when is_list(PTree) ->
     ?CUSTOM_INIT(_FunState, Ctx, PTree, _FoldState),
     RT = case Step of
@@ -731,7 +764,8 @@ fold(_LOpts, _FunState, Ctx, #{parameterRef := PTree}, {parameterRef, Step} = _F
              _ -> Ctx
          end,
     ?CUSTOM_RESULT(RT);
-fold(_LOpts, _FunState, Ctx, #{parameterRef := PTree}, {parameterRef, Step} = _FoldState) ->
+fold(_LOpts, _FunState, Ctx, #{parameterRef := PTree}, {parameterRef, Step} =
+    _FoldState) ->
     ?CUSTOM_INIT(_FunState, Ctx, PTree, _FoldState),
     RT = case Step of
              start -> lists:append(
@@ -752,7 +786,8 @@ fold(_LOpts, _FunState, Ctx, #{parameterRef := PTree}, {parameterRef, Step} = _F
 % plsqlPackageSource
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-fold(LOpts, _FunState, Ctx, #{plsqlPackageSource := PTree}, {plsqlPackageSource, Step} = _FoldState) ->
+fold(LOpts, _FunState, Ctx, #{plsqlPackageSource := PTree},
+    {plsqlPackageSource, Step} = _FoldState) ->
     ?CUSTOM_INIT(_FunState, Ctx, PTree, _FoldState),
     RT = case Step of
              start -> lists:append(
@@ -796,7 +831,8 @@ fold(_LOpts, _FunState, Ctx, _PTree, {plsqlUnit, Step} = _FoldState) ->
 % procedureLegacyAnnotation
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-fold(LOpts, _FunState, Ctx, #{procedureLegacyAnnotation := PTree}, {procedureLegacyAnnotation, Step} = _FoldState) ->
+fold(LOpts, _FunState, Ctx, #{procedureLegacyAnnotation := PTree},
+    {procedureLegacyAnnotation, Step} = _FoldState) ->
     ?CUSTOM_INIT(_FunState, Ctx, PTree, _FoldState),
     RT = case Step of
              start -> lists:append(
@@ -843,7 +879,8 @@ fold(LOpts, _FunState, Ctx, _PTree, {return, Step} = _FoldState) ->
 % roleAnnotation
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-fold(LOpts, _FunState, Ctx, #{roleAnnotation := PTree}, {roleAnnotation, Step} = _FoldState) ->
+fold(LOpts, _FunState, Ctx, #{roleAnnotation := PTree}, {roleAnnotation, Step} =
+    _FoldState) ->
     ?CUSTOM_INIT(_FunState, Ctx, PTree, _FoldState),
     RT = case Step of
              start ->
@@ -865,7 +902,8 @@ fold(LOpts, _FunState, Ctx, #{roleAnnotation := PTree}, {roleAnnotation, Step} =
 % systemPrivilegeAnnotation
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-fold(LOpts, _FunState, Ctx, #{systemPrivilegeAnnotation := PTree}, {systemPrivilegeAnnotation, Step} = _FoldState) ->
+fold(LOpts, _FunState, Ctx, #{systemPrivilegeAnnotation := PTree},
+    {systemPrivilegeAnnotation, Step} = _FoldState) ->
     ?CUSTOM_INIT(_FunState, Ctx, PTree, _FoldState),
     RT = case Step of
              start ->
@@ -943,7 +981,8 @@ fold(LOpts, _FunState, Ctx, PTree, {thenExpression@_@, Step} = _FoldState)
 % unaryAddOrSubtract
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-fold(_LOpts, _FunState, Ctx, #{unaryAddOrSubtract := PTree}, {unaryAddOrSubtract, Step} = _FoldState)
+fold(_LOpts, _FunState, Ctx, #{unaryAddOrSubtract := PTree},
+    {unaryAddOrSubtract, Step} = _FoldState)
     when is_list(PTree) ->
     ?CUSTOM_INIT(_FunState, Ctx, PTree, _FoldState),
     RT = case Step of
@@ -964,8 +1003,7 @@ fold(_LOpts, _FunState, Ctx, _PTree, {Rule, _Step, _Pos}) when
     Rule == packageFunctionDeclarationAttributeList;
     Rule == packageItemList;
     Rule == plsqlPackageSourceAttributeList;
-    Rule == privilegeAnnotationList;
-    Rule == roleAnnotationList ->
+    Rule == privilegeRoleAnnotationList ->
     Ctx;
 
 fold(_LOpts, _FunState, Ctx, _PTree, {Rule, _Step}) when
@@ -994,11 +1032,10 @@ fold(_LOpts, _FunState, Ctx, _PTree, {Rule, _Step}) when
     Rule == plsqlPackageSourceAttribute;
     Rule == plsqlUnit;
     Rule == plsqlUnitList;
-    Rule == privilegeAnnotationList@_@;
+    Rule == privilegeRoleAnnotationList@_@;
     Rule == procedureAnnotation;
     Rule == procedureHeading;
     Rule == resultCacheClause;
-    Rule == roleAnnotationList@_@;
     Rule == scalarExpression;
     Rule == scalarSubExpression;
     Rule == sharingClause;

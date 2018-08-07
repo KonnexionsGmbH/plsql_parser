@@ -134,7 +134,8 @@ fold([], _FunState, Ctx, _PTree, {columnRefCommaList@, Step} = _FoldState) ->
 % createPackage
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-fold([], _FunState, Ctx, #{createPackage := PTree}, {createPackage, Step} = _FoldState) ->
+fold([], _FunState, Ctx, #{createPackage := PTree}, {createPackage, Step} =
+    _FoldState) ->
     ?CUSTOM_INIT(_FunState, Ctx, PTree, _FoldState),
     RT = case Step of
              start -> lists:append(
@@ -168,7 +169,8 @@ fold([], _FunState, Ctx, #{createPackage := PTree}, {createPackage, Step} = _Fol
 % dataSource
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-fold([], _FunState, Ctx, #{dataSource := PTree}, {dataSource, Step} = _FoldState)
+fold([], _FunState, Ctx, #{dataSource := PTree}, {dataSource, Step} =
+    _FoldState)
     when is_list(PTree) ->
     ?CUSTOM_INIT(_FunState, Ctx, PTree, _FoldState),
     RT = case Step of
@@ -317,7 +319,8 @@ fold([], _FunState, Ctx, #{dataType := PTree}, {dataType, Step} = _FoldState)
 % defaultCollationClause
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-fold([], _FunState, Ctx, #{defaultCollationClause := PTree}, {defaultCollationClause, Step} = _FoldState)
+fold([], _FunState, Ctx, #{defaultCollationClause := PTree},
+    {defaultCollationClause, Step} = _FoldState)
     when is_list(PTree) ->
     ?CUSTOM_INIT(_FunState, Ctx, PTree, _FoldState),
     RT = case Step of
@@ -365,7 +368,8 @@ fold([], _FunState, Ctx, _PTree, {defaultValue@_@, Step} = _FoldState) ->
 % expression
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-fold([], _FunState, Ctx, #{expression := PTree}, {expression, Step} = _FoldState)
+fold([], _FunState, Ctx, #{expression := PTree}, {expression, Step} =
+    _FoldState)
     when is_atom(PTree) ->
     ?CUSTOM_INIT(_FunState, Ctx, PTree, _FoldState),
     RT = case Step of
@@ -377,7 +381,8 @@ fold([], _FunState, Ctx, #{expression := PTree}, {expression, Step} = _FoldState
              _ -> Ctx
          end,
     ?CUSTOM_RESULT(RT);
-fold([], _FunState, Ctx, #{expression := PTree}, {expression, Step} = _FoldState)
+fold([], _FunState, Ctx, #{expression := PTree}, {expression, Step} =
+    _FoldState)
     when is_map(PTree) ->
     ?CUSTOM_INIT(_FunState, Ctx, PTree, _FoldState),
     Operator = case maps:is_key(operator@, PTree) of
@@ -401,7 +406,8 @@ fold([], _FunState, Ctx, #{expression := PTree}, {expression, Step} = _FoldState
 % functionArg
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-fold([], _FunState, Ctx, #{functionArg := PTree}, {functionArg, Step} = _FoldState)
+fold([], _FunState, Ctx, #{functionArg := PTree}, {functionArg, Step} =
+    _FoldState)
     when map_size(PTree) == 2 ->
     ?CUSTOM_INIT(_FunState, Ctx, PTree, _FoldState),
     RT = case Step of
@@ -431,7 +437,8 @@ fold([], _FunState, Ctx, _PTree, {functionArgCommaList@, Step} = _FoldState) ->
 % functionHeading
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-fold([], _FunState, Ctx, #{functionHeading := PTree}, {functionHeading, Step} = _FoldState)
+fold([], _FunState, Ctx, #{functionHeading := PTree}, {functionHeading, Step} =
+    _FoldState)
     when is_map(PTree) ->
     ?CUSTOM_INIT(_FunState, Ctx, PTree, _FoldState),
     RT = case Step of
@@ -449,7 +456,8 @@ fold([], _FunState, Ctx, #{functionHeading := PTree}, {functionHeading, Step} = 
 % functionLegacyAnnotation
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-fold([], _FunState, Ctx, #{functionLegacyAnnotation := PTree}, {functionLegacyAnnotation, Step} = _FoldState) ->
+fold([], _FunState, Ctx, #{functionLegacyAnnotation := PTree},
+    {functionLegacyAnnotation, Step} = _FoldState) ->
     ?CUSTOM_INIT(_FunState, Ctx, PTree, _FoldState),
     RT = case Step of
              start -> lists:append(
@@ -469,7 +477,8 @@ fold([], _FunState, Ctx, #{functionLegacyAnnotation := PTree}, {functionLegacyAn
 % functionRef
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-fold([], _FunState, Ctx, #{functionRef := PTree}, {functionRef, Step} = _FoldState)
+fold([], _FunState, Ctx, #{functionRef := PTree}, {functionRef, Step} =
+    _FoldState)
     when is_map(PTree) ->
     ?CUSTOM_INIT(_FunState, Ctx, PTree, _FoldState),
     RT = case Step of
@@ -482,7 +491,8 @@ fold([], _FunState, Ctx, #{functionRef := PTree}, {functionRef, Step} = _FoldSta
 % invokerRightsClause
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-fold([], _FunState, Ctx, #{invokerRightsClause := PTree}, {invokerRightsClause, Step} = _FoldState)
+fold([], _FunState, Ctx, #{invokerRightsClause := PTree},
+    {invokerRightsClause, Step} = _FoldState)
     when is_list(PTree) ->
     ?CUSTOM_INIT(_FunState, Ctx, PTree, _FoldState),
     RT = case Step of
@@ -517,7 +527,8 @@ fold([], _FunState, Ctx, #{literal := PTree}, {literal, Step} = _FoldState)
 % objectPrivilegeAnnotation
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-fold([], _FunState, Ctx, #{objectPrivilegeAnnotation := PTree}, {objectPrivilegeAnnotation, Step} = _FoldState) ->
+fold([], _FunState, Ctx, #{objectPrivilegeAnnotation := PTree},
+    {objectPrivilegeAnnotation, Step} = _FoldState) ->
     ?CUSTOM_INIT(_FunState, Ctx, PTree, _FoldState),
     RT = case Step of
              start -> lists:append(
@@ -559,7 +570,8 @@ fold([], _FunState, Ctx, PTree, {operator, Step} = _FoldState)
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 fold([], _FunState, Ctx, _PTree, {Rule, Step} = _FoldState)
-    when Rule == packageFunctionDeclaration; Rule == packageProcedureDeclaration ->
+    when Rule == packageFunctionDeclaration; Rule ==
+    packageProcedureDeclaration ->
     ?CUSTOM_INIT(_FunState, Ctx, _PTree, _FoldState),
     RT = case Step of
              start -> Ctx;
@@ -571,7 +583,8 @@ fold([], _FunState, Ctx, _PTree, {Rule, Step} = _FoldState)
 % packageFunctionDeclarationAttribute
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-fold([], _FunState, Ctx, #{packageFunctionDeclarationAttribute := PTree}, {packageFunctionDeclarationAttribute, Step} = _FoldState)
+fold([], _FunState, Ctx, #{packageFunctionDeclarationAttribute := PTree},
+    {packageFunctionDeclarationAttribute, Step} = _FoldState)
     when is_list(PTree) ->
     ?CUSTOM_INIT(_FunState, Ctx, PTree, _FoldState),
     RT = case Step of
@@ -589,7 +602,8 @@ fold([], _FunState, Ctx, #{packageFunctionDeclarationAttribute := PTree}, {packa
 % packageItemConditional
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-fold([], _FunState, Ctx, #{packageItemConditional := PTree}, {packageItemConditional, Step} = _FoldState)
+fold([], _FunState, Ctx, #{packageItemConditional := PTree},
+    {packageItemConditional, Step} = _FoldState)
     when is_map(PTree) ->
     ?CUSTOM_INIT(_FunState, Ctx, PTree, _FoldState),
     RT = case Step of
@@ -615,7 +629,8 @@ fold([], _FunState, Ctx, #{packageItemConditional := PTree}, {packageItemConditi
 % packageItemList@_@
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-fold([], _FunState, Ctx, #{packageItemList@_@ := PTree}, {packageItemList@_@, Step} = _FoldState)
+fold([], _FunState, Ctx, #{packageItemList@_@ := PTree},
+    {packageItemList@_@, Step} = _FoldState)
     when is_map(PTree) ->
     ?CUSTOM_INIT(_FunState, Ctx, PTree, _FoldState),
     RT = case Step of
@@ -634,7 +649,8 @@ fold([], _FunState, Ctx, #{packageItemList@_@ := PTree}, {packageItemList@_@, St
 % parallelEnabledClause
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-fold([], _FunState, Ctx, #{parallelEnabledClause := PTree}, {parallelEnabledClause, Step} = _FoldState)
+fold([], _FunState, Ctx, #{parallelEnabledClause := PTree},
+    {parallelEnabledClause, Step} = _FoldState)
     when is_map(PTree) ->
     ?CUSTOM_INIT(_FunState, Ctx, PTree, _FoldState),
     RT = case Step of
@@ -654,7 +670,8 @@ fold([], _FunState, Ctx, #{parallelEnabledClause := PTree}, {parallelEnabledClau
 % parameterAnnotation
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-fold([], _FunState, Ctx, #{parameterAnnotation := PTree}, {parameterAnnotation, Step} = _FoldState) ->
+fold([], _FunState, Ctx, #{parameterAnnotation := PTree},
+    {parameterAnnotation, Step} = _FoldState) ->
     ?CUSTOM_INIT(_FunState, Ctx, PTree, _FoldState),
     RT = case Step of
              start -> lists:append(
@@ -674,7 +691,8 @@ fold([], _FunState, Ctx, #{parameterAnnotation := PTree}, {parameterAnnotation, 
 % parameterDeclaration
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-fold([], _FunState, Ctx, #{parameterDeclaration := PTree}, {parameterDeclaration, Step} = _FoldState)
+fold([], _FunState, Ctx, #{parameterDeclaration := PTree},
+    {parameterDeclaration, Step} = _FoldState)
     when is_map(PTree) ->
     ?CUSTOM_INIT(_FunState, Ctx, PTree, _FoldState),
     RT = case Step of
@@ -699,7 +717,8 @@ fold([], _FunState, Ctx, #{parameterDeclaration := PTree}, {parameterDeclaration
 % parameterDeclarationCommaList@
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-fold([], _FunState, Ctx, _PTree, {parameterDeclarationCommaList@, Step} = _FoldState) ->
+fold([], _FunState, Ctx, _PTree, {parameterDeclarationCommaList@, Step} =
+    _FoldState) ->
     ?CUSTOM_INIT(_FunState, Ctx, _PTree, _FoldState),
     RT = case Step of
              start -> Ctx ++ "(";
@@ -711,7 +730,8 @@ fold([], _FunState, Ctx, _PTree, {parameterDeclarationCommaList@, Step} = _FoldS
 % parameterRef
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-fold([], _FunState, Ctx, #{parameterRef := PTree}, {parameterRef, Step} = _FoldState)
+fold([], _FunState, Ctx, #{parameterRef := PTree}, {parameterRef, Step} =
+    _FoldState)
     when is_list(PTree) ->
     ?CUSTOM_INIT(_FunState, Ctx, PTree, _FoldState),
     RT = case Step of
@@ -719,7 +739,8 @@ fold([], _FunState, Ctx, #{parameterRef := PTree}, {parameterRef, Step} = _FoldS
              _ -> Ctx
          end,
     ?CUSTOM_RESULT(RT);
-fold([], _FunState, Ctx, #{parameterRef := PTree}, {parameterRef, Step} = _FoldState) ->
+fold([], _FunState, Ctx, #{parameterRef := PTree}, {parameterRef, Step} =
+    _FoldState) ->
     ?CUSTOM_INIT(_FunState, Ctx, PTree, _FoldState),
     RT = case Step of
              start -> lists:append(
@@ -740,7 +761,8 @@ fold([], _FunState, Ctx, #{parameterRef := PTree}, {parameterRef, Step} = _FoldS
 % pipelinedClause
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-fold([], _FunState, Ctx, #{pipelinedClause := PTree}, {pipelinedClause, Step} = _FoldState)
+fold([], _FunState, Ctx, #{pipelinedClause := PTree}, {pipelinedClause, Step} =
+    _FoldState)
     when is_map(PTree) ->
     ?CUSTOM_INIT(_FunState, Ctx, PTree, _FoldState),
     RT = case Step of
@@ -763,7 +785,8 @@ fold([], _FunState, Ctx, #{pipelinedClause := PTree}, {pipelinedClause, Step} = 
 % plsqlPackageSource
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-fold([], _FunState, Ctx, #{plsqlPackageSource := PTree}, {plsqlPackageSource, Step} = _FoldState) ->
+fold([], _FunState, Ctx, #{plsqlPackageSource := PTree},
+    {plsqlPackageSource, Step} = _FoldState) ->
     ?CUSTOM_INIT(_FunState, Ctx, PTree, _FoldState),
     RT = case Step of
              start -> lists:append(
@@ -788,7 +811,8 @@ fold([], _FunState, Ctx, #{plsqlPackageSource := PTree}, {plsqlPackageSource, St
 % procedureHeading
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-fold([], _FunState, Ctx, #{procedureHeading := PTree}, {procedureHeading, Step} = _FoldState)
+fold([], _FunState, Ctx, #{procedureHeading := PTree},
+    {procedureHeading, Step} = _FoldState)
     when is_map(PTree) ->
     ?CUSTOM_INIT(_FunState, Ctx, PTree, _FoldState),
     RT = case Step of
@@ -806,7 +830,8 @@ fold([], _FunState, Ctx, #{procedureHeading := PTree}, {procedureHeading, Step} 
 % procedureLegacyAnnotation
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-fold([], _FunState, Ctx, #{procedureLegacyAnnotation := PTree}, {procedureLegacyAnnotation, Step} = _FoldState) ->
+fold([], _FunState, Ctx, #{procedureLegacyAnnotation := PTree},
+    {procedureLegacyAnnotation, Step} = _FoldState) ->
     ?CUSTOM_INIT(_FunState, Ctx, PTree, _FoldState),
     RT = case Step of
              start -> lists:append(
@@ -826,7 +851,8 @@ fold([], _FunState, Ctx, #{procedureLegacyAnnotation := PTree}, {procedureLegacy
 % resultCacheClause
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-fold([], _FunState, Ctx, #{resultCacheClause := PTree}, {resultCacheClause, Step} = _FoldState) ->
+fold([], _FunState, Ctx, #{resultCacheClause := PTree},
+    {resultCacheClause, Step} = _FoldState) ->
     ?CUSTOM_INIT(_FunState, Ctx, PTree, _FoldState),
     RT = case Step of
              start -> lists:append(
@@ -858,13 +884,16 @@ fold([], _FunState, Ctx, _PTree, {return, Step} = _FoldState) ->
 % roleAnnotation
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-fold([], _FunState, Ctx, #{roleAnnotation := PTree}, {roleAnnotation, Step} = _FoldState) ->
+fold([], _FunState, Ctx, #{roleAnnotation := PTree}, {roleAnnotation, Step} =
+    _FoldState) ->
     ?CUSTOM_INIT(_FunState, Ctx, PTree, _FoldState),
     RT = case Step of
              start -> lists:append(
                  [
                      Ctx,
-                     "--<> role = ",
+                     "--<> ",
+                     maps:get(type@, PTree),
+                     " = ",
                      maps:get(role@, PTree),
                      ?CHAR_NEWLINE
                  ]);
@@ -876,7 +905,8 @@ fold([], _FunState, Ctx, #{roleAnnotation := PTree}, {roleAnnotation, Step} = _F
 % sharingClause
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-fold([], _FunState, Ctx, #{sharingClause := PTree}, {sharingClause, Step} = _FoldState)
+fold([], _FunState, Ctx, #{sharingClause := PTree}, {sharingClause, Step} =
+    _FoldState)
     when is_list(PTree) ->
     ?CUSTOM_INIT(_FunState, Ctx, PTree, _FoldState),
     RT = case Step of
@@ -894,7 +924,8 @@ fold([], _FunState, Ctx, #{sharingClause := PTree}, {sharingClause, Step} = _Fol
 % streamingClause
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-fold([], _FunState, Ctx, #{streamingClause := PTree}, {streamingClause, Step} = _FoldState)
+fold([], _FunState, Ctx, #{streamingClause := PTree}, {streamingClause, Step} =
+    _FoldState)
     when is_map(PTree) ->
     ?CUSTOM_INIT(_FunState, Ctx, PTree, _FoldState),
     RT = case Step of
@@ -912,7 +943,8 @@ fold([], _FunState, Ctx, #{streamingClause := PTree}, {streamingClause, Step} = 
 % streamingClauseExpression@_@
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-fold([], _FunState, Ctx, _PTree, {streamingClauseExpression@_@, Step} = _FoldState) ->
+fold([], _FunState, Ctx, _PTree, {streamingClauseExpression@_@, Step} =
+    _FoldState) ->
     ?CUSTOM_INIT(_FunState, Ctx, _PTree, _FoldState),
     RT = case Step of
              start -> Ctx;
@@ -924,7 +956,8 @@ fold([], _FunState, Ctx, _PTree, {streamingClauseExpression@_@, Step} = _FoldSta
 % systemPrivilegeAnnotation
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-fold([], _FunState, Ctx, #{systemPrivilegeAnnotation := PTree}, {systemPrivilegeAnnotation, Step} = _FoldState) ->
+fold([], _FunState, Ctx, #{systemPrivilegeAnnotation := PTree},
+    {systemPrivilegeAnnotation, Step} = _FoldState) ->
     ?CUSTOM_INIT(_FunState, Ctx, PTree, _FoldState),
     RT = case Step of
              start -> lists:append(
@@ -956,7 +989,8 @@ fold([], _FunState, Ctx, _PTree, {thenExpression@_@, Step} = _FoldState) ->
 % unaryAddOrSubtract
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-fold([], _FunState, Ctx, #{unaryAddOrSubtract := PTree}, {unaryAddOrSubtract, Step} = _FoldState)
+fold([], _FunState, Ctx, #{unaryAddOrSubtract := PTree},
+    {unaryAddOrSubtract, Step} = _FoldState)
     when is_list(PTree) ->
     ?CUSTOM_INIT(_FunState, Ctx, PTree, _FoldState),
     RT = case Step of
@@ -974,8 +1008,7 @@ fold([], _FunState, Ctx, _PTree, {Rule, _Step, _Pos}) when
     Rule == packageItemList;
     Rule == plsqlPackageSourceAttributeList;
     Rule == plsqlUnit;
-    Rule == privilegeAnnotationList;
-    Rule == roleAnnotationList ->
+    Rule == privilegeRoleAnnotationList ->
     Ctx;
 
 fold([], _FunState, Ctx, _PTree, {Rule, _Step}) when
@@ -993,9 +1026,8 @@ fold([], _FunState, Ctx, _PTree, {Rule, _Step}) when
     Rule == plsqlPackageSourceAttribute;
     Rule == plsqlUnit;
     Rule == plsqlUnitList;
-    Rule == privilegeAnnotationList@_@;
+    Rule == privilegeRoleAnnotationList@_@;
     Rule == procedureAnnotation;
-    Rule == roleAnnotationList@_@;
     Rule == scalarExpression;
     Rule == scalarSubExpression ->
     Ctx;
