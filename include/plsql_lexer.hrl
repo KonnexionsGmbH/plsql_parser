@@ -125,6 +125,7 @@
     {"^(?i)(RESULT_CACHE)$",           'RESULT_CACHE'},
     {"^(?i)(RETURN)$",                 'RETURN'},
     {"^(?i)(REWRITE)$",                'REWRITE'},
+    {"^(?i)(ROLE)$",                   'ROLE'},
     {"^(?i)(ROW)$",                    'ROW'},
     {"^(?i)(ROWID)$",                  'ROWID'},
     {"^(?i)(SECOND)$",                 'SECOND'},

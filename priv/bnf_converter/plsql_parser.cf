@@ -276,6 +276,12 @@ PrivilegeAnnotationList02.                  PrivilegeAnnotationList ::= ObjectPr
 PrivilegeAnnotationList03.                  PrivilegeAnnotationList ::= SystemPrivilegeAnnotation                         ;
 PrivilegeAnnotationList04.                  PrivilegeAnnotationList ::= SystemPrivilegeAnnotation PrivilegeAnnotationList ;
 
+-- roleAnnotationList -> roleAnnotation                    : ['$1'].
+-- roleAnnotationList -> roleAnnotation roleAnnotationList : ['$1' | '$2'].
+
+RoleAnnotationList01.                       RoleAnnotationList ::= RoleAnnotation                    ;
+RoleAnnotationList02.                       RoleAnnotationList ::= RoleAnnotation RoleAnnotationList ;
+
 -- Level 05 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 -- objectPrivilegeAnnotation -> '--<>' OBJECT_PRIVILEGE objectPrivilegeType '=' NAME          : #{objectPrivilegeAnnotation => #{type@ => unwrap_2_list('$2'),
@@ -303,6 +309,11 @@ PackageItemList04.                          PackageItemList ::= PackageItemCondi
 
 PlsqlPackageSourceAttributeList01.          PlsqlPackageSourceAttributeList ::= PlsqlPackageSourceAttribute                                 ;
 PlsqlPackageSourceAttributeList02.          PlsqlPackageSourceAttributeList ::= PlsqlPackageSourceAttribute PlsqlPackageSourceAttributeList ;
+
+-- roleAnnotation -> '--<>' ROLE '=' NAME : #{roleAnnotation => #{type@ => unwrap_2_list('$2'),
+--                                                                role@ => '$2'}}.
+
+RoleAnnotation01.                           RoleAnnotation ::= "--<>" "ROLE" "=" "NAME" ;
 
 -- sharingClause -> SHARING '=' METADATA : #{sharingClause => unwrap_2_list('$3')}.
 -- sharingClause -> SHARING '=' NONE     : #{sharingClause => unwrap_2_list('$3')}.
@@ -503,14 +514,26 @@ PackageProcedureDeclaration04.              PackageProcedureDeclaration ::= Proc
 AccessorCommaList01.                        AccessorCommaList ::= Accessor                       ;
 AccessorCommaList02.                        AccessorCommaList ::= Accessor "," AccessorCommaList ;
 
--- functionAnnotation -> functionLegacyAnnotation                         : #{functionAnnotation => #{functionLegacyAnnotation@ => '$1'}}.
--- functionAnnotation -> functionLegacyAnnotation privilegeAnnotationList : #{functionAnnotation => #{functionLegacyAnnotation@ => '$1',
---                                                                                                    privilegeAnnotationList@ => '$2'}}.
--- functionAnnotation -> privilegeAnnotationList                          : #{functionAnnotation => #{privilegeAnnotationList@ => '$1'}}.
+-- functionAnnotation ->                                                  roleAnnotationList : #{functionAnnotation => #{roleAnnotationList@ => '$1'}}.
+-- functionAnnotation ->                          privilegeAnnotationList                    : #{functionAnnotation => #{privilegeAnnotationList@ => '$1'}}.
+-- functionAnnotation ->                          privilegeAnnotationList roleAnnotationList : #{functionAnnotation => #{privilegeAnnotationList@ => '$1',
+--                                                                                                                       roleAnnotationList@ => '$2'}}.
+-- functionAnnotation -> functionLegacyAnnotation                                            : #{functionAnnotation => #{functionLegacyAnnotation@ => '$1'}}.
+-- functionAnnotation -> functionLegacyAnnotation                         roleAnnotationList : #{functionAnnotation => #{functionLegacyAnnotation@ => '$1',
+--                                                                                                                       roleAnnotationList@ => '$2'}}.
+-- functionAnnotation -> functionLegacyAnnotation privilegeAnnotationList                    : #{functionAnnotation => #{functionLegacyAnnotation@ => '$1',
+--                                                                                                                       privilegeAnnotationList@ => '$2'}}.
+-- functionAnnotation -> functionLegacyAnnotation privilegeAnnotationList roleAnnotationList : #{functionAnnotation => #{functionLegacyAnnotation@ => '$1',
+--                                                                                                                       privilegeAnnotationList@ => '$2',
+--                                                                                                                       roleAnnotationList@ => '$3'}}.
 
-FunctionAnnotation01.                       FunctionAnnotation ::= FunctionLegacyAnnotation                          ;
-FunctionAnnotation02.                       FunctionAnnotation ::= FunctionLegacyAnnotation PrivilegeAnnotationList  ;
-FunctionAnnotation03.                       FunctionAnnotation ::= PrivilegeAnnotationList                           ;
+FunctionAnnotation01.                       FunctionAnnotation ::=                                                  RoleAnnotationList ;
+FunctionAnnotation02.                       FunctionAnnotation ::=                          PrivilegeAnnotationList                    ;
+FunctionAnnotation03.                       FunctionAnnotation ::=                          PrivilegeAnnotationList RoleAnnotationList ;
+FunctionAnnotation04.                       FunctionAnnotation ::= FunctionLegacyAnnotation                                            ;
+FunctionAnnotation05.                       FunctionAnnotation ::= FunctionLegacyAnnotation                         RoleAnnotationList ;
+FunctionAnnotation06.                       FunctionAnnotation ::= FunctionLegacyAnnotation PrivilegeAnnotationList                    ;
+FunctionAnnotation07.                       FunctionAnnotation ::= FunctionLegacyAnnotation PrivilegeAnnotationList RoleAnnotationList ;
 
 -- functionHeading -> FUNCTION "NAME"                                       RETURN dataType : #{functionHeading => #{name@ => unwrap_2_list('$2'),
 --                                                                                                                 return@ => '$4'}}.
@@ -527,27 +550,54 @@ FunctionHeading02.                          FunctionHeading ::= "FUNCTION" "NAME
 PackageFunctionDeclarationAttributeList01.  PackageFunctionDeclarationAttributeList ::= PackageFunctionDeclarationAttribute                                         ;
 PackageFunctionDeclarationAttributeList02.  PackageFunctionDeclarationAttributeList ::= PackageFunctionDeclarationAttribute PackageFunctionDeclarationAttributeList ;
 
--- procedureAnnotation -> functionLegacyAnnotation  procedureLegacyAnnotation privilegeAnnotationList : #{procedureAnnotation => #{functionLegacyAnnotation@ => '$1',
---                                                                                                                                 procedureLegacyAnnotation@ => '$2',
---                                                                                                                                 privilegeAnnotationList@ => '$3'}}.
--- procedureAnnotation -> functionLegacyAnnotation  procedureLegacyAnnotation                         : #{procedureAnnotation => #{functionLegacyAnnotation@ => '$1',
---                                                                                                                                 procedureLegacyAnnotation@ => '$2'}}.
--- procedureAnnotation -> functionLegacyAnnotation  privilegeAnnotationList                           : #{procedureAnnotation => #{functionLegacyAnnotation@ => '$1',
---                                                                                                                                 privilegeAnnotationList@ => '$2'}}.
--- procedureAnnotation -> procedureLegacyAnnotation privilegeAnnotationList                           : #{procedureAnnotation => #{procedureLegacyAnnotation@ => '$1',
---                                                                                                                                 privilegeAnnotationList@ => '$2'}}.
--- procedureAnnotation -> functionLegacyAnnotation                                                    : #{procedureAnnotation => #{functionLegacyAnnotation@ => '$1'}}.
--- procedureAnnotation -> procedureLegacyAnnotation                                                   : #{procedureAnnotation => #{procedureLegacyAnnotation@ => '$1'}}.
--- procedureAnnotation -> privilegeAnnotationList                                                     : #{procedureAnnotation => #{privilegeAnnotationList@ => '$1'}}.
+-- procedureAnnotation ->                                                                             roleAnnotationList : #{procedureAnnotation => #{roleAnnotationList@ => '$1'}}.
+-- procedureAnnotation ->                                                     privilegeAnnotationList                    : #{procedureAnnotation => #{privilegeAnnotationList@ => '$1'}}.
+-- procedureAnnotation ->                                                     privilegeAnnotationList roleAnnotationList : #{procedureAnnotation => #{privilegeAnnotationList@ => '$1',
+--                                                                                                                                                    roleAnnotationList@ => '$2'}}.
+-- procedureAnnotation ->                           procedureLegacyAnnotation                                            : #{procedureAnnotation => #{procedureLegacyAnnotation@ => '$1'}}.
+-- procedureAnnotation ->                           procedureLegacyAnnotation                         roleAnnotationList : #{procedureAnnotation => #{procedureLegacyAnnotation@ => '$1',
+--                                                                                                                                                    roleAnnotationList@ => '$2'}}.
+-- procedureAnnotation ->                           procedureLegacyAnnotation privilegeAnnotationList                    : #{procedureAnnotation => #{procedureLegacyAnnotation@ => '$1',
+--                                                                                                                                                    privilegeAnnotationList@ => '$2'}}.
+-- procedureAnnotation ->                           procedureLegacyAnnotation privilegeAnnotationList roleAnnotationList  : #{procedureAnnotation => #{procedureLegacyAnnotation@ => '$1',
+--                                                                                                                                                     privilegeAnnotationList@ => '$2',
+--                                                                                                                                                     roleAnnotationList@ => '$3'}}.
+-- procedureAnnotation -> functionLegacyAnnotation                                                                       : #{procedureAnnotation => #{functionLegacyAnnotation@ => '$1'}}.
+-- procedureAnnotation -> functionLegacyAnnotation                                                    roleAnnotationList : #{procedureAnnotation => #{functionLegacyAnnotation@ => '$1',
+--                                                                                                                                                    roleAnnotationList@ => '$2'}}.
+-- procedureAnnotation -> functionLegacyAnnotation                            privilegeAnnotationList                    : #{procedureAnnotation => #{functionLegacyAnnotation@ => '$1',
+--                                                                                                                                                    privilegeAnnotationList@ => '$2'}}.
+-- procedureAnnotation -> functionLegacyAnnotation                            privilegeAnnotationList roleAnnotationList : #{procedureAnnotation => #{functionLegacyAnnotation@ => '$1',
+--                                                                                                                                                    privilegeAnnotationList@ => '$2',
+--                                                                                                                                                    roleAnnotationList@ => '$3'}}.
+-- procedureAnnotation -> functionLegacyAnnotation  procedureLegacyAnnotation                                            : #{procedureAnnotation => #{functionLegacyAnnotation@ => '$1',
+--                                                                                                                                                    procedureLegacyAnnotation@ => '$2'}}.
+-- procedureAnnotation -> functionLegacyAnnotation  procedureLegacyAnnotation                         roleAnnotationList : #{procedureAnnotation => #{functionLegacyAnnotation@ => '$1',
+--                                                                                                                                                    procedureLegacyAnnotation@ => '$2',
+--                                                                                                                                                    roleAnnotationList@ => '$3'}}.
+-- procedureAnnotation -> functionLegacyAnnotation  procedureLegacyAnnotation privilegeAnnotationList                    : #{procedureAnnotation => #{functionLegacyAnnotation@ => '$1',
+--                                                                                                                                                    procedureLegacyAnnotation@ => '$2',
+--                                                                                                                                                    privilegeAnnotationList@ => '$3'}}.
+-- procedureAnnotation -> functionLegacyAnnotation  procedureLegacyAnnotation privilegeAnnotationList roleAnnotationList : #{procedureAnnotation => #{functionLegacyAnnotation@ => '$1',
+--                                                                                                                                                    procedureLegacyAnnotation@ => '$2',
+--                                                                                                                                                    privilegeAnnotationList@ => '$3',
+--                                                                                                                                                    roleAnnotationList@ => '$4'}}.
 
-
-ProcedureAnnotation01.                      ProcedureAnnotation ::= FunctionLegacyAnnotation  ProcedureLegacyAnnotation PrivilegeAnnotationList ;
-ProcedureAnnotation02.                      ProcedureAnnotation ::= FunctionLegacyAnnotation  ProcedureLegacyAnnotation                         ;
-ProcedureAnnotation03.                      ProcedureAnnotation ::= FunctionLegacyAnnotation  PrivilegeAnnotationList                           ;
-ProcedureAnnotation04.                      ProcedureAnnotation ::= ProcedureLegacyAnnotation PrivilegeAnnotationList                           ;
-ProcedureAnnotation05.                      ProcedureAnnotation ::= FunctionLegacyAnnotation                                                    ;
-ProcedureAnnotation06.                      ProcedureAnnotation ::= ProcedureLegacyAnnotation                                                   ;
-ProcedureAnnotation07.                      ProcedureAnnotation ::= PrivilegeAnnotationList                                                     ;
+ProcedureAnnotation01.                      ProcedureAnnotation ::=                                                                             RoleAnnotationList ;
+ProcedureAnnotation02.                      ProcedureAnnotation ::=                                                     PrivilegeAnnotationList                    ;
+ProcedureAnnotation03.                      ProcedureAnnotation ::=                                                     PrivilegeAnnotationList RoleAnnotationList ;
+ProcedureAnnotation04.                      ProcedureAnnotation ::=                           ProcedureLegacyAnnotation                                            ;
+ProcedureAnnotation05.                      ProcedureAnnotation ::=                           ProcedureLegacyAnnotation                         RoleAnnotationList ;
+ProcedureAnnotation06.                      ProcedureAnnotation ::=                           ProcedureLegacyAnnotation PrivilegeAnnotationList                    ;
+ProcedureAnnotation07.                      ProcedureAnnotation ::=                           ProcedureLegacyAnnotation PrivilegeAnnotationList RoleAnnotationList ;
+ProcedureAnnotation08.                      ProcedureAnnotation ::= FunctionLegacyAnnotation                                                                       ;
+ProcedureAnnotation09.                      ProcedureAnnotation ::= FunctionLegacyAnnotation                                                    RoleAnnotationList ;
+ProcedureAnnotation10.                      ProcedureAnnotation ::= FunctionLegacyAnnotation                            PrivilegeAnnotationList                    ;
+ProcedureAnnotation11.                      ProcedureAnnotation ::= FunctionLegacyAnnotation                            PrivilegeAnnotationList RoleAnnotationList ;
+ProcedureAnnotation12.                      ProcedureAnnotation ::= FunctionLegacyAnnotation  ProcedureLegacyAnnotation                                            ;
+ProcedureAnnotation13.                      ProcedureAnnotation ::= FunctionLegacyAnnotation  ProcedureLegacyAnnotation                         RoleAnnotationList ;
+ProcedureAnnotation14.                      ProcedureAnnotation ::= FunctionLegacyAnnotation  ProcedureLegacyAnnotation PrivilegeAnnotationList                    ;
+ProcedureAnnotation15.                      ProcedureAnnotation ::= FunctionLegacyAnnotation  ProcedureLegacyAnnotation PrivilegeAnnotationList RoleAnnotationList ;
 
 -- procedureHeading -> PROCEDURE "NAME"                                       : #{procedureHeading => #{name@ => unwrap_2_list('$2')}}.
 -- procedureHeading -> PROCEDURE "NAME" '(' parameterDeclarationCommaList ')' : #{procedureHeading => #{name@ => unwrap_2_list('$2'),

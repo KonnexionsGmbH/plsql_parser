@@ -855,6 +855,24 @@ fold([], _FunState, Ctx, _PTree, {return, Step} = _FoldState) ->
     ?CUSTOM_RESULT(RT);
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% roleAnnotation
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+fold([], _FunState, Ctx, #{roleAnnotation := PTree}, {roleAnnotation, Step} = _FoldState) ->
+    ?CUSTOM_INIT(_FunState, Ctx, PTree, _FoldState),
+    RT = case Step of
+             start -> lists:append(
+                 [
+                     Ctx,
+                     "--<> role = ",
+                     maps:get(role@, PTree),
+                     ?CHAR_NEWLINE
+                 ]);
+             _ -> Ctx
+         end,
+    ?CUSTOM_RESULT(RT);
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % sharingClause
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -956,7 +974,8 @@ fold([], _FunState, Ctx, _PTree, {Rule, _Step, _Pos}) when
     Rule == packageItemList;
     Rule == plsqlPackageSourceAttributeList;
     Rule == plsqlUnit;
-    Rule == privilegeAnnotationList ->
+    Rule == privilegeAnnotationList;
+    Rule == roleAnnotationList ->
     Ctx;
 
 fold([], _FunState, Ctx, _PTree, {Rule, _Step}) when
@@ -976,6 +995,7 @@ fold([], _FunState, Ctx, _PTree, {Rule, _Step}) when
     Rule == plsqlUnitList;
     Rule == privilegeAnnotationList@_@;
     Rule == procedureAnnotation;
+    Rule == roleAnnotationList@_@;
     Rule == scalarExpression;
     Rule == scalarSubExpression ->
     Ctx;
