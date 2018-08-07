@@ -64,7 +64,8 @@ real_world_test_() ->
         fun() ->
             [
                 {formatter("TEST_12", ?TEST_12, ?TEST_12_RESULT_DEFAULT, LOpts)},
-                {formatter("TEST_13", ?TEST_13, ?TEST_13_RESULT_DEFAULT, LOpts)}
+                {formatter("TEST_13", ?TEST_13, ?TEST_13_RESULT_DEFAULT, LOpts)},
+                {formatter("TEST_14", ?TEST_14, ?TEST_14_RESULT_DEFAULT, LOpts)}
             ]
         end
     }.
