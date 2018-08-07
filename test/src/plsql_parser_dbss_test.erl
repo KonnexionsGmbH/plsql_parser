@@ -37,7 +37,8 @@ simple_test_() ->
                 {formatter("TEST_01", ?TEST_01, ?TEST_01_RESULT_DEFAULT, [])},
                 {formatter("TEST_02", ?TEST_02, ?TEST_02_RESULT_DEFAULT, [])},
                 {formatter("TEST_03", ?TEST_03, ?TEST_03_RESULT_DEFAULT, [])},
-                {formatter("TEST_04", ?TEST_04, ?TEST_04_RESULT_DEFAULT, LOpts)}
+                {formatter("TEST_04", ?TEST_04, ?TEST_04_RESULT_DEFAULT, LOpts)},
+                {formatter("TEST_05", ?TEST_05, ?TEST_05_RESULT_DEFAULT, [])}
             ]
         end
     }.

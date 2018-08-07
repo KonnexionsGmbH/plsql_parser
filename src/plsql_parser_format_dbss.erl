@@ -463,8 +463,10 @@ fold(LOpts, _FunState, Ctx, #{objectPrivilegeAnnotation := PTree},
                          Ctx,
                          ?TABULATOR,
                          ?TABULATOR,
+                         ?TABULATOR,
                          "<Privilege>",
                          ?CHAR_NEWLINE,
+                         ?TABULATOR,
                          ?TABULATOR,
                          ?TABULATOR,
                          ?TABULATOR,
@@ -475,10 +477,12 @@ fold(LOpts, _FunState, Ctx, #{objectPrivilegeAnnotation := PTree},
                          ?TABULATOR,
                          ?TABULATOR,
                          ?TABULATOR,
+                         ?TABULATOR,
                          "<Object>",
                          maps:get(object@, PTree),
                          "</Object>",
                          ?CHAR_NEWLINE,
+                         ?TABULATOR,
                          ?TABULATOR,
                          ?TABULATOR,
                          "</Privilege>",
@@ -828,6 +832,32 @@ fold(_LOpts, _FunState, Ctx, _PTree, {plsqlUnit, Step} = _FoldState) ->
     ?CUSTOM_RESULT(RT);
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% privilegeRoleAnnotationList@_@
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+fold(LOpts, _FunState, Ctx, _PTree, {privilegeRoleAnnotationList@_@, Step} = _FoldState) ->
+    ?CUSTOM_INIT(_FunState, Ctx, _PTree, _FoldState),
+    RT = case Step of
+             start -> lists:append(
+                 [
+                     Ctx,
+                     ?TABULATOR,
+                     ?TABULATOR,
+                     "<PrivilegesRoles>",
+                     ?CHAR_NEWLINE
+                 ]);
+             _ -> lists:append(
+                 [
+                     Ctx,
+                     ?TABULATOR,
+                     ?TABULATOR,
+                     "</PrivilegesRoles>",
+                     ?CHAR_NEWLINE
+                 ])
+         end,
+    ?CUSTOM_RESULT(RT);
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % procedureLegacyAnnotation
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -889,6 +919,7 @@ fold(LOpts, _FunState, Ctx, #{roleAnnotation := PTree}, {roleAnnotation, Step} =
                          Ctx,
                          ?TABULATOR,
                          ?TABULATOR,
+                         ?TABULATOR,
                          "<Role>",
                          maps:get(role@, PTree),
                          "</Role>",
@@ -912,8 +943,10 @@ fold(LOpts, _FunState, Ctx, #{systemPrivilegeAnnotation := PTree},
                          Ctx,
                          ?TABULATOR,
                          ?TABULATOR,
+                         ?TABULATOR,
                          "<Privilege>",
                          ?CHAR_NEWLINE,
+                         ?TABULATOR,
                          ?TABULATOR,
                          ?TABULATOR,
                          ?TABULATOR,
@@ -921,6 +954,7 @@ fold(LOpts, _FunState, Ctx, #{systemPrivilegeAnnotation := PTree},
                          maps:get(privilegeType@, PTree),
                          "</Type>",
                          ?CHAR_NEWLINE,
+                         ?TABULATOR,
                          ?TABULATOR,
                          ?TABULATOR,
                          "</Privilege>",
@@ -1032,7 +1066,6 @@ fold(_LOpts, _FunState, Ctx, _PTree, {Rule, _Step}) when
     Rule == plsqlPackageSourceAttribute;
     Rule == plsqlUnit;
     Rule == plsqlUnitList;
-    Rule == privilegeRoleAnnotationList@_@;
     Rule == procedureAnnotation;
     Rule == procedureHeading;
     Rule == resultCacheClause;

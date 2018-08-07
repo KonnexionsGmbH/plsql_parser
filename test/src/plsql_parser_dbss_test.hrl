@@ -191,6 +191,85 @@ end
 </Package>").
 
 %%------------------------------------------------------------------------------
+%% TEST 05 - annotations.
+%%------------------------------------------------------------------------------
+
+-define(TEST_05, "
+create package my_package as
+--<> legacy_name_function = my_function_name
+--<> legacy_name_procedure = my_procedure_name
+--<> object_privilege execute = dbss.func_1
+--<> role = my_role_1
+--<> system_privilege = INHERIT ANY PRIVILEGES
+--<> object_privilege execute = dbss.func_2
+--<> role = my_role_2
+--<> system_privilege = SELECT ANY TABLE
+--<> object_privilege execute = dbss.func_3
+--<> role = my_role_3
+--<> system_privilege = SET CONTAINER
+--<> object_privilege execute = dbss.func_4
+--<> role = my_role_4
+--<> system_privilege = UNLIMITED TABLESPACE
+--<> object_privilege execute = dbss.func_5
+--<> role = my_role_5
+--<> system_privilege = SELECT ANY DIRECTORY
+procedure my_procedure;
+end;
+").
+
+-define(TEST_05_RESULT_DEFAULT, "<?xml version='1.0' encoding='UTF-8'?>
+<Package xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:noNamespaceSchemaLocation='../../priv/dbss.xsd'>
+    <Name>my_package</Name>
+    <Procedure>
+        <Name>my_procedure</Name>
+        <LegacyNameFunction>my_function_name</LegacyNameFunction>
+        <LegacyNameProcedure>my_procedure_name</LegacyNameProcedure>
+        <PrivilegesRoles>
+            <Privilege>
+                <Type>EXECUTE</Type>
+                <Object>dbss.func_1</Object>
+            </Privilege>
+            <Role>my_role_1</Role>
+            <Privilege>
+                <Type>INHERIT ANY PRIVILEGES</Type>
+            </Privilege>
+            <Privilege>
+                <Type>EXECUTE</Type>
+                <Object>dbss.func_2</Object>
+            </Privilege>
+            <Role>my_role_2</Role>
+            <Privilege>
+                <Type>SELECT ANY TABLE</Type>
+            </Privilege>
+            <Privilege>
+                <Type>EXECUTE</Type>
+                <Object>dbss.func_3</Object>
+            </Privilege>
+            <Role>my_role_3</Role>
+            <Privilege>
+                <Type>SET CONTAINER</Type>
+            </Privilege>
+            <Privilege>
+                <Type>EXECUTE</Type>
+                <Object>dbss.func_4</Object>
+            </Privilege>
+            <Role>my_role_4</Role>
+            <Privilege>
+                <Type>UNLIMITED TABLESPACE</Type>
+            </Privilege>
+            <Privilege>
+                <Type>EXECUTE</Type>
+                <Object>dbss.func_5</Object>
+            </Privilege>
+            <Role>my_role_5</Role>
+            <Privilege>
+                <Type>SELECT ANY DIRECTORY</Type>
+            </Privilege>
+        </PrivilegesRoles>
+    </Procedure>
+</Package>").
+
+%%------------------------------------------------------------------------------
 %% TEST 11 - Complete test.
 %%------------------------------------------------------------------------------
 
@@ -1535,9 +1614,11 @@ END dbss_flashback;
         <Condition>
             <IfEnd>DBMS_DB_VERSION.version = 12 AND DBMS_DB_VERSION.release = 1</IfEnd>
         </Condition>
-        <Privilege>
-            <Type>FLASHBACK ANY TABLE</Type>
-        </Privilege>
+        <PrivilegesRoles>
+            <Privilege>
+                <Type>FLASHBACK ANY TABLE</Type>
+            </Privilege>
+        </PrivilegesRoles>
         <Parameter>
             <Name>p_sqls_cv_in_out</Name>
             <Mode>IN OUT</Mode>
@@ -1589,9 +1670,11 @@ END dbss_flashback;
         <Condition>
             <IfEnd>DBMS_DB_VERSION.version > 12 OR DBMS_DB_VERSION.version = 12 AND DBMS_DB_VERSION.release > 1</IfEnd>
         </Condition>
-        <Privilege>
-            <Type>FLASHBACK ANY TABLE</Type>
-        </Privilege>
+        <PrivilegesRoles>
+            <Privilege>
+                <Type>FLASHBACK ANY TABLE</Type>
+            </Privilege>
+        </PrivilegesRoles>
         <Parameter>
             <Name>p_sqls_cv_in_out</Name>
             <Mode>IN OUT</Mode>
@@ -1651,9 +1734,11 @@ END dbss_flashback;
         <Condition>
             <IfEnd>DBMS_DB_VERSION.version = 12 AND DBMS_DB_VERSION.release = 1</IfEnd>
         </Condition>
-        <Privilege>
-            <Type>SYSDBA</Type>
-        </Privilege>
+        <PrivilegesRoles>
+            <Privilege>
+                <Type>SYSDBA</Type>
+            </Privilege>
+        </PrivilegesRoles>
         <Parameter>
             <Name>p_sqls_cv_in_out</Name>
             <Mode>IN OUT</Mode>
@@ -1705,9 +1790,11 @@ END dbss_flashback;
         <Condition>
             <IfEnd>DBMS_DB_VERSION.version > 12 OR DBMS_DB_VERSION.version = 12 AND DBMS_DB_VERSION.release > 1</IfEnd>
         </Condition>
-        <Privilege>
-            <Type>SYSDBA</Type>
-        </Privilege>
+        <PrivilegesRoles>
+            <Privilege>
+                <Type>SYSDBA</Type>
+            </Privilege>
+        </PrivilegesRoles>
         <Parameter>
             <Name>p_sqls_cv_in_out</Name>
             <Mode>IN OUT</Mode>
@@ -1767,9 +1854,11 @@ END dbss_flashback;
         <Condition>
             <IfEnd>DBMS_DB_VERSION.version = 12 AND DBMS_DB_VERSION.release = 1</IfEnd>
         </Condition>
-        <Privilege>
-            <Type>FLASHBACK ANY TABLE</Type>
-        </Privilege>
+        <PrivilegesRoles>
+            <Privilege>
+                <Type>FLASHBACK ANY TABLE</Type>
+            </Privilege>
+        </PrivilegesRoles>
         <Parameter>
             <Name>p_sqls_cv_in_out</Name>
             <Mode>IN OUT</Mode>
@@ -1821,9 +1910,11 @@ END dbss_flashback;
         <Condition>
             <IfEnd>DBMS_DB_VERSION.version > 12 OR DBMS_DB_VERSION.version = 12 AND DBMS_DB_VERSION.release > 1</IfEnd>
         </Condition>
-        <Privilege>
-            <Type>FLASHBACK ANY TABLE</Type>
-        </Privilege>
+        <PrivilegesRoles>
+            <Privilege>
+                <Type>FLASHBACK ANY TABLE</Type>
+            </Privilege>
+        </PrivilegesRoles>
         <Parameter>
             <Name>p_sqls_cv_in_out</Name>
             <Mode>IN OUT</Mode>
@@ -1880,9 +1971,11 @@ END dbss_flashback;
     </Procedure>
     <Procedure>
         <Name>del_rstr_pnt</Name>
-        <Privilege>
-            <Type>SYSDBA</Type>
-        </Privilege>
+        <PrivilegesRoles>
+            <Privilege>
+                <Type>SYSDBA</Type>
+            </Privilege>
+        </PrivilegesRoles>
         <Parameter>
             <Name>p_sqls_cv_in_out</Name>
             <Mode>IN OUT</Mode>
@@ -1923,9 +2016,11 @@ END dbss_flashback;
     </Procedure>
     <Procedure>
         <Name>del_rstr_pnts</Name>
-        <Privilege>
-            <Type>SYSDBA</Type>
-        </Privilege>
+        <PrivilegesRoles>
+            <Privilege>
+                <Type>SYSDBA</Type>
+            </Privilege>
+        </PrivilegesRoles>
         <Parameter>
             <Name>p_sqls_cv_in_out</Name>
             <Mode>IN OUT</Mode>
@@ -1958,9 +2053,11 @@ END dbss_flashback;
     </Procedure>
     <Procedure>
         <Name>del_rstr_pnts_guar</Name>
-        <Privilege>
-            <Type>SYSDBA</Type>
-        </Privilege>
+        <PrivilegesRoles>
+            <Privilege>
+                <Type>SYSDBA</Type>
+            </Privilege>
+        </PrivilegesRoles>
         <Parameter>
             <Name>p_sqls_cv_in_out</Name>
             <Mode>IN OUT</Mode>
@@ -1993,9 +2090,11 @@ END dbss_flashback;
     </Procedure>
     <Procedure>
         <Name>del_rstr_pnts_norm</Name>
-        <Privilege>
-            <Type>FLASHBACK ANY TABLE</Type>
-        </Privilege>
+        <PrivilegesRoles>
+            <Privilege>
+                <Type>FLASHBACK ANY TABLE</Type>
+            </Privilege>
+        </PrivilegesRoles>
         <Parameter>
             <Name>p_sqls_cv_in_out</Name>
             <Mode>IN OUT</Mode>
@@ -2028,9 +2127,11 @@ END dbss_flashback;
     </Procedure>
     <Procedure>
         <Name>del_rstr_pnts_pres</Name>
-        <Privilege>
-            <Type>FLASHBACK ANY TABLE</Type>
-        </Privilege>
+        <PrivilegesRoles>
+            <Privilege>
+                <Type>FLASHBACK ANY TABLE</Type>
+            </Privilege>
+        </PrivilegesRoles>
         <Parameter>
             <Name>p_sqls_cv_in_out</Name>
             <Mode>IN OUT</Mode>
@@ -2066,10 +2167,12 @@ END dbss_flashback;
         <Condition>
             <IfEnd>DBMS_DB_VERSION.version = 12 AND DBMS_DB_VERSION.release = 1</IfEnd>
         </Condition>
-        <Privilege>
-            <Type>SELECT</Type>
-            <Object>v$restore_point</Object>
-        </Privilege>
+        <PrivilegesRoles>
+            <Privilege>
+                <Type>SELECT</Type>
+                <Object>v$restore_point</Object>
+            </Privilege>
+        </PrivilegesRoles>
         <Parameter>
             <Name>p_rstr_pnts_cv_out</Name>
             <Mode>OUT</Mode>
@@ -2113,10 +2216,12 @@ END dbss_flashback;
         <Condition>
             <IfEnd>DBMS_DB_VERSION.version > 12 OR DBMS_DB_VERSION.version = 12 AND DBMS_DB_VERSION.release > 1</IfEnd>
         </Condition>
-        <Privilege>
-            <Type>SELECT</Type>
-            <Object>v$restore_point</Object>
-        </Privilege>
+        <PrivilegesRoles>
+            <Privilege>
+                <Type>SELECT</Type>
+                <Object>v$restore_point</Object>
+            </Privilege>
+        </PrivilegesRoles>
         <Parameter>
             <Name>p_rstr_pnts_cv_out</Name>
             <Mode>OUT</Mode>
@@ -2165,16 +2270,18 @@ END dbss_flashback;
     </Procedure>
     <Procedure>
         <Name>set_flashback_off</Name>
-        <Privilege>
-            <Type>SELECT</Type>
-            <Object>v$database</Object>
-        </Privilege>
-        <Privilege>
-            <Type>ALTER DATABASE</Type>
-        </Privilege>
-        <Privilege>
-            <Type>SET CONTAINER</Type>
-        </Privilege>
+        <PrivilegesRoles>
+            <Privilege>
+                <Type>SELECT</Type>
+                <Object>v$database</Object>
+            </Privilege>
+            <Privilege>
+                <Type>ALTER DATABASE</Type>
+            </Privilege>
+            <Privilege>
+                <Type>SET CONTAINER</Type>
+            </Privilege>
+        </PrivilegesRoles>
         <Parameter>
             <Name>p_sqls_cv_in_out</Name>
             <Mode>IN OUT</Mode>
@@ -2207,16 +2314,18 @@ END dbss_flashback;
     </Procedure>
     <Procedure>
         <Name>set_flashback_on</Name>
-        <Privilege>
-            <Type>SELECT</Type>
-            <Object>v$database</Object>
-        </Privilege>
-        <Privilege>
-            <Type>ALTER DATABASE</Type>
-        </Privilege>
-        <Privilege>
-            <Type>SET CONTAINER</Type>
-        </Privilege>
+        <PrivilegesRoles>
+            <Privilege>
+                <Type>SELECT</Type>
+                <Object>v$database</Object>
+            </Privilege>
+            <Privilege>
+                <Type>ALTER DATABASE</Type>
+            </Privilege>
+            <Privilege>
+                <Type>SET CONTAINER</Type>
+            </Privilege>
+        </PrivilegesRoles>
         <Parameter>
             <Name>p_sqls_cv_in_out</Name>
             <Mode>IN OUT</Mode>
@@ -2511,10 +2620,12 @@ END dbss_flashback;
         <Condition>
             <IfEnd>DBMS_DB_VERSION.version = 12 AND DBMS_DB_VERSION.release = 1</IfEnd>
         </Condition>
-        <Role>dbss_r_flashback</Role>
-        <Privilege>
-            <Type>FLASHBACK ANY TABLE</Type>
-        </Privilege>
+        <PrivilegesRoles>
+            <Role>dbss_r_flashback</Role>
+            <Privilege>
+                <Type>FLASHBACK ANY TABLE</Type>
+            </Privilege>
+        </PrivilegesRoles>
         <Parameter>
             <LoggerToCharacter>none</LoggerToCharacter>
             <Name>p_sqls_cv_in_out</Name>
@@ -2568,10 +2679,12 @@ END dbss_flashback;
         <Condition>
             <IfEnd>DBMS_DB_VERSION.version > 12 OR DBMS_DB_VERSION.version = 12 AND DBMS_DB_VERSION.release > 1</IfEnd>
         </Condition>
-        <Role>dbss_r_flashback</Role>
-        <Privilege>
-            <Type>FLASHBACK ANY TABLE</Type>
-        </Privilege>
+        <PrivilegesRoles>
+            <Role>dbss_r_flashback</Role>
+            <Privilege>
+                <Type>FLASHBACK ANY TABLE</Type>
+            </Privilege>
+        </PrivilegesRoles>
         <Parameter>
             <LoggerToCharacter>none</LoggerToCharacter>
             <Name>p_sqls_cv_in_out</Name>
@@ -2633,10 +2746,12 @@ END dbss_flashback;
         <Condition>
             <IfEnd>DBMS_DB_VERSION.version = 12 AND DBMS_DB_VERSION.release = 1</IfEnd>
         </Condition>
-        <Role>dbss_r_flashback</Role>
-        <Privilege>
-            <Type>SYSDBA</Type>
-        </Privilege>
+        <PrivilegesRoles>
+            <Role>dbss_r_flashback</Role>
+            <Privilege>
+                <Type>SYSDBA</Type>
+            </Privilege>
+        </PrivilegesRoles>
         <Parameter>
             <LoggerToCharacter>none</LoggerToCharacter>
             <Name>p_sqls_cv_in_out</Name>
@@ -2690,10 +2805,12 @@ END dbss_flashback;
         <Condition>
             <IfEnd>DBMS_DB_VERSION.version > 12 OR DBMS_DB_VERSION.version = 12 AND DBMS_DB_VERSION.release > 1</IfEnd>
         </Condition>
-        <Role>dbss_r_flashback</Role>
-        <Privilege>
-            <Type>SYSDBA</Type>
-        </Privilege>
+        <PrivilegesRoles>
+            <Role>dbss_r_flashback</Role>
+            <Privilege>
+                <Type>SYSDBA</Type>
+            </Privilege>
+        </PrivilegesRoles>
         <Parameter>
             <LoggerToCharacter>none</LoggerToCharacter>
             <Name>p_sqls_cv_in_out</Name>
@@ -2755,10 +2872,12 @@ END dbss_flashback;
         <Condition>
             <IfEnd>DBMS_DB_VERSION.version = 12 AND DBMS_DB_VERSION.release = 1</IfEnd>
         </Condition>
-        <Role>dbss_r_flashback</Role>
-        <Privilege>
-            <Type>FLASHBACK ANY TABLE</Type>
-        </Privilege>
+        <PrivilegesRoles>
+            <Role>dbss_r_flashback</Role>
+            <Privilege>
+                <Type>FLASHBACK ANY TABLE</Type>
+            </Privilege>
+        </PrivilegesRoles>
         <Parameter>
             <LoggerToCharacter>none</LoggerToCharacter>
             <Name>p_sqls_cv_in_out</Name>
@@ -2812,10 +2931,12 @@ END dbss_flashback;
         <Condition>
             <IfEnd>DBMS_DB_VERSION.version > 12 OR DBMS_DB_VERSION.version = 12 AND DBMS_DB_VERSION.release > 1</IfEnd>
         </Condition>
-        <Role>dbss_r_flashback</Role>
-        <Privilege>
-            <Type>FLASHBACK ANY TABLE</Type>
-        </Privilege>
+        <PrivilegesRoles>
+            <Role>dbss_r_flashback</Role>
+            <Privilege>
+                <Type>FLASHBACK ANY TABLE</Type>
+            </Privilege>
+        </PrivilegesRoles>
         <Parameter>
             <LoggerToCharacter>none</LoggerToCharacter>
             <Name>p_sqls_cv_in_out</Name>
@@ -2874,10 +2995,12 @@ END dbss_flashback;
     </Procedure>
     <Procedure>
         <Name>del_rstr_pnt</Name>
-        <Role>dbss_r_flashback</Role>
-        <Privilege>
-            <Type>SYSDBA</Type>
-        </Privilege>
+        <PrivilegesRoles>
+            <Role>dbss_r_flashback</Role>
+            <Privilege>
+                <Type>SYSDBA</Type>
+            </Privilege>
+        </PrivilegesRoles>
         <Parameter>
             <LoggerToCharacter>none</LoggerToCharacter>
             <Name>p_sqls_cv_in_out</Name>
@@ -2920,10 +3043,12 @@ END dbss_flashback;
     </Procedure>
     <Procedure>
         <Name>del_rstr_pnts</Name>
-        <Role>dbss_r_flashback</Role>
-        <Privilege>
-            <Type>SYSDBA</Type>
-        </Privilege>
+        <PrivilegesRoles>
+            <Role>dbss_r_flashback</Role>
+            <Privilege>
+                <Type>SYSDBA</Type>
+            </Privilege>
+        </PrivilegesRoles>
         <Parameter>
             <LoggerToCharacter>none</LoggerToCharacter>
             <Name>p_sqls_cv_in_out</Name>
@@ -2957,10 +3082,12 @@ END dbss_flashback;
     </Procedure>
     <Procedure>
         <Name>del_rstr_pnts_guar</Name>
-        <Role>dbss_r_flashback</Role>
-        <Privilege>
-            <Type>SYSDBA</Type>
-        </Privilege>
+        <PrivilegesRoles>
+            <Role>dbss_r_flashback</Role>
+            <Privilege>
+                <Type>SYSDBA</Type>
+            </Privilege>
+        </PrivilegesRoles>
         <Parameter>
             <LoggerToCharacter>none</LoggerToCharacter>
             <Name>p_sqls_cv_in_out</Name>
@@ -2994,10 +3121,12 @@ END dbss_flashback;
     </Procedure>
     <Procedure>
         <Name>del_rstr_pnts_norm</Name>
-        <Role>dbss_r_flashback</Role>
-        <Privilege>
-            <Type>FLASHBACK ANY TABLE</Type>
-        </Privilege>
+        <PrivilegesRoles>
+            <Role>dbss_r_flashback</Role>
+            <Privilege>
+                <Type>FLASHBACK ANY TABLE</Type>
+            </Privilege>
+        </PrivilegesRoles>
         <Parameter>
             <LoggerToCharacter>none</LoggerToCharacter>
             <Name>p_sqls_cv_in_out</Name>
@@ -3031,10 +3160,12 @@ END dbss_flashback;
     </Procedure>
     <Procedure>
         <Name>del_rstr_pnts_pres</Name>
-        <Role>dbss_r_flashback</Role>
-        <Privilege>
-            <Type>FLASHBACK ANY TABLE</Type>
-        </Privilege>
+        <PrivilegesRoles>
+            <Role>dbss_r_flashback</Role>
+            <Privilege>
+                <Type>FLASHBACK ANY TABLE</Type>
+            </Privilege>
+        </PrivilegesRoles>
         <Parameter>
             <LoggerToCharacter>none</LoggerToCharacter>
             <Name>p_sqls_cv_in_out</Name>
@@ -3071,11 +3202,13 @@ END dbss_flashback;
         <Condition>
             <IfEnd>DBMS_DB_VERSION.version = 12 AND DBMS_DB_VERSION.release = 1</IfEnd>
         </Condition>
-        <Privilege>
-            <Type>SELECT</Type>
-            <Object>sys.v_$restore_point</Object>
-        </Privilege>
-        <Role>dbss_r_flashback</Role>
+        <PrivilegesRoles>
+            <Privilege>
+                <Type>SELECT</Type>
+                <Object>sys.v_$restore_point</Object>
+            </Privilege>
+            <Role>dbss_r_flashback</Role>
+        </PrivilegesRoles>
         <Parameter>
             <LoggerToCharacter>none</LoggerToCharacter>
             <Name>p_rstr_pnts_cv_out</Name>
@@ -3122,11 +3255,13 @@ END dbss_flashback;
         <Condition>
             <IfEnd>DBMS_DB_VERSION.version > 12 OR DBMS_DB_VERSION.version = 12 AND DBMS_DB_VERSION.release > 1</IfEnd>
         </Condition>
-        <Privilege>
-            <Type>SELECT</Type>
-            <Object>sys.v_$restore_point</Object>
-        </Privilege>
-        <Role>dbss_r_flashback</Role>
+        <PrivilegesRoles>
+            <Privilege>
+                <Type>SELECT</Type>
+                <Object>sys.v_$restore_point</Object>
+            </Privilege>
+            <Role>dbss_r_flashback</Role>
+        </PrivilegesRoles>
         <Parameter>
             <LoggerToCharacter>none</LoggerToCharacter>
             <Name>p_rstr_pnts_cv_out</Name>
@@ -3179,16 +3314,18 @@ END dbss_flashback;
     </Procedure>
     <Procedure>
         <Name>set_flashback_off</Name>
-        <Privilege>
-            <Type>SELECT</Type>
-            <Object>sys.v_$database</Object>
-        </Privilege>
-        <Privilege>
-            <Type>ALTER DATABASE</Type>
-        </Privilege>
-        <Privilege>
-            <Type>SET CONTAINER</Type>
-        </Privilege>
+        <PrivilegesRoles>
+            <Privilege>
+                <Type>SELECT</Type>
+                <Object>sys.v_$database</Object>
+            </Privilege>
+            <Privilege>
+                <Type>ALTER DATABASE</Type>
+            </Privilege>
+            <Privilege>
+                <Type>SET CONTAINER</Type>
+            </Privilege>
+        </PrivilegesRoles>
         <Parameter>
             <LoggerToCharacter>none</LoggerToCharacter>
             <Name>p_sqls_cv_in_out</Name>
@@ -3222,16 +3359,18 @@ END dbss_flashback;
     </Procedure>
     <Procedure>
         <Name>set_flashback_on</Name>
-        <Privilege>
-            <Type>SELECT</Type>
-            <Object>sys.v_$database</Object>
-        </Privilege>
-        <Privilege>
-            <Type>ALTER DATABASE</Type>
-        </Privilege>
-        <Privilege>
-            <Type>SET CONTAINER</Type>
-        </Privilege>
+        <PrivilegesRoles>
+            <Privilege>
+                <Type>SELECT</Type>
+                <Object>sys.v_$database</Object>
+            </Privilege>
+            <Privilege>
+                <Type>ALTER DATABASE</Type>
+            </Privilege>
+            <Privilege>
+                <Type>SET CONTAINER</Type>
+            </Privilege>
+        </PrivilegesRoles>
         <Parameter>
             <LoggerToCharacter>none</LoggerToCharacter>
             <Name>p_sqls_cv_in_out</Name>
