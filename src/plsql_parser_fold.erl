@@ -298,14 +298,20 @@ fold_i(Fun, LOpts, FunState, Ctx, #{functionAnnotation := Value} = PTree) ->
                           maps:get(functionLegacyAnnotation@, Value));
                   _ -> NewCtxS
               end,
-    NewCtx2 = case maps:is_key(privilegeRoleAnnotationList@, Value) of
+    NewCtx2 = case maps:is_key(functionSimpleLegacyAnnotation@, Value) of
                   true ->
                       fold_i(Fun, LOpts, FunState, NewCtx1,
-                          {privilegeRoleAnnotationList@_@,
-                              maps:get(privilegeRoleAnnotationList@, Value)});
+                          maps:get(functionSimpleLegacyAnnotation@, Value));
                   _ -> NewCtx1
               end,
-    NewCtxE = Fun(LOpts, FunState, NewCtx2, PTree, {Rule, 'end'}),
+    NewCtx3 = case maps:is_key(privilegeRoleAnnotationList@, Value) of
+                  true ->
+                      fold_i(Fun, LOpts, FunState, NewCtx2,
+                          {privilegeRoleAnnotationList@_@,
+                              maps:get(privilegeRoleAnnotationList@, Value)});
+                  _ -> NewCtx2
+              end,
+    NewCtxE = Fun(LOpts, FunState, NewCtx3, PTree, {Rule, 'end'}),
     ?FOLD_RESULT(NewCtxE);
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -391,6 +397,18 @@ fold_i(Fun, LOpts, FunState, Ctx, #{functionLegacyAnnotation := _Value} =
     PTree) ->
     ?FOLD_INIT(FunState, Ctx, PTree),
     Rule = functionLegacyAnnotation,
+    NewCtxS = Fun(LOpts, FunState, Ctx, PTree, {Rule, start}),
+    NewCtxE = Fun(LOpts, FunState, NewCtxS, PTree, {Rule, 'end'}),
+    ?FOLD_RESULT(NewCtxE);
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% functionSimpleLegacyAnnotation
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+fold_i(Fun, LOpts, FunState, Ctx, #{functionSimpleLegacyAnnotation := _Value} =
+    PTree) ->
+    ?FOLD_INIT(FunState, Ctx, PTree),
+    Rule = functionSimpleLegacyAnnotation,
     NewCtxS = Fun(LOpts, FunState, Ctx, PTree, {Rule, start}),
     NewCtxE = Fun(LOpts, FunState, NewCtxS, PTree, {Rule, 'end'}),
     ?FOLD_RESULT(NewCtxE);
@@ -772,20 +790,26 @@ fold_i(Fun, LOpts, FunState, Ctx, #{procedureAnnotation := Value} = PTree) ->
                           maps:get(functionLegacyAnnotation@, Value));
                   _ -> NewCtxS
               end,
-    NewCtx2 = case maps:is_key(procedureLegacyAnnotation@, Value) of
+    NewCtx2 = case maps:is_key(functionSimpleLegacyAnnotation@, Value) of
                   true ->
                       fold_i(Fun, LOpts, FunState, NewCtx1,
-                          maps:get(procedureLegacyAnnotation@, Value));
+                          maps:get(functionSimpleLegacyAnnotation@, Value));
                   _ -> NewCtx1
               end,
-    NewCtx3 = case maps:is_key(privilegeRoleAnnotationList@, Value) of
+    NewCtx3 = case maps:is_key(procedureLegacyAnnotation@, Value) of
                   true ->
                       fold_i(Fun, LOpts, FunState, NewCtx2,
-                          {privilegeRoleAnnotationList@_@,
-                              maps:get(privilegeRoleAnnotationList@, Value)});
+                          maps:get(procedureLegacyAnnotation@, Value));
                   _ -> NewCtx2
               end,
-    NewCtxE = Fun(LOpts, FunState, NewCtx3, PTree, {Rule, 'end'}),
+    NewCtx4 = case maps:is_key(privilegeRoleAnnotationList@, Value) of
+                  true ->
+                      fold_i(Fun, LOpts, FunState, NewCtx3,
+                          {privilegeRoleAnnotationList@_@,
+                              maps:get(privilegeRoleAnnotationList@, Value)});
+                  _ -> NewCtx3
+              end,
+    NewCtxE = Fun(LOpts, FunState, NewCtx4, PTree, {Rule, 'end'}),
     ?FOLD_RESULT(NewCtxE);
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
