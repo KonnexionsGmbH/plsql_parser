@@ -414,6 +414,7 @@ PlsqlPackageSourceAttribute03.              PlsqlPackageSourceAttribute ::= Invo
 
 -- systemPrivilegeType -> ALTER DATABASE         : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2')]).
 -- systemPrivilegeType -> ALTER SESSION          : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2')]).
+-- systemPrivilegeType -> ALTER USER             : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2')]).
 -- systemPrivilegeType -> CREATE ANY CONTEXT     : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2'), " ", unwrap_2_list('$3')]).
 -- systemPrivilegeType -> CREATE ANY CREDENTIAL  : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2'), " ", unwrap_2_list('$3')]).
 -- systemPrivilegeType -> CREATE ANY DIRECTORY   : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2'), " ", unwrap_2_list('$3')]).
@@ -438,27 +439,28 @@ PlsqlPackageSourceAttribute03.              PlsqlPackageSourceAttribute ::= Invo
 
 SystemPrivilegeType01.                      SystemPrivilegeType ::= "ALTER" "DATABASE"           ;
 SystemPrivilegeType02.                      SystemPrivilegeType ::= "ALTER" "SESSION"            ;
-SystemPrivilegeType03.                      SystemPrivilegeType ::= "CREATE" "ANY" "CONTEXT"     ;
-SystemPrivilegeType04.                      SystemPrivilegeType ::= "CREATE" "ANY" "CREDENTIAL"  ;
-SystemPrivilegeType05.                      SystemPrivilegeType ::= "CREATE" "ANY" "DIRECTORY"   ;
-SystemPrivilegeType06.                      SystemPrivilegeType ::= "CREATE" "CREDENTIAL"        ;
-SystemPrivilegeType07.                      SystemPrivilegeType ::= "CREATE" "EXTERNAL" "JOB"    ;
-SystemPrivilegeType08.                      SystemPrivilegeType ::= "CREATE" "JOB"               ;
-SystemPrivilegeType09.                      SystemPrivilegeType ::= "CREATE" "PROCEDURE"         ;
-SystemPrivilegeType10.                      SystemPrivilegeType ::= "CREATE" "SEQUENCE"          ;
-SystemPrivilegeType11.                      SystemPrivilegeType ::= "CREATE" "SESSION"           ;
-SystemPrivilegeType12.                      SystemPrivilegeType ::= "CREATE" "TABLE"             ;
-SystemPrivilegeType13.                      SystemPrivilegeType ::= "CREATE" "TRIGGER"           ;
-SystemPrivilegeType14.                      SystemPrivilegeType ::= "CREATE" "TYPE"              ;
-SystemPrivilegeType15.                      SystemPrivilegeType ::= "CREATE" "VIEW"              ;
-SystemPrivilegeType16.                      SystemPrivilegeType ::= "DROP" "ANY" "DIRECTORY"     ;
-SystemPrivilegeType17.                      SystemPrivilegeType ::= "FLASHBACK" "ANY" "TABLE"    ;
-SystemPrivilegeType18.                      SystemPrivilegeType ::= "INHERIT" "ANY" "PRIVILEGES" ;
-SystemPrivilegeType19.                      SystemPrivilegeType ::= "SELECT" "ANY" "DIRECTORY"   ;
-SystemPrivilegeType20.                      SystemPrivilegeType ::= "SELECT" "ANY" "TABLE"       ;
-SystemPrivilegeType21.                      SystemPrivilegeType ::= "SET" "CONTAINER"            ;
-SystemPrivilegeType22.                      SystemPrivilegeType ::= "SYSDBA"                     ;
-SystemPrivilegeType23.                      SystemPrivilegeType ::= "UNLIMITED" "TABLESPACE"     ;
+SystemPrivilegeType03.                      SystemPrivilegeType ::= "ALTER" "USER"               ;
+SystemPrivilegeType04.                      SystemPrivilegeType ::= "CREATE" "ANY" "CONTEXT"     ;
+SystemPrivilegeType05.                      SystemPrivilegeType ::= "CREATE" "ANY" "CREDENTIAL"  ;
+SystemPrivilegeType06.                      SystemPrivilegeType ::= "CREATE" "ANY" "DIRECTORY"   ;
+SystemPrivilegeType07.                      SystemPrivilegeType ::= "CREATE" "CREDENTIAL"        ;
+SystemPrivilegeType08.                      SystemPrivilegeType ::= "CREATE" "EXTERNAL" "JOB"    ;
+SystemPrivilegeType09.                      SystemPrivilegeType ::= "CREATE" "JOB"               ;
+SystemPrivilegeType10.                      SystemPrivilegeType ::= "CREATE" "PROCEDURE"         ;
+SystemPrivilegeType11.                      SystemPrivilegeType ::= "CREATE" "SEQUENCE"          ;
+SystemPrivilegeType12.                      SystemPrivilegeType ::= "CREATE" "SESSION"           ;
+SystemPrivilegeType13.                      SystemPrivilegeType ::= "CREATE" "TABLE"             ;
+SystemPrivilegeType14.                      SystemPrivilegeType ::= "CREATE" "TRIGGER"           ;
+SystemPrivilegeType15.                      SystemPrivilegeType ::= "CREATE" "TYPE"              ;
+SystemPrivilegeType16.                      SystemPrivilegeType ::= "CREATE" "VIEW"              ;
+SystemPrivilegeType17.                      SystemPrivilegeType ::= "DROP" "ANY" "DIRECTORY"     ;
+SystemPrivilegeType18.                      SystemPrivilegeType ::= "FLASHBACK" "ANY" "TABLE"    ;
+SystemPrivilegeType19.                      SystemPrivilegeType ::= "INHERIT" "ANY" "PRIVILEGES" ;
+SystemPrivilegeType20.                      SystemPrivilegeType ::= "SELECT" "ANY" "DIRECTORY"   ;
+SystemPrivilegeType21.                      SystemPrivilegeType ::= "SELECT" "ANY" "TABLE"       ;
+SystemPrivilegeType22.                      SystemPrivilegeType ::= "SET" "CONTAINER"            ;
+SystemPrivilegeType23.                      SystemPrivilegeType ::= "SYSDBA"                     ;
+SystemPrivilegeType24.                      SystemPrivilegeType ::= "UNLIMITED" "TABLESPACE"     ;
 
 -- Level 07 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

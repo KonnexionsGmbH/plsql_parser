@@ -315,6 +315,31 @@ packageItemSimple -> packageItem : #{packageItemSimple => #{packageItem@ => '$1'
 plsqlPackageSourceAttribute -> accessibleByClause     : #{plsqlPackageSourceAttribute => '$1'}.
 plsqlPackageSourceAttribute -> defaultCollationClause : #{plsqlPackageSourceAttribute => '$1'}.
 plsqlPackageSourceAttribute -> invokerRightsClause    : #{plsqlPackageSourceAttribute => '$1'}.
+
+systemPrivilegeType -> ALTER DATABASE         : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2')]).
+systemPrivilegeType -> ALTER SESSION          : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2')]).
+systemPrivilegeType -> ALTER USER             : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2')]).
+systemPrivilegeType -> CREATE ANY CONTEXT     : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2'), " ", unwrap_2_list('$3')]).
+systemPrivilegeType -> CREATE ANY CREDENTIAL  : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2'), " ", unwrap_2_list('$3')]).
+systemPrivilegeType -> CREATE ANY DIRECTORY   : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2'), " ", unwrap_2_list('$3')]).
+systemPrivilegeType -> CREATE CREDENTIAL      : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2')]).
+systemPrivilegeType -> CREATE EXTERNAL JOB    : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2'), " ", unwrap_2_list('$3')]).
+systemPrivilegeType -> CREATE JOB             : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2')]).
+systemPrivilegeType -> CREATE PROCEDURE       : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2')]).
+systemPrivilegeType -> CREATE SEQUENCE        : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2')]).
+systemPrivilegeType -> CREATE SESSION         : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2')]).
+systemPrivilegeType -> CREATE TABLE           : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2')]).
+systemPrivilegeType -> CREATE TRIGGER         : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2')]).
+systemPrivilegeType -> CREATE TYPE            : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2')]).
+systemPrivilegeType -> CREATE VIEW            : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2')]).
+systemPrivilegeType -> DROP ANY DIRECTORY     : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2'), " ", unwrap_2_list('$3')]).
+systemPrivilegeType -> FLASHBACK ANY TABLE    : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2'), " ", unwrap_2_list('$3')]).
+systemPrivilegeType -> INHERIT ANY PRIVILEGES : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2'), " ", unwrap_2_list('$3')]).
+systemPrivilegeType -> SELECT ANY DIRECTORY   : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2'), " ", unwrap_2_list('$3')]).
+systemPrivilegeType -> SELECT ANY TABLE       : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2'), " ", unwrap_2_list('$3')]).
+systemPrivilegeType -> SET CONTAINER          : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2')]).
+systemPrivilegeType -> SYSDBA                 : unwrap_2_list('$1').
+systemPrivilegeType -> UNLIMITED TABLESPACE   : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2')]).
 ============================================================================= */
 
 objectPrivilegeType ::= 'ALTER'
@@ -353,6 +378,7 @@ plsqlPackageSourceAttribute ::= accessibleByClause
 
 systemPrivilegeType ::= ( 'ALTER' 'DATABASE' )
                       | ( 'ALTER' 'SESSION' )
+                      | ( 'ALTER' 'USER' )
                       | ( 'CREATE' 'ANY' 'CONTEXT' )
                       | ( 'CREATE' 'ANY' 'CREDENTIA' )
                       | ( 'CREATE' 'ANY' 'DIRECTORY' )

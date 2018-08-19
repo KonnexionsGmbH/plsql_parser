@@ -152,6 +152,7 @@
     {"^(?i)(UPDATE)$",                      'UPDATE'},
     {"^(?i)(UROWID)$",                      'UROWID'},
     {"^(?i)(USE)$",                         'USE'},
+    {"^(?i)(USER)$",                        'USER'},
     {"^(?i)(USING)$",                       'USING'},
     {"^(?i)(USING_NLS_COMP)$",              'USING_NLS_COMP'},
     {"^(?i)(VALUE)$",                       'VALUE'},

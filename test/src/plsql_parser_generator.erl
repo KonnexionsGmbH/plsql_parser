@@ -2884,6 +2884,7 @@ create_code(systemPrivilegeAnnotation = Rule) ->
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% systemPrivilegeType ::= ( 'ALTER' 'DATABASE' )
 %%                       | ( 'ALTER' 'SESSION' )
+%%                       | ( 'ALTER' 'USER' )
 %%                       | ( 'CREATE' 'ANY' 'CONTEXT' )
 %%                       | ( 'CREATE' 'ANY' 'CREDENTIA' )
 %%                       | ( 'CREATE' 'ANY' 'DIRECTORY' )
@@ -2914,6 +2915,7 @@ create_code(systemPrivilegeType = Rule) ->
         [
             "ALTER DATABASE",
             "ALTER SESSION",
+            "ALTER USER",
             "CREATE ANY CONTEXT",
             "CREATE ANY CREDENTIAL",
             "CREATE ANY DIRECTORY",
