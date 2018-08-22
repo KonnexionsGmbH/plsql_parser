@@ -51,6 +51,7 @@ eunit_test(Source, LOpts, Type) ->
     %% -------------------------------------------------------------------------
     case ?PARSER_MODULE:parsetree_with_tokens(Source) of
         {ok, {ParseTree, Tokens}} ->
+            ?E("~n ParseTree: ~p~n Tokens: ~p~n", [ParseTree, Tokens]),
             ?D("~n ParseTree: ~p~n Tokens: ~p~n", [ParseTree, Tokens]),
             %% -----------------------------------------------------------------
             %% Test TopDown
