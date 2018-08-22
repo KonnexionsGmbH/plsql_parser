@@ -1078,9 +1078,9 @@ create_code(expression = Rule) ->
     ?CREATE_CODE_END;
 
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% ffunctionAnnotation ::= ( functionLegacyAnnotation functionSimpleLegacyAnnotation? privilegeRoleAnnotationList? )
-%%                       | (                          functionSimpleLegacyAnnotation  privilegeRoleAnnotationList? )
-%%                       |                                                            privilegeRoleAnnotationList
+%% functionAnnotation ::= ( functionLegacyAnnotation functionSimpleLegacyAnnotation? privilegeRoleAnnotationList? )
+%%                      | (                          functionSimpleLegacyAnnotation  privilegeRoleAnnotationList? )
+%%                      |                                                            privilegeRoleAnnotationList
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 create_code(functionAnnotation = Rule) ->
@@ -2579,9 +2579,9 @@ create_code(privilegeRoleAnnotationList = Rule) ->
 
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% procedureAnnotation ::= ( functionLegacyAnnotation functionSimpleLegacyAnnotation? procedureLegacyAnnotation? privilegeRoleAnnotationList? )
-%%                      | (                          functionSimpleLegacyAnnotation  procedureLegacyAnnotation? privilegeRoleAnnotationList? )
-%%                      | (                                                          procedureLegacyAnnotation  privilegeRoleAnnotationList? )
-%%                      |                                                                                       privilegeRoleAnnotationList
+%%                       | (                          functionSimpleLegacyAnnotation  procedureLegacyAnnotation? privilegeRoleAnnotationList? )
+%%                       | (                                                          procedureLegacyAnnotation  privilegeRoleAnnotationList? )
+%%                       |                                                                                       privilegeRoleAnnotationList
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 create_code(procedureAnnotation = Rule) ->
