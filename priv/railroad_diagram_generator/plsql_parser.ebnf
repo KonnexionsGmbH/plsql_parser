@@ -682,6 +682,8 @@ parameterDeclarationCommaList -> parameterDeclaration ',' parameterDeclarationCo
 
 accessor ::= unitKind? ( NAME '.' )?  NAME
 
+apiHiddenAnnotation ::= '--<>' 'API_HIDDEN' '=' 'TRUE'
+
 dataType ::= 'BFILE'
            | 'BINARY_DOUBLE'
            | 'BINARY_FLOAT'
