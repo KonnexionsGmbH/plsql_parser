@@ -566,7 +566,7 @@ systemPrivilegeType -> UNLIMITED TABLESPACE   : lists:append([unwrap_2_list('$1'
 
 %% Level 07 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-accessibleByClause -> ACCESSIBLE BY accessorCommaList : #{accessibleByClause => #{accessorCommaList@ => '$3'}}.
+accessibleByClause -> ACCESSIBLE BY '(' accessorCommaList ')' : #{accessibleByClause => #{accessorCommaList@ => '$4'}}.
 
 defaultCollationClause -> DEFAULT COLLATION USING_NLS_COMP : #{defaultCollationClause => lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2'), " ", unwrap_2_list('$3')])}.
 

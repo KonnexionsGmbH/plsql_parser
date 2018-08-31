@@ -25,49 +25,52 @@ Definitions.
 
 Rules.
 
+% ignore SUBTYPEs
+([Ss][Uu][Bb][Tt][Yy][Pp][Ee](\s.*[\r\n]*|[\r\n]*);) : skip_token.
+
 % $ELSE / $ELSIF / $END / $IF / $THEN
-(\$[Ee][Ll][Ss][Ee])                                : {token, {list_to_atom(string:uppercase(TokenChars)), TokenLine}}.
-(\$[Ee][Ll][Ss][Ii][Ff])                            : {token, {list_to_atom(string:uppercase(TokenChars)), TokenLine}}.
-(\$[Ee][Nn][Dd])                                    : {token, {list_to_atom(string:uppercase(TokenChars)), TokenLine}}.
-(\$[Ii][Ff])                                        : {token, {list_to_atom(string:uppercase(TokenChars)), TokenLine}}.
-(\$[Tt][Hh][Ee][Nn])                                : {token, {list_to_atom(string:uppercase(TokenChars)), TokenLine}}.
+(\$[Ee][Ll][Ss][Ee])                                 : {token, {list_to_atom(string:uppercase(TokenChars)), TokenLine}}.
+(\$[Ee][Ll][Ss][Ii][Ff])                             : {token, {list_to_atom(string:uppercase(TokenChars)), TokenLine}}.
+(\$[Ee][Nn][Dd])                                     : {token, {list_to_atom(string:uppercase(TokenChars)), TokenLine}}.
+(\$[Ii][Ff])                                         : {token, {list_to_atom(string:uppercase(TokenChars)), TokenLine}}.
+(\$[Tt][Hh][Ee][Nn])                                 : {token, {list_to_atom(string:uppercase(TokenChars)), TokenLine}}.
 
 % %ROWTYPE / %TYPE
-(%[Rr][Oo][Ww][Tt][Yy][Pp][Ee])                     : {token, {list_to_atom(string:uppercase(TokenChars)), TokenLine}}.
-(%[Tt][Yy][Pp][Ee])                                 : {token, {list_to_atom(string:uppercase(TokenChars)), TokenLine}}.
+(%[Rr][Oo][Ww][Tt][Yy][Pp][Ee])                      : {token, {list_to_atom(string:uppercase(TokenChars)), TokenLine}}.
+(%[Tt][Yy][Pp][Ee])                                  : {token, {list_to_atom(string:uppercase(TokenChars)), TokenLine}}.
 
 % strings
-(\'([^\']*(\'\')*)*\')                              : {token, {'STRING', TokenLine, TokenChars}}.
-(\"((\$|[^\"]*)*(\"\")*)*\")                        : {token, {'NAME', TokenLine, TokenChars}}.
+(\'([^\']*(\'\')*)*\')                               : {token, {'STRING', TokenLine, TokenChars}}.
+(\"((\$|[^\"]*)*(\"\")*)*\")                         : {token, {'NAME', TokenLine, TokenChars}}.
 
 % punctuation
-(!=|\^=|<>|<|>|<=|>=)                               : {token, {'COMPARISON', TokenLine, list_to_atom(TokenChars)}}.
-([=\|\-\+\*\/\(\)\,\.\;]|(\|\|)|(:=)|(=>)|(\-\-<>)) : {token, {list_to_atom(TokenChars), TokenLine}}.
+(!=|\^=|<>|<|>|<=|>=)                                : {token, {'COMPARISON', TokenLine, list_to_atom(TokenChars)}}.
+([=\|\-\+\*\/\(\)\,\.\;]|(\|\|)|(:=)|(=>)|(\-\-<>))  : {token, {list_to_atom(TokenChars), TokenLine}}.
 
 % names
-[A-Za-z][A-Za-z0-9_\$@~]*                           : match_any(TokenChars, TokenLen, TokenLine, ?TOKENPATTERNS).
+[A-Za-z][A-Za-z0-9_\$#]*                             : match_any(TokenChars, TokenLen, TokenLine, ?TOKENPATTERNS).
 
 % parameters
-(\:[A-Za-z0-9_\.][A-Za-z0-9_\.]*)                   : {token, {'PARAMETER', TokenLine, TokenChars}}.
+(\:[A-Za-z0-9_\.][A-Za-z0-9_\.]*)                    : {token, {'PARAMETER', TokenLine, TokenChars}}.
 
 % numbers
-([0-9]+)                                            : {token, {'INTNUM', TokenLine, TokenChars}}.
+([0-9]+)                                             : {token, {'INTNUM', TokenLine, TokenChars}}.
 ((([\.][0-9]+)|([0-9]+[\.]?[0-9]*))([eE][+-]?[0-9]+)?[fFdD]?)
-                                                    : {token, {'APPROXNUM', TokenLine, TokenChars}}.
+                                                     : {token, {'APPROXNUM', TokenLine, TokenChars}}.
 
 % man_page
-(/\*<>([^*]|[\r\n]|(\*+([^*/]|[\r\n])))*\*+/)       : {token, {'MAN_PAGE', TokenLine, TokenChars}}.
+(/\*<>([^*]|[\r\n]|(\*+([^*/]|[\r\n])))*\*+/)        : {token, {'MAN_PAGE', TokenLine, TokenChars}}.
 
 % skips
-([\s\t\r\n]+)                                       : skip_token.    %% white space
+([\s\t\r\n]+)                                        : skip_token.    %% white space
 
 % block comments
-(/\*([^*]|[\r\n]|(\*+([^*/]|[\r\n])))*\*+/)         : skip_token.
+(/\*([^*]|[\r\n]|(\*+([^*/]|[\r\n])))*\*+/)          : skip_token.
 
 % line comments
-(--(\s.*[\r\n]+|[\r\n]+))                           : skip_token.
-%(--\n)                                             : skip_token.
-%(--\r\n)                                           : skip_token.
+(--(\s.*[\r\n]+|[\r\n]+))                            : skip_token.
+%(--\n)                                              : skip_token.
+%(--\r\n)                                            : skip_token.
 
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 Erlang code.

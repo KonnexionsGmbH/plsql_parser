@@ -63,8 +63,8 @@ finalize(_Params, Ctx)
 fold([], _FunState, Ctx, _PTree, {accessibleByClause, Step} = _FoldState) ->
     ?CUSTOM_INIT(_FunState, Ctx, _PTree, _FoldState),
     RT = case Step of
-             start -> Ctx ++ " accessible by ";
-             _ -> Ctx
+             start -> Ctx ++ " accessible by (";
+             _ -> Ctx ++ ")"
          end,
     ?CUSTOM_RESULT(RT);
 

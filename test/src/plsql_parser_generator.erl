@@ -425,8 +425,12 @@ create_code(accessibleByClause = Rule) ->
 
     Code =
         [
-                "Accessible By " ++ lists:nth(
-                rand:uniform(AccessorCommaList_Length), AccessorCommaList)
+            lists:append(
+                [
+                    "Accessible By (",
+                    lists:nth(rand:uniform(AccessorCommaList_Length), AccessorCommaList),
+                    ")"
+                ])
             || _ <- lists:seq(1, ?MAX_BASIC * 2)
         ],
     store_code(Rule, Code, ?MAX_BASIC, false),
@@ -1571,7 +1575,7 @@ create_code(man_page = Rule) ->
 
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% (\"((\$|[^\"]*)*(\"\")*)*\")
-%% [A-Za-z][A-Za-z0-9_\$#@~]*
+%% [A-Za-z][A-Za-z0-9_\$#]*
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 create_code(name = Rule) ->
@@ -1590,11 +1594,23 @@ create_code(name = Rule) ->
             "credit_limit_ident_3",
             "credit_limit_ident_4",
             "credit_limit_ident_5",
-            "credit_limit_ident_~1",
-            "credit_limit_ident_~2",
-            "credit_limit_ident_~3",
-            "credit_limit_ident_~4",
-            "credit_limit_ident_~5",
+            "credit_limit_ident__1",
+            "credit_limit_ident__2",
+            "credit_limit_ident__3",
+            "credit_limit_ident__4",
+            "credit_limit_ident__5",
+            "I#IDENT_000_#",
+            "I#IDENT_100_#",
+            "I#IDENT_1_",
+            "I#IDENT_200_#",
+            "I#IDENT_2__",
+            "I#IDENT_3_$",
+            "I#IDENT_4_$",
+            "I#IDENT_5",
+            "I#IDENT_6",
+            "I#IDENT_7",
+            "I#IDENT_8",
+            "I#IDENT_9",
             "I1IDENT_000_1",
             "I1IDENT_100_1",
             "I1IDENT_1_",
@@ -1607,36 +1623,24 @@ create_code(name = Rule) ->
             "I1IDENT_7",
             "I1IDENT_8",
             "I1IDENT_9",
-            "I@IDENT_000_@",
-            "I@IDENT_100_@",
-            "I@IDENT_1_",
-            "I@IDENT_200_@",
-            "I@IDENT_2__",
-            "I@IDENT_3_$",
-            "I@IDENT_4_$",
-            "I@IDENT_5",
-            "I@IDENT_6",
-            "I@IDENT_7",
-            "I@IDENT_8",
-            "I@IDENT_9",
+            "L#astName_ident",
             "L1astName_ident",
-            "L@astName_ident",
-            "m1oney~66tree_ident",
-            "m@oney~~$tree_ident",
+            "m#oney__$tree_ident",
+            "m1oney_66tree_ident",
+            "o#racle$number_ident",
             "o1racle6number_ident",
-            "o@racle$number_ident",
+            "p#hone$_ident",
             "p1hone5_ident",
-            "p@hone$_ident",
-            "S1N~5_ident",
-            "S@N~$_ident",
+            "S#N_$_ident",
+            "S1N_5_ident",
+            "t#2_ident",
+            "t#ry_again__ident",
             "t12_ident",
             "t1ry_again__ident",
-            "t@2_ident",
-            "t@ry_again__ident",
+            "X#_ident",
+            "X#YZ_ident",
             "X1_ident",
-            "X1YZ_ident",
-            "X@_ident",
-            "X@YZ_ident"
+            "X1YZ_ident"
         ],
     store_code(Rule, Code, ?MAX_BASIC, false),
     ?CREATE_CODE_END;
