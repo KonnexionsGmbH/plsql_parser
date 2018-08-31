@@ -154,16 +154,11 @@ Create
 Package
 package_name
 As
---<> legacy_name_function = name_21
 Function function_name_1
          Return Clob
          ;
---<> legacy_name_function = name_31
---<> legacy_name_procedure = name_32
 Procedure procedure_name_1 (
-               --<> logger_to_character = none
                parameter_1 in out date,
-               --<> logger_to_character = false
                parameter_2 in out date
           )
          ;
@@ -511,7 +506,6 @@ Create
 Package
 package_name
 As
---<> legacy_name_function = new_function
 --<> system_privilege = sysdba
 --<> object_privilege execute = my_function
 --<> object_privilege select = my_table
@@ -523,8 +517,6 @@ As
 Function function_name_1
          Return Clob
          ;
---<> legacy_name_function = new_function
---<> legacy_name_procedure = new_procedure
 --<> system_privilege = sysdba
 --<> object_privilege execute = my_function
 --<> object_privilege select = my_table

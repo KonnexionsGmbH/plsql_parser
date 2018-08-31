@@ -99,14 +99,15 @@ create_code() ->
     create_code(approxnum),
     create_code(comparison),
     create_code(intnum),
+    create_code(man_page),
     create_code(name),
     create_code(parameter),
     create_code(string),
     % based on parser definitions ..............................................
+    create_code(apiHiddenAnnotation),
     create_code(defaultCollationClause),
     create_code(invokerRightsClause),
     create_code(objectPrivilegeType),
-    create_code(parameterAnnotation),
     create_code(sharingClause),
     create_code(systemPrivilegeType),
     create_code(unaryAddOrSubtract),
@@ -121,17 +122,15 @@ create_code() ->
         [])),
 
     create_code(accessor),
+    create_code(apiGroupAnnotation),
     create_code(columnRef),
     create_code(dataSource),
     create_code(dataType),
-    create_code(functionLegacyAnnotation),
-    create_code(functionSimpleLegacyAnnotation),
+    create_code(dataTypeReturn),
     create_code(literal),
     create_code(objectPrivilegeAnnotation),
     create_code(parameterRef),
     create_code(pipelinedClause),
-    create_code(procedureLegacyAnnotation),
-    create_code(roleAnnotation),
     create_code(systemPrivilegeAnnotation),
 
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -145,7 +144,7 @@ create_code() ->
     create_code(accessorCommaList),
     create_code(columnRefCommaList),
     create_code(dataSourceCommaList),
-    create_code(privilegeRoleAnnotationList),
+    create_code(privilegeAnnotationList),
 
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Level 04
@@ -477,6 +476,42 @@ create_code(accessorCommaList = Rule) ->
     ?CREATE_CODE_END;
 
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% apiGroupAnnotation ::= '--<>' 'API_GROUP' '=' NAME
+%% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+create_code(apiGroupAnnotation = Rule) ->
+    ?CREATE_CODE_START,
+    [{name, Name}] = ets:lookup(?CODE_TEMPLATES, name),
+    Name_Length = length(Name),
+
+    Code =
+        [
+            lists:append(
+                [
+                    "--<> API_Group = ",
+                    lists:nth(rand:uniform(Name_Length), Name),
+                    ?CHAR_NEWLINE
+                ])
+            || _ <- lists:seq(1, ?MAX_BASIC * 2)
+        ],
+    store_code(Rule, Code, ?MAX_BASIC, false),
+    ?CREATE_CODE_END;
+
+%% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% apiHidenAnnotation ::= '--<>' 'API_HIDDEN' '=' 'TRUE'
+%% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+create_code(apiHiddenAnnotation = Rule) ->
+    ?CREATE_CODE_START,
+
+    Code =
+        [
+                "--<> API_Hidden = True" ++ ?CHAR_NEWLINE
+        ],
+    store_code(Rule, Code, ?MAX_BASIC, false),
+    ?CREATE_CODE_END;
+
+%% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% (([\.][0-9]+)|([0-9]+[\.]?[0-9]*))[eE]?[+-]?[0-9]*[fFdD]?)
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -793,7 +828,7 @@ create_code(dataType = Rule) ->
                     lists:nth(rand:uniform(Intnum_Length), Intnum),
                     " Char)"
                 ]),
-            "Cloba",
+            "Clob",
             "Date",
             "Float",
             lists:append(
@@ -959,6 +994,100 @@ create_code(dataType = Rule) ->
     ?CREATE_CODE_END;
 
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% dataTypeReturn ::= 'BFILE'
+%%                  | 'BINARY_DOUBLE'
+%%                  | 'BINARY_FLOAT'
+%%                  | 'BINARY_INTEGER'
+%%                  | 'BLOB'
+%%                  | 'BOOLEAN'
+%%                  | 'CHAR'
+%%                  | 'CLOB'
+%%                  | 'DATE'
+%%                  | 'FLOAT'
+%%                  | ( 'INTERVAL' 'DAY' ( '(' INTNUM ')' )? 'TO' 'SECOND' ( '(' INTNUM ')' )? )
+%%                  | ( 'INTERVAL' 'YEAR' ( '(' INTNUM ')' )? 'TO' 'MONTH' )
+%%                  | ( 'LONG' 'RAW' )
+%%                  | ( ( ( NAME '.' )? NAME '.' )? NAME '%TYPE'? )
+%%                  | ( NAME ( '%ROWTYPE' | '%TYPE' )? )
+%%                  | 'NCLOB'
+%%                  | 'NUMBER'
+%%                  | 'PLS_INTEGER'
+%%                  | ( 'REF' 'CURSOR' )
+%%                  | 'ROWID'
+%%                  | ( 'TIMESTAMP' ( '(' INTNUM ')' )? ( 'WITH' 'LOCAL'? 'TIME' 'ZONE' )? )
+%%                  | 'UROWID'
+%%                  | 'VARCHAR2'
+%%                  | 'XMLTYPE'
+%% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+create_code(dataTypeReturn = Rule) ->
+    ?CREATE_CODE_START,
+    [{name, Name}] = ets:lookup(?CODE_TEMPLATES, name),
+    Name_Length = length(Name),
+
+    Code =
+        [
+            "Bfile",
+            "Binary_double",
+            "Binary_float",
+            "Binary_integer",
+            "Blob",
+            "Boolean",
+            "Char",
+            "Clob",
+            "Date",
+            "Float",
+            "Interval Day To Second",
+            "Interval Year To Month",
+            "Long Raw",
+            lists:nth(rand:uniform(Name_Length), Name),
+                lists:nth(rand:uniform(Name_Length), Name) ++ "%Rowtype",
+                lists:nth(rand:uniform(Name_Length), Name) ++ "%Type",
+            lists:append(
+                [
+                    lists:nth(rand:uniform(Name_Length), Name),
+                    ".",
+                    lists:nth(rand:uniform(Name_Length), Name)
+                ]),
+            lists:append(
+                [
+                    lists:nth(rand:uniform(Name_Length), Name),
+                    ".",
+                    lists:nth(rand:uniform(Name_Length), Name),
+                    "%Type"
+                ]),
+            lists:append(
+                [
+                    lists:nth(rand:uniform(Name_Length), Name),
+                    ".",
+                    lists:nth(rand:uniform(Name_Length), Name),
+                    ".",
+                    lists:nth(rand:uniform(Name_Length), Name)
+                ]),
+            lists:append(
+                [
+                    lists:nth(rand:uniform(Name_Length), Name),
+                    ".",
+                    lists:nth(rand:uniform(Name_Length), Name),
+                    ".",
+                    lists:nth(rand:uniform(Name_Length), Name),
+                    "%Type"
+                ]),
+            "Nclob",
+            "Number",
+            "Pls_integer",
+            "Ref Cursor",
+            "Rowid",
+            "Timestamp",
+            "Timestamp With Time Zone",
+            "Timestamp With Local Time Zone",
+            "Varchar2",
+            "Xmltype"
+        ],
+    store_code(Rule, Code, ?MAX_BASIC, false),
+    ?CREATE_CODE_END;
+
+%% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% default ::= ( ':=' | 'DEFAULT' ) expression
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -1078,58 +1207,28 @@ create_code(expression = Rule) ->
     ?CREATE_CODE_END;
 
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% functionAnnotation ::= ( functionLegacyAnnotation functionSimpleLegacyAnnotation? privilegeRoleAnnotationList? )
-%%                      | (                          functionSimpleLegacyAnnotation  privilegeRoleAnnotationList? )
-%%                      |                                                            privilegeRoleAnnotationList
+%% functionAnnotation ::= privilegeAnnotationList
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 create_code(functionAnnotation = Rule) ->
     ?CREATE_CODE_START,
-    [{functionLegacyAnnotation, FunctionLegacyAnnotation}] =
-        ets:lookup(?CODE_TEMPLATES, functionLegacyAnnotation),
-    FunctionLegacyAnnotation_Length = length(FunctionLegacyAnnotation),
-    [{functionSimpleLegacyAnnotation, FunctionSimpleLegacyAnnotation}] =
-        ets:lookup(?CODE_TEMPLATES, functionSimpleLegacyAnnotation),
-    FunctionSimpleLegacyAnnotation_Length =
-        length(FunctionSimpleLegacyAnnotation),
-    [{privilegeRoleAnnotationList, PrivilegeRoleAnnotationList}] =
-        ets:lookup(?CODE_TEMPLATES, privilegeRoleAnnotationList),
-    PrivilegeRoleAnnotationList_Length = length(PrivilegeRoleAnnotationList),
+    [{apiHiddenAnnotation, ApiHiddenAnnotation}] =
+        ets:lookup(?CODE_TEMPLATES, apiHiddenAnnotation),
+    ApiHiddenAnnotation_Length = length(ApiHiddenAnnotation),
+    [{privilegeAnnotationList, PrivilegeAnnotationList}] =
+        ets:lookup(?CODE_TEMPLATES, privilegeAnnotationList),
+    PrivilegeAnnotationList_Length = length(PrivilegeAnnotationList),
 
     Code =
         [
-            case rand:uniform(3) rem 3 of
-                1 -> lists:append(
-                    [
-                        lists:nth(rand:uniform(FunctionLegacyAnnotation_Length),
-                            FunctionLegacyAnnotation),
-                        case rand:uniform(2) rem 2 of
-                            1 -> lists:nth(rand:uniform(
-                                FunctionSimpleLegacyAnnotation_Length),
-                                FunctionSimpleLegacyAnnotation);
-                            _ -> []
-                        end,
-                        case rand:uniform(2) rem 2 of
-                            1 -> lists:nth(rand:uniform(
-                                PrivilegeRoleAnnotationList_Length),
-                                PrivilegeRoleAnnotationList);
-                            _ -> []
-                        end
-                    ]);
-                2 ->
-                    lists:nth(
-                        rand:uniform(FunctionSimpleLegacyAnnotation_Length),
-                        FunctionSimpleLegacyAnnotation) ++
-                    case rand:uniform(2) rem 2 of
-                        1 -> lists:nth(
-                            rand:uniform(PrivilegeRoleAnnotationList_Length),
-                            PrivilegeRoleAnnotationList);
-                        _ -> []
-                    end;
-                _ ->
-                    lists:nth(rand:uniform(PrivilegeRoleAnnotationList_Length),
-                        PrivilegeRoleAnnotationList)
-            end
+                case rand:uniform(5) rem 5 of
+                    1 -> lists:nth(rand:uniform(ApiHiddenAnnotation_Length),
+                        ApiHiddenAnnotation);
+                    _ -> []
+                end
+                ++
+                lists:nth(rand:uniform(PrivilegeAnnotationList_Length),
+                    PrivilegeAnnotationList)
             || _ <- lists:seq(1, ?MAX_BASIC * 2)
         ],
     store_code(Rule, Code, ?MAX_BASIC, false),
@@ -1224,21 +1323,21 @@ create_code(functionArgCommaList = Rule) ->
     ?CREATE_CODE_END;
 
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% functionHeading ::= 'FUNCTION' NAME ( '(' ( parameterAnnotation? parameterDeclaration )* ')' )?
+%% functionHeading ::= 'FUNCTION' NAME ( '(' ( parameterDeclaration )* ')' )?
 %%                               'RETURN' dataType
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 create_code(functionHeading = Rule) ->
     ?CREATE_CODE_START,
-    [{dataType, DataType}] = ets:lookup(?CODE_TEMPLATES, dataType),
-    DataType_Length = length(DataType),
+    [{dataTypeReturn, DataTypeReturn}] =
+        ets:lookup(?CODE_TEMPLATES, dataTypeReturn),
+    DataTypeReturn_Length = length(DataTypeReturn),
     [{name, Name}] = ets:lookup(?CODE_TEMPLATES, name),
     Name_Length = length(Name),
     [{parameterDeclarationCommaList, ParameterDeclarationCommaList}] =
-        ets:lookup(
-            ?CODE_TEMPLATES, parameterDeclarationCommaList),
-    ParameterDeclarationCommaList_Length = length(
-        ParameterDeclarationCommaList),
+        ets:lookup(?CODE_TEMPLATES, parameterDeclarationCommaList),
+    ParameterDeclarationCommaList_Length =
+        length(ParameterDeclarationCommaList),
 
     Code =
         [
@@ -1259,29 +1358,7 @@ create_code(functionHeading = Rule) ->
                             ])
                     end,
                     "Return ",
-                    lists:nth(rand:uniform(DataType_Length), DataType)
-                ])
-            || _ <- lists:seq(1, ?MAX_BASIC * 2)
-        ],
-    store_code(Rule, Code, ?MAX_BASIC, false),
-    ?CREATE_CODE_END;
-
-%% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% functionLegacyAnnotation ::= '--<>' 'LEGACY_NAME_FUNCTION' '=' NAME
-%% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-create_code(functionLegacyAnnotation = Rule) ->
-    ?CREATE_CODE_START,
-    [{name, Name}] = ets:lookup(?CODE_TEMPLATES, name),
-    Name_Length = length(Name),
-
-    Code =
-        [
-            lists:append(
-                [
-                    "--<> Legacy_name_function = ",
-                    lists:nth(rand:uniform(Name_Length), Name),
-                    ?CHAR_NEWLINE
+                    lists:nth(rand:uniform(DataTypeReturn_Length), DataTypeReturn)
                 ])
             || _ <- lists:seq(1, ?MAX_BASIC * 2)
         ],
@@ -1338,28 +1415,6 @@ create_code(functionRef = Rule) ->
         ],
     store_code(Rule, Code, ?MAX_BASIC, false),
     store_code(expression, Code, ?MAX_BASIC, false),
-    ?CREATE_CODE_END;
-
-%% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% functionSimpleLegacyAnnotation ::= '--<>' 'LEGACY_NAME_FUNCTION_SIMPLE' '=' NAME
-%% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-create_code(functionSimpleLegacyAnnotation = Rule) ->
-    ?CREATE_CODE_START,
-    [{name, Name}] = ets:lookup(?CODE_TEMPLATES, name),
-    Name_Length = length(Name),
-
-    Code =
-        [
-            lists:append(
-                [
-                    "--<> Legacy_name_function_simple = ",
-                    lists:nth(rand:uniform(Name_Length), Name),
-                    ?CHAR_NEWLINE
-                ])
-            || _ <- lists:seq(1, ?MAX_BASIC * 2)
-        ],
-    store_code(Rule, Code, ?MAX_BASIC, false),
     ?CREATE_CODE_END;
 
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1448,6 +1503,70 @@ create_code(literal = Rule) ->
         ],
     store_code(Rule, Code, ?MAX_BASIC, false),
     store_code(expression, Code, ?MAX_BASIC, false),
+    ?CREATE_CODE_END;
+
+%% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% (/\*<>([^*]|[\r\n]|(\*+([^*/]|[\r\n])))*\*+/)
+%% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+create_code(man_page = Rule) ->
+    ?CREATE_CODE_START,
+
+    Code =
+        [
+            lists:append([
+                ?CHAR_NEWLINE,
+                "/*<>",
+                ?CHAR_NEWLINE,
+                case rand:uniform(4) rem 4 of
+                    1 -> lists:append(
+                        [
+                            "Comment Line No. ",
+                            integer_to_list(rand:uniform(?MAX_BASIC)),
+                            ?CHAR_NEWLINE,
+                            "Comment Line No. ",
+                            integer_to_list(rand:uniform(?MAX_BASIC)),
+                            ?CHAR_NEWLINE,
+                            "Comment Line No. ",
+                            integer_to_list(rand:uniform(?MAX_BASIC)),
+                            ?CHAR_NEWLINE,
+                            "Comment Line No. ",
+                            integer_to_list(rand:uniform(?MAX_BASIC)),
+                            ?CHAR_NEWLINE
+                        ]);
+                    2 -> lists:append(
+                        [
+                            "Comment Line No. ",
+                            integer_to_list(rand:uniform(?MAX_BASIC)),
+                            ?CHAR_NEWLINE,
+                            "Comment Line No. ",
+                            integer_to_list(rand:uniform(?MAX_BASIC)),
+                            ?CHAR_NEWLINE,
+                            "Comment Line No. ",
+                            integer_to_list(rand:uniform(?MAX_BASIC)),
+                            ?CHAR_NEWLINE
+                        ]);
+                    3 -> lists:append(
+                        [
+                            "Comment Line No. ",
+                            integer_to_list(rand:uniform(?MAX_BASIC)),
+                            ?CHAR_NEWLINE,
+                            "Comment Line No. ",
+                            integer_to_list(rand:uniform(?MAX_BASIC)),
+                            ?CHAR_NEWLINE
+                        ]);
+                    _ -> lists:append([
+                        "Comment Line No. ",
+                        integer_to_list(rand:uniform(?MAX_BASIC)),
+                        ?CHAR_NEWLINE
+                    ])
+                end,
+                "*/",
+                ?CHAR_NEWLINE
+            ])
+            || _ <- lists:seq(1, ?MAX_BASIC * 2)
+        ],
+    store_code(Rule, Code, ?MAX_BASIC, false),
     ?CREATE_CODE_END;
 
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1764,12 +1883,14 @@ create_code(packageFunctionDeclarationAttributeList = Rule) ->
     ?CREATE_CODE_END;
 
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% packageItem ::= packageFunctionDeclaration
-%%               | packageProcedureDeclaration
+%% packageItem ::= ( packageFunctionDeclaration
+%%                 | packageProcedureDeclaration ) man_page?
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 create_code(packageItem = Rule) ->
     ?CREATE_CODE_START,
+    [{man_page, Man_Page}] = ets:lookup(?CODE_TEMPLATES, man_page),
+    Man_Page_Length = length(Man_Page),
     [{packageFunctionDeclaration, PackageFunctionDeclaration}] = ets:lookup(
         ?CODE_TEMPLATES, packageFunctionDeclaration),
     PackageFunctionDeclaration_Length = length(PackageFunctionDeclaration),
@@ -1779,12 +1900,19 @@ create_code(packageItem = Rule) ->
 
     Code =
         [
-            case rand:uniform(2) rem 2 of
-                1 -> lists:nth(rand:uniform(PackageFunctionDeclaration_Length),
-                    PackageFunctionDeclaration);
-                _ -> lists:nth(rand:uniform(PackageProcedureDeclaration_Length),
-                    PackageProcedureDeclaration)
-            end
+                case rand:uniform(2) rem 2 of
+                    1 -> lists:nth(
+                        rand:uniform(PackageFunctionDeclaration_Length),
+                        PackageFunctionDeclaration);
+                    _ -> lists:nth(
+                        rand:uniform(PackageProcedureDeclaration_Length),
+                        PackageProcedureDeclaration)
+                end
+                ++
+                case rand:uniform(5) rem 5 of
+                    1 -> lists:nth(rand:uniform(Man_Page_Length), Man_Page);
+                    _ -> []
+                end
             || _ <- lists:seq(1, ?MAX_BASIC * 2)
         ],
     store_code(Rule, Code, ?MAX_BASIC, false),
@@ -2062,25 +2190,8 @@ create_code(parameter = Rule) ->
     ?CREATE_CODE_END;
 
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% parameterAnnotation ::= '--<>' 'LOGGER_TO_CHARACTER' '=' ( 'FALSE' | 'NONE' )
-%% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-create_code(parameterAnnotation = Rule) ->
-    ?CREATE_CODE_START,
-
-    Code =
-        [
-                "--<> Logger_to_character = False" ++ ?CHAR_NEWLINE,
-                "--<> Logger_to_character = None" ++ ?CHAR_NEWLINE
-        ],
-    store_code(Rule, Code, ?MAX_BASIC, false),
-    ?CREATE_CODE_END;
-
-%% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% parameterDeclaration ::= NAME ( 'IN'? dataType default? )
 %%                             | ( 'IN'? 'OUT' 'NOCOPY'? dataType )
-%% -----------------------------------------------------------------------------
-%% parameterAnnotation ::= '--<>' 'LOGGER_TO_CHARACTER' '=' ( 'FALSE' | 'NONE' )
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 create_code(parameterDeclaration = Rule) ->
@@ -2091,20 +2202,11 @@ create_code(parameterDeclaration = Rule) ->
     Default_Length = length(Default),
     [{name, Name}] = ets:lookup(?CODE_TEMPLATES, name),
     Name_Length = length(Name),
-    [{parameterAnnotation, ParameterAnnotation}] = ets:lookup(?CODE_TEMPLATES,
-        parameterAnnotation),
-    ParameterAnnotation_Length = length(ParameterAnnotation),
 
     Code =
         [
             lists:append(
                 [
-                    case rand:uniform(5) rem 5 of
-                        1 ->
-                            lists:nth(rand:uniform(ParameterAnnotation_Length),
-                                ParameterAnnotation);
-                        _ -> []
-                    end,
                     lists:nth(rand:uniform(Name_Length), Name),
                     case rand:uniform(3) rem 3 of
                         1 -> lists:append(
@@ -2264,6 +2366,8 @@ create_code(pipelinedClause = Rule) ->
 
 create_code(plsqlPackageSource = Rule) ->
     ?CREATE_CODE_START,
+    [{man_page, Man_Page}] = ets:lookup(?CODE_TEMPLATES, man_page),
+    Man_Page_Length = length(Man_Page),
     [{name, Name}] = ets:lookup(?CODE_TEMPLATES, name),
     Name_Length = length(Name),
     [{sharingClause, SharingClause}] = ets:lookup(?CODE_TEMPLATES,
@@ -2303,6 +2407,10 @@ create_code(plsqlPackageSource = Rule) ->
                     case rand:uniform(2) rem 2 of
                         1 -> " As ";
                         _ -> " Is "
+                    end,
+                    case rand:uniform(5) rem 5 of
+                        1 -> lists:nth(rand:uniform(Man_Page_Length), Man_Page);
+                        _ -> []
                     end,
                     lists:nth(rand:uniform(PackageItemList_Length),
                         PackageItemList),
@@ -2415,17 +2523,17 @@ create_code(plsqlPackageSourceAttributeList = Rule) ->
     ?CREATE_CODE_END;
 
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% privilegeRoleAnnotationList ::= ( objectPrivilegeAnnotation | roleAnnotation | systemPrivilegeAnnotation )+
+%% privilegeAnnotationList ::= ( apiGroupAnnotation | objectPrivilegeAnnotation | systemPrivilegeAnnotation )+
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-create_code(privilegeRoleAnnotationList = Rule) ->
+create_code(privilegeAnnotationList = Rule) ->
     ?CREATE_CODE_START,
+    [{apiGroupAnnotation, ApiGroupAnnotation}] =
+        ets:lookup(?CODE_TEMPLATES, apiGroupAnnotation),
+    ApiGroupAnnotation_Length = length(ApiGroupAnnotation),
     [{objectPrivilegeAnnotation, ObjectPrivilegeAnnotation}] =
         ets:lookup(?CODE_TEMPLATES, objectPrivilegeAnnotation),
     ObjectPrivilegeAnnotation_Length = length(ObjectPrivilegeAnnotation),
-    [{roleAnnotation, RoleAnnotation}] =
-        ets:lookup(?CODE_TEMPLATES, roleAnnotation),
-    RoleAnnotation_Length = length(RoleAnnotation),
     [{systemPrivilegeAnnotation, SystemPrivilegeAnnotation}] =
         ets:lookup(?CODE_TEMPLATES, systemPrivilegeAnnotation),
     SystemPrivilegeAnnotation_Length = length(SystemPrivilegeAnnotation),
@@ -2441,8 +2549,9 @@ create_code(privilegeRoleAnnotationList = Rule) ->
                                     ObjectPrivilegeAnnotation_Length),
                                     ObjectPrivilegeAnnotation);
                             2 ->
-                                lists:nth(rand:uniform(RoleAnnotation_Length),
-                                    RoleAnnotation);
+                                lists:nth(
+                                    rand:uniform(ApiGroupAnnotation_Length),
+                                    ApiGroupAnnotation);
                             _ ->
                                 lists:nth(rand:uniform(
                                     SystemPrivilegeAnnotation_Length),
@@ -2454,8 +2563,9 @@ create_code(privilegeRoleAnnotationList = Rule) ->
                                     ObjectPrivilegeAnnotation_Length),
                                     ObjectPrivilegeAnnotation);
                             2 ->
-                                lists:nth(rand:uniform(RoleAnnotation_Length),
-                                    RoleAnnotation);
+                                lists:nth(
+                                    rand:uniform(ApiGroupAnnotation_Length),
+                                    ApiGroupAnnotation);
                             _ ->
                                 lists:nth(rand:uniform(
                                     SystemPrivilegeAnnotation_Length),
@@ -2467,8 +2577,9 @@ create_code(privilegeRoleAnnotationList = Rule) ->
                                     ObjectPrivilegeAnnotation_Length),
                                     ObjectPrivilegeAnnotation);
                             2 ->
-                                lists:nth(rand:uniform(RoleAnnotation_Length),
-                                    RoleAnnotation);
+                                lists:nth(
+                                    rand:uniform(ApiGroupAnnotation_Length),
+                                    ApiGroupAnnotation);
                             _ ->
                                 lists:nth(rand:uniform(
                                     SystemPrivilegeAnnotation_Length),
@@ -2480,8 +2591,9 @@ create_code(privilegeRoleAnnotationList = Rule) ->
                                     ObjectPrivilegeAnnotation_Length),
                                     ObjectPrivilegeAnnotation);
                             2 ->
-                                lists:nth(rand:uniform(RoleAnnotation_Length),
-                                    RoleAnnotation);
+                                lists:nth(
+                                    rand:uniform(ApiGroupAnnotation_Length),
+                                    ApiGroupAnnotation);
                             _ ->
                                 lists:nth(rand:uniform(
                                     SystemPrivilegeAnnotation_Length),
@@ -2496,8 +2608,9 @@ create_code(privilegeRoleAnnotationList = Rule) ->
                                     ObjectPrivilegeAnnotation_Length),
                                     ObjectPrivilegeAnnotation);
                             2 ->
-                                lists:nth(rand:uniform(RoleAnnotation_Length),
-                                    RoleAnnotation);
+                                lists:nth(
+                                    rand:uniform(ApiGroupAnnotation_Length),
+                                    ApiGroupAnnotation);
                             _ ->
                                 lists:nth(rand:uniform(
                                     SystemPrivilegeAnnotation_Length),
@@ -2509,8 +2622,9 @@ create_code(privilegeRoleAnnotationList = Rule) ->
                                     ObjectPrivilegeAnnotation_Length),
                                     ObjectPrivilegeAnnotation);
                             2 ->
-                                lists:nth(rand:uniform(RoleAnnotation_Length),
-                                    RoleAnnotation);
+                                lists:nth(
+                                    rand:uniform(ApiGroupAnnotation_Length),
+                                    ApiGroupAnnotation);
                             _ ->
                                 lists:nth(rand:uniform(
                                     SystemPrivilegeAnnotation_Length),
@@ -2522,8 +2636,9 @@ create_code(privilegeRoleAnnotationList = Rule) ->
                                     ObjectPrivilegeAnnotation_Length),
                                     ObjectPrivilegeAnnotation);
                             2 ->
-                                lists:nth(rand:uniform(RoleAnnotation_Length),
-                                    RoleAnnotation);
+                                lists:nth(
+                                    rand:uniform(ApiGroupAnnotation_Length),
+                                    ApiGroupAnnotation);
                             _ ->
                                 lists:nth(rand:uniform(
                                     SystemPrivilegeAnnotation_Length),
@@ -2537,8 +2652,8 @@ create_code(privilegeRoleAnnotationList = Rule) ->
                                 ObjectPrivilegeAnnotation_Length),
                                 ObjectPrivilegeAnnotation);
                         2 ->
-                            lists:nth(rand:uniform(RoleAnnotation_Length),
-                                RoleAnnotation);
+                            lists:nth(rand:uniform(ApiGroupAnnotation_Length),
+                                ApiGroupAnnotation);
                         _ ->
                             lists:nth(
                                 rand:uniform(SystemPrivilegeAnnotation_Length),
@@ -2550,8 +2665,8 @@ create_code(privilegeRoleAnnotationList = Rule) ->
                                 ObjectPrivilegeAnnotation_Length),
                                 ObjectPrivilegeAnnotation);
                         2 ->
-                            lists:nth(rand:uniform(RoleAnnotation_Length),
-                                RoleAnnotation);
+                            lists:nth(rand:uniform(ApiGroupAnnotation_Length),
+                                ApiGroupAnnotation);
                         _ ->
                             lists:nth(
                                 rand:uniform(SystemPrivilegeAnnotation_Length),
@@ -2564,8 +2679,8 @@ create_code(privilegeRoleAnnotationList = Rule) ->
                                 ObjectPrivilegeAnnotation_Length),
                                 ObjectPrivilegeAnnotation);
                         2 ->
-                            lists:nth(rand:uniform(RoleAnnotation_Length),
-                                RoleAnnotation);
+                            lists:nth(rand:uniform(ApiGroupAnnotation_Length),
+                                ApiGroupAnnotation);
                         _ ->
                             lists:nth(
                                 rand:uniform(SystemPrivilegeAnnotation_Length),
@@ -2578,92 +2693,35 @@ create_code(privilegeRoleAnnotationList = Rule) ->
     ?CREATE_CODE_END;
 
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% procedureAnnotation ::= ( functionLegacyAnnotation functionSimpleLegacyAnnotation? procedureLegacyAnnotation? privilegeRoleAnnotationList? )
-%%                       | (                          functionSimpleLegacyAnnotation  procedureLegacyAnnotation? privilegeRoleAnnotationList? )
-%%                       | (                                                          procedureLegacyAnnotation  privilegeRoleAnnotationList? )
-%%                       |                                                                                       privilegeRoleAnnotationList
+%% procedureAnnotation ::=  privilegeAnnotationList
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 create_code(procedureAnnotation = Rule) ->
     ?CREATE_CODE_START,
-    [{functionLegacyAnnotation, FunctionLegacyAnnotation}] = ets:lookup(
-        ?CODE_TEMPLATES, functionLegacyAnnotation),
-    FunctionLegacyAnnotation_Length = length(FunctionLegacyAnnotation),
-    [{functionSimpleLegacyAnnotation, FunctionSimpleLegacyAnnotation}] =
-        ets:lookup(?CODE_TEMPLATES, functionSimpleLegacyAnnotation),
-    FunctionSimpleLegacyAnnotation_Length =
-        length(FunctionSimpleLegacyAnnotation),
-    [{privilegeRoleAnnotationList, PrivilegeRoleAnnotationList}] =
-        ets:lookup(?CODE_TEMPLATES, privilegeRoleAnnotationList),
-    PrivilegeRoleAnnotationList_Length = length(PrivilegeRoleAnnotationList),
-    [{procedureLegacyAnnotation, ProcedureLegacyAnnotation}] = ets:lookup(
-        ?CODE_TEMPLATES, procedureLegacyAnnotation),
-    ProcedureLegacyAnnotation_Length = length(ProcedureLegacyAnnotation),
+    [{apiHiddenAnnotation, ApiHiddenAnnotation}] =
+        ets:lookup(?CODE_TEMPLATES, apiHiddenAnnotation),
+    ApiHiddenAnnotation_Length = length(ApiHiddenAnnotation),
+    [{privilegeAnnotationList, PrivilegeAnnotationList}] =
+        ets:lookup(?CODE_TEMPLATES, privilegeAnnotationList),
+    PrivilegeAnnotationList_Length = length(PrivilegeAnnotationList),
 
     Code =
         [
-            case rand:uniform(4) rem 4 of
-                1 -> lists:append(
-                    [
-                        lists:nth(rand:uniform(FunctionLegacyAnnotation_Length),
-                            FunctionLegacyAnnotation),
-                        case rand:uniform(2) rem 2 of
-                            1 -> lists:nth(rand:uniform(
-                                FunctionSimpleLegacyAnnotation_Length),
-                                FunctionSimpleLegacyAnnotation);
-                            _ -> []
-                        end,
-                        case rand:uniform(2) rem 2 of
-                            1 -> lists:nth(
-                                rand:uniform(ProcedureLegacyAnnotation_Length),
-                                ProcedureLegacyAnnotation);
-                            _ -> []
-                        end,
-                        case rand:uniform(2) rem 2 of
-                            1 -> lists:nth(rand:uniform(
-                                PrivilegeRoleAnnotationList_Length),
-                                PrivilegeRoleAnnotationList);
-                            _ -> []
-                        end
-                    ]);
-                2 -> lists:append(
-                    [
-                        lists:nth(
-                            rand:uniform(FunctionSimpleLegacyAnnotation_Length),
-                            FunctionSimpleLegacyAnnotation),
-                        case rand:uniform(2) rem 2 of
-                            1 -> lists:nth(
-                                rand:uniform(ProcedureLegacyAnnotation_Length),
-                                ProcedureLegacyAnnotation);
-                            _ -> []
-                        end,
-                        case rand:uniform(2) rem 2 of
-                            1 -> lists:nth(rand:uniform(
-                                PrivilegeRoleAnnotationList_Length),
-                                PrivilegeRoleAnnotationList);
-                            _ -> []
-                        end
-                    ]);
-                3 ->
-                    lists:nth(rand:uniform(ProcedureLegacyAnnotation_Length),
-                        ProcedureLegacyAnnotation) ++
-                    case rand:uniform(2) rem 2 of
-                        1 -> lists:nth(rand:uniform(
-                            PrivilegeRoleAnnotationList_Length),
-                            PrivilegeRoleAnnotationList);
-                        _ -> []
-                    end;
-                _ ->
-                    lists:nth(rand:uniform(PrivilegeRoleAnnotationList_Length),
-                        PrivilegeRoleAnnotationList)
-            end
+                case rand:uniform(5) rem 5 of
+                    1 -> lists:nth(rand:uniform(ApiHiddenAnnotation_Length),
+                        ApiHiddenAnnotation);
+                    _ -> []
+                end
+                ++
+                lists:nth(rand:uniform(PrivilegeAnnotationList_Length),
+                    PrivilegeAnnotationList)
             || _ <- lists:seq(1, ?MAX_BASIC * 2)
         ],
     store_code(Rule, Code, ?MAX_BASIC, false),
     ?CREATE_CODE_END;
 
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% procedureHeading ::= 'PROCEDURE' NAME ( '(' ( parameterAnnotation? parameterDeclaration )* ')' )?
+%% procedureHeading ::= 'PROCEDURE' NAME ( '(' ( parameterDeclaration )* ')' )?
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 create_code(procedureHeading = Rule) ->
@@ -2701,28 +2759,6 @@ create_code(procedureHeading = Rule) ->
     ?CREATE_CODE_END;
 
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% procedureLegacyAnnotation ::= '--<>' 'LEGACY_NAME_PROCEDURE' '=' NAME
-%% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-create_code(procedureLegacyAnnotation = Rule) ->
-    ?CREATE_CODE_START,
-    [{name, Name}] = ets:lookup(?CODE_TEMPLATES, name),
-    Name_Length = length(Name),
-
-    Code =
-        [
-            lists:append(
-                [
-                    "--<> Legacy_name_procedure = ",
-                    lists:nth(rand:uniform(Name_Length), Name),
-                    ?CHAR_NEWLINE
-                ])
-            || _ <- lists:seq(1, ?MAX_BASIC * 2)
-        ],
-    store_code(Rule, Code, ?MAX_BASIC, false),
-    ?CREATE_CODE_END;
-
-%% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% resultCacheClause ::= 'RESULT_CACHE' ( 'RELIES_ON' '(' dataSource ( ',' dataSource )* ')' )?
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -2746,28 +2782,6 @@ create_code(resultCacheClause = Rule) ->
                     _ -> []
                 end
             || _ <- lists:seq(1, ?MAX_BASIC div 10)
-        ],
-    store_code(Rule, Code, ?MAX_BASIC, false),
-    ?CREATE_CODE_END;
-
-%% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% roleAnnotation ::= '--<>' 'ROLE' '=' NAME
-%% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-create_code(roleAnnotation = Rule) ->
-    ?CREATE_CODE_START,
-    [{name, Name}] = ets:lookup(?CODE_TEMPLATES, name),
-    Name_Length = length(Name),
-
-    Code =
-        [
-            lists:append(
-                [
-                    "--<> Role = ",
-                    lists:nth(rand:uniform(Name_Length), Name),
-                    ?CHAR_NEWLINE
-                ])
-            || _ <- lists:seq(1, ?MAX_BASIC * 2)
         ],
     store_code(Rule, Code, ?MAX_BASIC, false),
     ?CREATE_CODE_END;

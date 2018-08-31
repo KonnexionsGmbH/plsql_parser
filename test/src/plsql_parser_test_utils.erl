@@ -51,7 +51,6 @@ eunit_test(Source, LOpts, Type) ->
     %% -------------------------------------------------------------------------
     case ?PARSER_MODULE:parsetree_with_tokens(Source) of
         {ok, {ParseTree, Tokens}} ->
-            ?E("~n ParseTree: ~p~n Tokens: ~p~n", [ParseTree, Tokens]),
             ?D("~n ParseTree: ~p~n Tokens: ~p~n", [ParseTree, Tokens]),
             %% -----------------------------------------------------------------
             %% Test TopDown
@@ -127,27 +126,9 @@ eunit_test(Source, LOpts, Type) ->
             end,
             ?assertEqual(ParseTree, ParseTree_TD),
             %% -----------------------------------------------------------------
-            %% 5. No redundant whitespaces.
-            %% -----------------------------------------------------------------
-            Source_TD_MultipleSpace = string:str(Source_TD, "  "),
-            case Source_TD_MultipleSpace of
-                0 -> ok;
-                _ ->
-                    io:format(user, "~n" ++ ?MODULE_STRING ++
-                        " : [TD] Error redundant whitespace(s) : 1. Redundant WS~n > ~p",
-                        [Source_TD_MultipleSpace]),
-                    io:format(user, "~n" ++ ?MODULE_STRING ++
-                        " : [TD] Error redundant whitespace(s) : Source         ~n > ~p",
-                        [Source]),
-                    io:format(user, "~n" ++ ?MODULE_STRING ++
-                        " : [TD] Error redundant whitespace(s) : Source_TD      ~n > ~p",
-                        [Source_TD]),
-                    throw("[TD] Error redundant whitespace(s)")
-            end,
-            %% -----------------------------------------------------------------
             %% Test DBSS
             %% -----------------------------------------------------------------
-            %% 6. ParseTree ==> Source_FORMAT
+            %% 5. ParseTree ==> Source_FORMAT
             %% -----------------------------------------------------------------
             Source_FORMAT =
                 case plsql_parser_fold:top_down(plsql_parser_format_dbss,

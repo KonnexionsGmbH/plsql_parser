@@ -106,6 +106,48 @@ fold([], _FunState, Ctx, _PTree, {Rule, Step, Pos} = _FoldState)
     ?CUSTOM_RESULT(RT);
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% apiGroupAnnotation
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+fold([], _FunState, Ctx, #{apiGroupAnnotation := PTree}, {apiGroupAnnotation, Step} =
+    _FoldState) ->
+    ?CUSTOM_INIT(_FunState, Ctx, PTree, _FoldState),
+    RT = case Step of
+             start -> lists:append(
+                 [
+                     Ctx,
+                     "--<> ",
+                     maps:get(type@, PTree),
+                     " = ",
+                     maps:get(apiGroup@, PTree),
+                     ?CHAR_NEWLINE
+                 ]);
+             _ -> Ctx
+         end,
+    ?CUSTOM_RESULT(RT);
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% apiHiddenAnnotation
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+fold([], _FunState, Ctx, #{apiHiddenAnnotation := PTree}, {apiHiddenAnnotation, Step} =
+    _FoldState) ->
+    ?CUSTOM_INIT(_FunState, Ctx, PTree, _FoldState),
+    RT = case Step of
+             start -> lists:append(
+                 [
+                     Ctx,
+                     "--<> ",
+                     maps:get(type@, PTree),
+                     " = ",
+                     maps:get(apiHidden@, PTree),
+                     ?CHAR_NEWLINE
+                 ]);
+             _ -> Ctx
+         end,
+    ?CUSTOM_RESULT(RT);
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % columnRef
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -453,48 +495,6 @@ fold([], _FunState, Ctx, #{functionHeading := PTree}, {functionHeading, Step} =
     ?CUSTOM_RESULT(RT);
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% functionLegacyAnnotation
-% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-fold([], _FunState, Ctx, #{functionLegacyAnnotation := PTree},
-    {functionLegacyAnnotation, Step} = _FoldState) ->
-    ?CUSTOM_INIT(_FunState, Ctx, PTree, _FoldState),
-    RT = case Step of
-             start -> lists:append(
-                 [
-                     Ctx,
-                     "--<> ",
-                     maps:get(type@, PTree),
-                     " = ",
-                     maps:get(value@, PTree),
-                     ?CHAR_NEWLINE
-                 ]);
-             _ -> Ctx
-         end,
-    ?CUSTOM_RESULT(RT);
-
-% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% functionSimpleLegacyAnnotation
-% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-fold([], _FunState, Ctx, #{functionSimpleLegacyAnnotation := PTree},
-    {functionSimpleLegacyAnnotation, Step} = _FoldState) ->
-    ?CUSTOM_INIT(_FunState, Ctx, PTree, _FoldState),
-    RT = case Step of
-             start -> lists:append(
-                 [
-                     Ctx,
-                     "--<> ",
-                     maps:get(type@, PTree),
-                     " = ",
-                     maps:get(value@, PTree),
-                     ?CHAR_NEWLINE
-                 ]);
-             _ -> Ctx
-         end,
-    ?CUSTOM_RESULT(RT);
-
-% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % functionRef
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -620,6 +620,27 @@ fold([], _FunState, Ctx, #{packageFunctionDeclarationAttribute := PTree},
     ?CUSTOM_RESULT(RT);
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% packageItem
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+fold([], _FunState, Ctx, #{packageItem := PTree},
+    {packageItem, Step} = _FoldState)
+    when is_map(PTree) ->
+    ?CUSTOM_INIT(_FunState, Ctx, PTree, _FoldState),
+    RT = case Step of
+             start -> Ctx;
+             _ -> lists:append(
+                 [
+                     Ctx,
+                     case maps:is_key(man_page@, PTree) of
+                         true -> " " ++ maps:get(man_page@, PTree);
+                         _ -> []
+                     end
+                 ])
+         end,
+    ?CUSTOM_RESULT(RT);
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % packageItemConditional
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -655,13 +676,18 @@ fold([], _FunState, Ctx, #{packageItemList@_@ := PTree},
     when is_map(PTree) ->
     ?CUSTOM_INIT(_FunState, Ctx, PTree, _FoldState),
     RT = case Step of
-             start -> lists:append(
-                 [
-                     Ctx,
-                     " ",
-                     maps:get(asIs@, PTree),
-                     " "
-                 ]);
+             start ->
+                 lists:append(
+                     [
+                         Ctx,
+                         " ",
+                         maps:get(asIs@, PTree),
+                         case maps:is_key(man_page@, PTree) of
+                             true -> " " ++ maps:get(man_page@, PTree);
+                             _ -> []
+                         end,
+                         " "
+                     ]);
              _ -> Ctx
          end,
     ?CUSTOM_RESULT(RT);
@@ -684,27 +710,6 @@ fold([], _FunState, Ctx, #{parallelEnabledClause := PTree},
                      maps:get(type@, PTree)
                  ]);
              _ -> Ctx ++ ")"
-         end,
-    ?CUSTOM_RESULT(RT);
-
-% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% parameterAnnotation
-% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-fold([], _FunState, Ctx, #{parameterAnnotation := PTree},
-    {parameterAnnotation, Step} = _FoldState) ->
-    ?CUSTOM_INIT(_FunState, Ctx, PTree, _FoldState),
-    RT = case Step of
-             start -> lists:append(
-                 [
-                     Ctx,
-                     "--<> ",
-                     maps:get(type@, PTree),
-                     " = ",
-                     maps:get(value@, PTree),
-                     ?CHAR_NEWLINE
-                 ]);
-             _ -> Ctx
          end,
     ?CUSTOM_RESULT(RT);
 
@@ -848,27 +853,6 @@ fold([], _FunState, Ctx, #{procedureHeading := PTree},
     ?CUSTOM_RESULT(RT);
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% procedureLegacyAnnotation
-% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-fold([], _FunState, Ctx, #{procedureLegacyAnnotation := PTree},
-    {procedureLegacyAnnotation, Step} = _FoldState) ->
-    ?CUSTOM_INIT(_FunState, Ctx, PTree, _FoldState),
-    RT = case Step of
-             start -> lists:append(
-                 [
-                     Ctx,
-                     "--<> ",
-                     maps:get(type@, PTree),
-                     " = ",
-                     maps:get(value@, PTree),
-                     ?CHAR_NEWLINE
-                 ]);
-             _ -> Ctx
-         end,
-    ?CUSTOM_RESULT(RT);
-
-% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % resultCacheClause
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -897,27 +881,6 @@ fold([], _FunState, Ctx, _PTree, {return, Step} = _FoldState) ->
     ?CUSTOM_INIT(_FunState, Ctx, _PTree, _FoldState),
     RT = case Step of
              start -> Ctx ++ " return";
-             _ -> Ctx
-         end,
-    ?CUSTOM_RESULT(RT);
-
-% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% roleAnnotation
-% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-fold([], _FunState, Ctx, #{roleAnnotation := PTree}, {roleAnnotation, Step} =
-    _FoldState) ->
-    ?CUSTOM_INIT(_FunState, Ctx, PTree, _FoldState),
-    RT = case Step of
-             start -> lists:append(
-                 [
-                     Ctx,
-                     "--<> ",
-                     maps:get(type@, PTree),
-                     " = ",
-                     maps:get(role@, PTree),
-                     ?CHAR_NEWLINE
-                 ]);
              _ -> Ctx
          end,
     ?CUSTOM_RESULT(RT);
@@ -1029,7 +992,7 @@ fold([], _FunState, Ctx, _PTree, {Rule, _Step, _Pos}) when
     Rule == packageItemList;
     Rule == plsqlPackageSourceAttributeList;
     Rule == plsqlUnit;
-    Rule == privilegeRoleAnnotationList ->
+    Rule == privilegeAnnotationList ->
     Ctx;
 
 fold([], _FunState, Ctx, _PTree, {Rule, _Step}) when
@@ -1040,14 +1003,15 @@ fold([], _FunState, Ctx, _PTree, {Rule, _Step}) when
     Rule == functionAnnotation;
     Rule == functionArg;
     Rule == functionArgCommaList;
+    Rule == packageFunctionDeclaration@_@;
     Rule == packageFunctionDeclarationAttribute;
     Rule == packageItemSimple;
+    Rule == packageProcedureDeclaration@_@;
     Rule == parameterDeclarationCommaList;
-    Rule == parameterDeclarationHelper;
     Rule == plsqlPackageSourceAttribute;
     Rule == plsqlUnit;
     Rule == plsqlUnitList;
-    Rule == privilegeRoleAnnotationList@_@;
+    Rule == privilegeAnnotationList@_@;
     Rule == procedureAnnotation;
     Rule == scalarExpression;
     Rule == scalarSubExpression ->

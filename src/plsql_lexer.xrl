@@ -55,6 +55,9 @@ Rules.
 ((([\.][0-9]+)|([0-9]+[\.]?[0-9]*))([eE][+-]?[0-9]+)?[fFdD]?)
                                                     : {token, {'APPROXNUM', TokenLine, TokenChars}}.
 
+% man_page
+(/\*<>([^*]|[\r\n]|(\*+([^*/]|[\r\n])))*\*+/)       : {token, {'MAN_PAGE', TokenLine, TokenChars}}.
+
 % skips
 ([\s\t\r\n]+)                                       : skip_token.    %% white space
 
@@ -62,9 +65,9 @@ Rules.
 (/\*([^*]|[\r\n]|(\*+([^*/]|[\r\n])))*\*+/)         : skip_token.
 
 % line comments
-(--(\s.*[\r\n]+|[\r\n]+))                                          : skip_token.
-%(--\n)                                          : skip_token.
-%(--\r\n)                                          : skip_token.
+(--(\s.*[\r\n]+|[\r\n]+))                           : skip_token.
+%(--\n)                                             : skip_token.
+%(--\r\n)                                           : skip_token.
 
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 Erlang code.

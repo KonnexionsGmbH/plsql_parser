@@ -84,14 +84,10 @@ end dbss_flashback;
 create or replace package dbss_flashback
 is
     $if myString = \"myString\" $then
-    --<> legacy_name_function = name_2_1
     function cre_restore_point_1 (
-        --<> logger_to_character = false
         p_is_show_in                   in char)
         return date;
     $else
-    --<> legacy_name_function = name_3_1
-    --<> legacy_name_procedure = name_3_2
     procedure cre_restore_point_2 (
         p_is_show_in                   in char);
     $end
@@ -107,9 +103,7 @@ end dbss_flashback;
         <Condition>
             <If>myString = \"myString\"</If>
         </Condition>
-        <LegacyNameFunction>name_2_1</LegacyNameFunction>
         <Parameter>
-            <LoggerToCharacter>false</LoggerToCharacter>
             <Name>p_is_show_in</Name>
             <Mode>IN</Mode>
             <DataType>CHAR</DataType>
@@ -123,8 +117,6 @@ end dbss_flashback;
         <Condition>
             <Else></Else>
         </Condition>
-        <LegacyNameFunction>name_3_1</LegacyNameFunction>
-        <LegacyNameProcedure>name_3_2</LegacyNameProcedure>
         <Parameter>
             <Name>p_is_show_in</Name>
             <Mode>IN</Mode>
@@ -196,22 +188,20 @@ end
 
 -define(TEST_05, "
 create package my_package as
---<> legacy_name_function = my_function_name
---<> legacy_name_procedure = my_procedure_name
 --<> object_privilege execute = dbss.func_1
---<> role = my_role_1
+--<> api_group = my_api_group_1
 --<> system_privilege = INHERIT ANY PRIVILEGES
 --<> object_privilege execute = dbss.func_2
---<> role = my_role_2
+--<> api_group = my_api_group_2
 --<> system_privilege = SELECT ANY TABLE
 --<> object_privilege execute = dbss.func_3
---<> role = my_role_3
+--<> api_group = my_api_group_3
 --<> system_privilege = SET CONTAINER
 --<> object_privilege execute = dbss.func_4
---<> role = my_role_4
+--<> api_group = my_api_group_4
 --<> system_privilege = UNLIMITED TABLESPACE
 --<> object_privilege execute = dbss.func_5
---<> role = my_role_5
+--<> api_group = my_api_group_5
 --<> system_privilege = SELECT ANY DIRECTORY
 procedure my_procedure;
 end;
@@ -222,78 +212,48 @@ end;
     <Name>my_package</Name>
     <Procedure>
         <Name>my_procedure</Name>
-        <LegacyNameFunction>my_function_name</LegacyNameFunction>
-        <LegacyNameProcedure>my_procedure_name</LegacyNameProcedure>
-        <PrivilegeRole>
+        <ApiGroupPrivilege>
             <Privilege>
                 <Type>EXECUTE</Type>
                 <Object>dbss.func_1</Object>
             </Privilege>
-        </PrivilegeRole>
-        <PrivilegeRole>
-            <Role>my_role_1</Role>
-        </PrivilegeRole>
-        <PrivilegeRole>
+            <ApiGroup>my_api_group_1</ApiGroup>
             <Privilege>
                 <Type>INHERIT ANY PRIVILEGES</Type>
             </Privilege>
-        </PrivilegeRole>
-        <PrivilegeRole>
             <Privilege>
                 <Type>EXECUTE</Type>
                 <Object>dbss.func_2</Object>
             </Privilege>
-        </PrivilegeRole>
-        <PrivilegeRole>
-            <Role>my_role_2</Role>
-        </PrivilegeRole>
-        <PrivilegeRole>
+            <ApiGroup>my_api_group_2</ApiGroup>
             <Privilege>
                 <Type>SELECT ANY TABLE</Type>
             </Privilege>
-        </PrivilegeRole>
-        <PrivilegeRole>
             <Privilege>
                 <Type>EXECUTE</Type>
                 <Object>dbss.func_3</Object>
             </Privilege>
-        </PrivilegeRole>
-        <PrivilegeRole>
-            <Role>my_role_3</Role>
-        </PrivilegeRole>
-        <PrivilegeRole>
+            <ApiGroup>my_api_group_3</ApiGroup>
             <Privilege>
                 <Type>SET CONTAINER</Type>
             </Privilege>
-        </PrivilegeRole>
-        <PrivilegeRole>
             <Privilege>
                 <Type>EXECUTE</Type>
                 <Object>dbss.func_4</Object>
             </Privilege>
-        </PrivilegeRole>
-        <PrivilegeRole>
-            <Role>my_role_4</Role>
-        </PrivilegeRole>
-        <PrivilegeRole>
+            <ApiGroup>my_api_group_4</ApiGroup>
             <Privilege>
                 <Type>UNLIMITED TABLESPACE</Type>
             </Privilege>
-        </PrivilegeRole>
-        <PrivilegeRole>
             <Privilege>
                 <Type>EXECUTE</Type>
                 <Object>dbss.func_5</Object>
             </Privilege>
-        </PrivilegeRole>
-        <PrivilegeRole>
-            <Role>my_role_5</Role>
-        </PrivilegeRole>
-        <PrivilegeRole>
+            <ApiGroup>my_api_group_5</ApiGroup>
             <Privilege>
                 <Type>SELECT ANY DIRECTORY</Type>
             </Privilege>
-        </PrivilegeRole>
+        </ApiGroupPrivilege>
     </Procedure>
 </Package>").
 
@@ -592,8 +552,6 @@ IS
 
     $IF DBMS_DB_VERSION.version = 12 AND DBMS_DB_VERSION.release = 1
     $THEN
-        --<> legacy_name_function = dbss_f_cre_rstr_pnt_12_1
-        --<> legacy_name_procedure = dbss_p_cre_rstr_pnt_12_1
         PROCEDURE cre_rstr_pnt (
             p_sqls_cv_in_out               IN OUT dbss_type.sqls_cur,
             p_rstr_pnt_in                  IN     v$restore_point.name%TYPE := dbss_global.get_default_rstr_pnt (),
@@ -605,8 +563,6 @@ IS
 
     $IF DBMS_DB_VERSION.version > 12 OR DBMS_DB_VERSION.version = 12 AND DBMS_DB_VERSION.release > 1
     $THEN
-        --<> legacy_name_function = dbss_f_cre_rstr_pnt_12_2
-        --<> legacy_name_procedure = dbss_p_cre_rstr_pnt_12_2
         PROCEDURE cre_rstr_pnt (
             p_sqls_cv_in_out               IN OUT dbss_type.sqls_cur,
             p_rstr_pnt_in                  IN     v$restore_point.name%TYPE := dbss_global.get_default_rstr_pnt (),
@@ -619,8 +575,6 @@ IS
 
     $IF DBMS_DB_VERSION.version = 12 AND DBMS_DB_VERSION.release = 1
     $THEN
-        --<> legacy_name_function = dbss_f_cre_rstr_pnt_guar_12_1
-        --<> legacy_name_procedure = dbss_p_cre_rstr_pnt_guar_12_1
         PROCEDURE cre_rstr_pnt_guar (
             p_sqls_cv_in_out               IN OUT dbss_type.sqls_cur,
             p_rstr_pnt_in                  IN     v$restore_point.name%TYPE := dbss_global.get_default_rstr_pnt (),
@@ -632,8 +586,6 @@ IS
 
     $IF DBMS_DB_VERSION.version > 12 OR DBMS_DB_VERSION.version = 12 AND DBMS_DB_VERSION.release > 1
     $THEN
-        --<> legacy_name_function = dbss_f_cre_rstr_pnt_guar_12_2
-        --<> legacy_name_procedure = dbss_p_cre_rstr_pnt_guar_12_2
         PROCEDURE cre_rstr_pnt_guar (
             p_sqls_cv_in_out               IN OUT dbss_type.sqls_cur,
             p_rstr_pnt_in                  IN     v$restore_point.name%TYPE := dbss_global.get_default_rstr_pnt (),
@@ -646,8 +598,6 @@ IS
 
     $IF DBMS_DB_VERSION.version = 12 AND DBMS_DB_VERSION.release = 1
     $THEN
-        --<> legacy_name_function = dbss_f_cre_rstr_pnt_pres_12_1
-        --<> legacy_name_procedure = dbss_p_cre_rstr_pnt_pres_12_1
         PROCEDURE cre_rstr_pnt_pres (
             p_sqls_cv_in_out               IN OUT dbss_type.sqls_cur,
             p_rstr_pnt_in                  IN     v$restore_point.name%TYPE := dbss_global.get_default_rstr_pnt (),
@@ -659,8 +609,6 @@ IS
 
     $IF DBMS_DB_VERSION.version > 12 OR DBMS_DB_VERSION.version = 12 AND DBMS_DB_VERSION.release > 1
     $THEN
-        --<> legacy_name_function = dbss_f_cre_rstr_pnt_pres_12_2
-        --<> legacy_name_procedure = dbss_p_cre_rstr_pnt_pres_12_2
         PROCEDURE cre_rstr_pnt_pres (
             p_sqls_cv_in_out               IN OUT dbss_type.sqls_cur,
             p_rstr_pnt_in                  IN     v$restore_point.name%TYPE := dbss_global.get_default_rstr_pnt (),
@@ -704,8 +652,6 @@ IS
 
     $IF DBMS_DB_VERSION.version = 12 AND DBMS_DB_VERSION.release = 1
     $THEN
-        --<> legacy_name_function = dbss_f_get_rstr_pnts_12_1
-        --<> legacy_name_procedure = dbss_p_get_rstr_pnts_12_1
         PROCEDURE get_rstr_pnts (
             p_rstr_pnts_cv_out                OUT dbss_type.rstr_pnts_cur,
             p_guaranteed_in                IN     v$restore_point.guarantee_flashback_database%TYPE := 'ALL',
@@ -716,8 +662,6 @@ IS
 
     $IF DBMS_DB_VERSION.version > 12 OR DBMS_DB_VERSION.version = 12 AND DBMS_DB_VERSION.release > 1
     $THEN
-        --<> legacy_name_function = dbss_f_get_rstr_pnts_12_2
-        --<> legacy_name_procedure = dbss_p_get_rstr_pnts_12_2
         PROCEDURE get_rstr_pnts (
             p_rstr_pnts_cv_out                OUT dbss_type.rstr_pnts_cur,
             p_clean_in                     IN     v$restore_point.clean_pdb_restore_point%TYPE := 'ALL',
@@ -750,8 +694,6 @@ END dbss_flashback;
         <Condition>
             <IfEnd>DBMS_DB_VERSION.version = 12 AND DBMS_DB_VERSION.release = 1</IfEnd>
         </Condition>
-        <LegacyNameFunction>dbss_f_cre_rstr_pnt_12_1</LegacyNameFunction>
-        <LegacyNameProcedure>dbss_p_cre_rstr_pnt_12_1</LegacyNameProcedure>
         <Parameter>
             <Name>p_sqls_cv_in_out</Name>
             <Mode>IN OUT</Mode>
@@ -803,8 +745,6 @@ END dbss_flashback;
         <Condition>
             <IfEnd>DBMS_DB_VERSION.version > 12 OR DBMS_DB_VERSION.version = 12 AND DBMS_DB_VERSION.release > 1</IfEnd>
         </Condition>
-        <LegacyNameFunction>dbss_f_cre_rstr_pnt_12_2</LegacyNameFunction>
-        <LegacyNameProcedure>dbss_p_cre_rstr_pnt_12_2</LegacyNameProcedure>
         <Parameter>
             <Name>p_sqls_cv_in_out</Name>
             <Mode>IN OUT</Mode>
@@ -864,8 +804,6 @@ END dbss_flashback;
         <Condition>
             <IfEnd>DBMS_DB_VERSION.version = 12 AND DBMS_DB_VERSION.release = 1</IfEnd>
         </Condition>
-        <LegacyNameFunction>dbss_f_cre_rstr_pnt_guar_12_1</LegacyNameFunction>
-        <LegacyNameProcedure>dbss_p_cre_rstr_pnt_guar_12_1</LegacyNameProcedure>
         <Parameter>
             <Name>p_sqls_cv_in_out</Name>
             <Mode>IN OUT</Mode>
@@ -917,8 +855,6 @@ END dbss_flashback;
         <Condition>
             <IfEnd>DBMS_DB_VERSION.version > 12 OR DBMS_DB_VERSION.version = 12 AND DBMS_DB_VERSION.release > 1</IfEnd>
         </Condition>
-        <LegacyNameFunction>dbss_f_cre_rstr_pnt_guar_12_2</LegacyNameFunction>
-        <LegacyNameProcedure>dbss_p_cre_rstr_pnt_guar_12_2</LegacyNameProcedure>
         <Parameter>
             <Name>p_sqls_cv_in_out</Name>
             <Mode>IN OUT</Mode>
@@ -978,8 +914,6 @@ END dbss_flashback;
         <Condition>
             <IfEnd>DBMS_DB_VERSION.version = 12 AND DBMS_DB_VERSION.release = 1</IfEnd>
         </Condition>
-        <LegacyNameFunction>dbss_f_cre_rstr_pnt_pres_12_1</LegacyNameFunction>
-        <LegacyNameProcedure>dbss_p_cre_rstr_pnt_pres_12_1</LegacyNameProcedure>
         <Parameter>
             <Name>p_sqls_cv_in_out</Name>
             <Mode>IN OUT</Mode>
@@ -1031,8 +965,6 @@ END dbss_flashback;
         <Condition>
             <IfEnd>DBMS_DB_VERSION.version > 12 OR DBMS_DB_VERSION.version = 12 AND DBMS_DB_VERSION.release > 1</IfEnd>
         </Condition>
-        <LegacyNameFunction>dbss_f_cre_rstr_pnt_pres_12_2</LegacyNameFunction>
-        <LegacyNameProcedure>dbss_p_cre_rstr_pnt_pres_12_2</LegacyNameProcedure>
         <Parameter>
             <Name>p_sqls_cv_in_out</Name>
             <Mode>IN OUT</Mode>
@@ -1260,8 +1192,6 @@ END dbss_flashback;
         <Condition>
             <IfEnd>DBMS_DB_VERSION.version = 12 AND DBMS_DB_VERSION.release = 1</IfEnd>
         </Condition>
-        <LegacyNameFunction>dbss_f_get_rstr_pnts_12_1</LegacyNameFunction>
-        <LegacyNameProcedure>dbss_p_get_rstr_pnts_12_1</LegacyNameProcedure>
         <Parameter>
             <Name>p_rstr_pnts_cv_out</Name>
             <Mode>OUT</Mode>
@@ -1305,8 +1235,6 @@ END dbss_flashback;
         <Condition>
             <IfEnd>DBMS_DB_VERSION.version > 12 OR DBMS_DB_VERSION.version = 12 AND DBMS_DB_VERSION.release > 1</IfEnd>
         </Condition>
-        <LegacyNameFunction>dbss_f_get_rstr_pnts_12_2</LegacyNameFunction>
-        <LegacyNameProcedure>dbss_p_get_rstr_pnts_12_2</LegacyNameProcedure>
         <Parameter>
             <Name>p_rstr_pnts_cv_out</Name>
             <Mode>OUT</Mode>
@@ -1642,11 +1570,11 @@ END dbss_flashback;
         <Condition>
             <IfEnd>DBMS_DB_VERSION.version = 12 AND DBMS_DB_VERSION.release = 1</IfEnd>
         </Condition>
-        <PrivilegeRole>
+        <ApiGroupPrivilege>
             <Privilege>
                 <Type>FLASHBACK ANY TABLE</Type>
             </Privilege>
-        </PrivilegeRole>
+        </ApiGroupPrivilege>
         <Parameter>
             <Name>p_sqls_cv_in_out</Name>
             <Mode>IN OUT</Mode>
@@ -1698,11 +1626,11 @@ END dbss_flashback;
         <Condition>
             <IfEnd>DBMS_DB_VERSION.version > 12 OR DBMS_DB_VERSION.version = 12 AND DBMS_DB_VERSION.release > 1</IfEnd>
         </Condition>
-        <PrivilegeRole>
+        <ApiGroupPrivilege>
             <Privilege>
                 <Type>FLASHBACK ANY TABLE</Type>
             </Privilege>
-        </PrivilegeRole>
+        </ApiGroupPrivilege>
         <Parameter>
             <Name>p_sqls_cv_in_out</Name>
             <Mode>IN OUT</Mode>
@@ -1762,11 +1690,11 @@ END dbss_flashback;
         <Condition>
             <IfEnd>DBMS_DB_VERSION.version = 12 AND DBMS_DB_VERSION.release = 1</IfEnd>
         </Condition>
-        <PrivilegeRole>
+        <ApiGroupPrivilege>
             <Privilege>
                 <Type>SYSDBA</Type>
             </Privilege>
-        </PrivilegeRole>
+        </ApiGroupPrivilege>
         <Parameter>
             <Name>p_sqls_cv_in_out</Name>
             <Mode>IN OUT</Mode>
@@ -1818,11 +1746,11 @@ END dbss_flashback;
         <Condition>
             <IfEnd>DBMS_DB_VERSION.version > 12 OR DBMS_DB_VERSION.version = 12 AND DBMS_DB_VERSION.release > 1</IfEnd>
         </Condition>
-        <PrivilegeRole>
+        <ApiGroupPrivilege>
             <Privilege>
                 <Type>SYSDBA</Type>
             </Privilege>
-        </PrivilegeRole>
+        </ApiGroupPrivilege>
         <Parameter>
             <Name>p_sqls_cv_in_out</Name>
             <Mode>IN OUT</Mode>
@@ -1882,11 +1810,11 @@ END dbss_flashback;
         <Condition>
             <IfEnd>DBMS_DB_VERSION.version = 12 AND DBMS_DB_VERSION.release = 1</IfEnd>
         </Condition>
-        <PrivilegeRole>
+        <ApiGroupPrivilege>
             <Privilege>
                 <Type>FLASHBACK ANY TABLE</Type>
             </Privilege>
-        </PrivilegeRole>
+        </ApiGroupPrivilege>
         <Parameter>
             <Name>p_sqls_cv_in_out</Name>
             <Mode>IN OUT</Mode>
@@ -1938,11 +1866,11 @@ END dbss_flashback;
         <Condition>
             <IfEnd>DBMS_DB_VERSION.version > 12 OR DBMS_DB_VERSION.version = 12 AND DBMS_DB_VERSION.release > 1</IfEnd>
         </Condition>
-        <PrivilegeRole>
+        <ApiGroupPrivilege>
             <Privilege>
                 <Type>FLASHBACK ANY TABLE</Type>
             </Privilege>
-        </PrivilegeRole>
+        </ApiGroupPrivilege>
         <Parameter>
             <Name>p_sqls_cv_in_out</Name>
             <Mode>IN OUT</Mode>
@@ -1999,11 +1927,11 @@ END dbss_flashback;
     </Procedure>
     <Procedure>
         <Name>del_rstr_pnt</Name>
-        <PrivilegeRole>
+        <ApiGroupPrivilege>
             <Privilege>
                 <Type>SYSDBA</Type>
             </Privilege>
-        </PrivilegeRole>
+        </ApiGroupPrivilege>
         <Parameter>
             <Name>p_sqls_cv_in_out</Name>
             <Mode>IN OUT</Mode>
@@ -2044,11 +1972,11 @@ END dbss_flashback;
     </Procedure>
     <Procedure>
         <Name>del_rstr_pnts</Name>
-        <PrivilegeRole>
+        <ApiGroupPrivilege>
             <Privilege>
                 <Type>SYSDBA</Type>
             </Privilege>
-        </PrivilegeRole>
+        </ApiGroupPrivilege>
         <Parameter>
             <Name>p_sqls_cv_in_out</Name>
             <Mode>IN OUT</Mode>
@@ -2081,11 +2009,11 @@ END dbss_flashback;
     </Procedure>
     <Procedure>
         <Name>del_rstr_pnts_guar</Name>
-        <PrivilegeRole>
+        <ApiGroupPrivilege>
             <Privilege>
                 <Type>SYSDBA</Type>
             </Privilege>
-        </PrivilegeRole>
+        </ApiGroupPrivilege>
         <Parameter>
             <Name>p_sqls_cv_in_out</Name>
             <Mode>IN OUT</Mode>
@@ -2118,11 +2046,11 @@ END dbss_flashback;
     </Procedure>
     <Procedure>
         <Name>del_rstr_pnts_norm</Name>
-        <PrivilegeRole>
+        <ApiGroupPrivilege>
             <Privilege>
                 <Type>FLASHBACK ANY TABLE</Type>
             </Privilege>
-        </PrivilegeRole>
+        </ApiGroupPrivilege>
         <Parameter>
             <Name>p_sqls_cv_in_out</Name>
             <Mode>IN OUT</Mode>
@@ -2155,11 +2083,11 @@ END dbss_flashback;
     </Procedure>
     <Procedure>
         <Name>del_rstr_pnts_pres</Name>
-        <PrivilegeRole>
+        <ApiGroupPrivilege>
             <Privilege>
                 <Type>FLASHBACK ANY TABLE</Type>
             </Privilege>
-        </PrivilegeRole>
+        </ApiGroupPrivilege>
         <Parameter>
             <Name>p_sqls_cv_in_out</Name>
             <Mode>IN OUT</Mode>
@@ -2195,12 +2123,12 @@ END dbss_flashback;
         <Condition>
             <IfEnd>DBMS_DB_VERSION.version = 12 AND DBMS_DB_VERSION.release = 1</IfEnd>
         </Condition>
-        <PrivilegeRole>
+        <ApiGroupPrivilege>
             <Privilege>
                 <Type>SELECT</Type>
                 <Object>v$restore_point</Object>
             </Privilege>
-        </PrivilegeRole>
+        </ApiGroupPrivilege>
         <Parameter>
             <Name>p_rstr_pnts_cv_out</Name>
             <Mode>OUT</Mode>
@@ -2244,12 +2172,12 @@ END dbss_flashback;
         <Condition>
             <IfEnd>DBMS_DB_VERSION.version > 12 OR DBMS_DB_VERSION.version = 12 AND DBMS_DB_VERSION.release > 1</IfEnd>
         </Condition>
-        <PrivilegeRole>
+        <ApiGroupPrivilege>
             <Privilege>
                 <Type>SELECT</Type>
                 <Object>v$restore_point</Object>
             </Privilege>
-        </PrivilegeRole>
+        </ApiGroupPrivilege>
         <Parameter>
             <Name>p_rstr_pnts_cv_out</Name>
             <Mode>OUT</Mode>
@@ -2298,22 +2226,18 @@ END dbss_flashback;
     </Procedure>
     <Procedure>
         <Name>set_flashback_off</Name>
-        <PrivilegeRole>
+        <ApiGroupPrivilege>
             <Privilege>
                 <Type>SELECT</Type>
                 <Object>v$database</Object>
             </Privilege>
-        </PrivilegeRole>
-        <PrivilegeRole>
             <Privilege>
                 <Type>ALTER DATABASE</Type>
             </Privilege>
-        </PrivilegeRole>
-        <PrivilegeRole>
             <Privilege>
                 <Type>SET CONTAINER</Type>
             </Privilege>
-        </PrivilegeRole>
+        </ApiGroupPrivilege>
         <Parameter>
             <Name>p_sqls_cv_in_out</Name>
             <Mode>IN OUT</Mode>
@@ -2346,22 +2270,18 @@ END dbss_flashback;
     </Procedure>
     <Procedure>
         <Name>set_flashback_on</Name>
-        <PrivilegeRole>
+        <ApiGroupPrivilege>
             <Privilege>
                 <Type>SELECT</Type>
                 <Object>v$database</Object>
             </Privilege>
-        </PrivilegeRole>
-        <PrivilegeRole>
             <Privilege>
                 <Type>ALTER DATABASE</Type>
             </Privilege>
-        </PrivilegeRole>
-        <PrivilegeRole>
             <Privilege>
                 <Type>SET CONTAINER</Type>
             </Privilege>
-        </PrivilegeRole>
+        </ApiGroupPrivilege>
         <Parameter>
             <Name>p_sqls_cv_in_out</Name>
             <Mode>IN OUT</Mode>
@@ -2455,12 +2375,10 @@ IS
 
     $IF DBMS_DB_VERSION.version = 12 AND DBMS_DB_VERSION.release = 1
     $THEN
-        --<> role = dbss_r_flashback
+        --<> api_group = dbss_r_flashback
         --<> system_privilege = flashback any table
         PROCEDURE cre_rstr_pnt (
-            --<> logger_to_character = none
             p_sqls_cv_in_out               IN OUT dbss_type.sqls_cur,
-            --<> logger_to_character = false
             p_rstr_pnt_in                  IN     SYS.v_$restore_point.name%TYPE := dbss_global.get_default_rstr_pnt (),
             p_scn_in                       IN     NUMBER := 0,
             p_is_cursor_in                 IN     BOOLEAN := dbss_global.get_default_is_cursor (),
@@ -2470,12 +2388,10 @@ IS
 
     $IF DBMS_DB_VERSION.version > 12 OR DBMS_DB_VERSION.version = 12 AND DBMS_DB_VERSION.release > 1
     $THEN
-        --<> role = dbss_r_flashback
+        --<> api_group = dbss_r_flashback
         --<> system_privilege = flashback any table
         PROCEDURE cre_rstr_pnt (
-            --<> logger_to_character = none
             p_sqls_cv_in_out               IN OUT dbss_type.sqls_cur,
-            --<> logger_to_character = false
             p_rstr_pnt_in                  IN     SYS.v_$restore_point.name%TYPE := dbss_global.get_default_rstr_pnt (),
             p_is_clean_in                  IN     BOOLEAN := FALSE,
             p_scn_in                       IN     NUMBER := 0,
@@ -2486,12 +2402,10 @@ IS
 
     $IF DBMS_DB_VERSION.version = 12 AND DBMS_DB_VERSION.release = 1
     $THEN
-        --<> role = dbss_r_flashback
+        --<> api_group = dbss_r_flashback
         --<> system_privilege = sysdba
         PROCEDURE cre_rstr_pnt_guar (
-            --<> logger_to_character = none
             p_sqls_cv_in_out               IN OUT dbss_type.sqls_cur,
-            --<> logger_to_character = false
             p_rstr_pnt_in                  IN     SYS.v_$restore_point.name%TYPE := dbss_global.get_default_rstr_pnt (),
             p_scn_in                       IN     NUMBER := 0,
             p_is_cursor_in                 IN     BOOLEAN := dbss_global.get_default_is_cursor (),
@@ -2501,12 +2415,10 @@ IS
 
     $IF DBMS_DB_VERSION.version > 12 OR DBMS_DB_VERSION.version = 12 AND DBMS_DB_VERSION.release > 1
     $THEN
-        --<> role = dbss_r_flashback
+        --<> api_group = dbss_r_flashback
         --<> system_privilege = sysdba
         PROCEDURE cre_rstr_pnt_guar (
-            --<> logger_to_character = none
             p_sqls_cv_in_out               IN OUT dbss_type.sqls_cur,
-            --<> logger_to_character = false
             p_rstr_pnt_in                  IN     SYS.v_$restore_point.name%TYPE := dbss_global.get_default_rstr_pnt (),
             p_is_clean_in                  IN     BOOLEAN := FALSE,
             p_scn_in                       IN     NUMBER := 0,
@@ -2517,12 +2429,10 @@ IS
 
     $IF DBMS_DB_VERSION.version = 12 AND DBMS_DB_VERSION.release = 1
     $THEN
-        --<> role = dbss_r_flashback
+        --<> api_group = dbss_r_flashback
         --<> system_privilege = flashback any table
         PROCEDURE cre_rstr_pnt_pres (
-            --<> logger_to_character = none
             p_sqls_cv_in_out               IN OUT dbss_type.sqls_cur,
-            --<> logger_to_character = false
             p_rstr_pnt_in                  IN     SYS.v_$restore_point.name%TYPE := dbss_global.get_default_rstr_pnt (),
             p_scn_in                       IN     NUMBER := 0,
             p_is_cursor_in                 IN     BOOLEAN := dbss_global.get_default_is_cursor (),
@@ -2532,12 +2442,10 @@ IS
 
     $IF DBMS_DB_VERSION.version > 12 OR DBMS_DB_VERSION.version = 12 AND DBMS_DB_VERSION.release > 1
     $THEN
-        --<> role = dbss_r_flashback
+        --<> api_group = dbss_r_flashback
         --<> system_privilege = flashback any table
         PROCEDURE cre_rstr_pnt_pres (
-            --<> logger_to_character = none
             p_sqls_cv_in_out               IN OUT dbss_type.sqls_cur,
-            --<> logger_to_character = false
             p_rstr_pnt_in                  IN     SYS.v_$restore_point.name%TYPE := dbss_global.get_default_rstr_pnt (),
             p_is_clean_in                  IN     BOOLEAN := FALSE,
             p_scn_in                       IN     NUMBER := 0,
@@ -2546,48 +2454,42 @@ IS
             p_is_show_in                   IN     BOOLEAN := dbss_global.get_default_is_show ());
     $END
 
-    --<> role = dbss_r_flashback
+    --<> api_group = dbss_r_flashback
     --<> system_privilege = sysdba
     PROCEDURE del_rstr_pnt (
-        --<> logger_to_character = none
         p_sqls_cv_in_out               IN OUT dbss_type.sqls_cur,
-        --<> logger_to_character = false
         p_rstr_pnt_in                  IN     SYS.v_$restore_point.name%TYPE := dbss_global.get_default_rstr_pnt (),
         p_is_cursor_in                 IN     BOOLEAN := dbss_global.get_default_is_cursor (),
         p_is_execute_in                IN     BOOLEAN := dbss_global.get_default_is_execute (),
         p_is_show_in                   IN     BOOLEAN := dbss_global.get_default_is_show ());
 
-    --<> role = dbss_r_flashback
+    --<> api_group = dbss_r_flashback
     --<> system_privilege = sysdba
     PROCEDURE del_rstr_pnts (
-        --<> logger_to_character = none
         p_sqls_cv_in_out               IN OUT dbss_type.sqls_cur,
         p_is_cursor_in                 IN     BOOLEAN := dbss_global.get_default_is_cursor (),
         p_is_execute_in                IN     BOOLEAN := dbss_global.get_default_is_execute (),
         p_is_show_in                   IN     BOOLEAN := dbss_global.get_default_is_show ());
 
-    --<> role = dbss_r_flashback
+    --<> api_group = dbss_r_flashback
     --<> system_privilege = sysdba
     PROCEDURE del_rstr_pnts_guar (
-        --<> logger_to_character = none
         p_sqls_cv_in_out               IN OUT dbss_type.sqls_cur,
         p_is_cursor_in                 IN     BOOLEAN := dbss_global.get_default_is_cursor (),
         p_is_execute_in                IN     BOOLEAN := dbss_global.get_default_is_execute (),
         p_is_show_in                   IN     BOOLEAN := dbss_global.get_default_is_show ());
 
-    --<> role = dbss_r_flashback
+    --<> api_group = dbss_r_flashback
     --<> system_privilege = flashback any table
     PROCEDURE del_rstr_pnts_norm (
-        --<> logger_to_character = none
         p_sqls_cv_in_out               IN OUT dbss_type.sqls_cur,
         p_is_cursor_in                 IN     BOOLEAN := dbss_global.get_default_is_cursor (),
         p_is_execute_in                IN     BOOLEAN := dbss_global.get_default_is_execute (),
         p_is_show_in                   IN     BOOLEAN := dbss_global.get_default_is_show ());
 
-    --<> role = dbss_r_flashback
+    --<> api_group = dbss_r_flashback
     --<> system_privilege = flashback any table
     PROCEDURE del_rstr_pnts_pres (
-        --<> logger_to_character = none
         p_sqls_cv_in_out               IN OUT dbss_type.sqls_cur,
         p_is_cursor_in                 IN     BOOLEAN := dbss_global.get_default_is_cursor (),
         p_is_execute_in                IN     BOOLEAN := dbss_global.get_default_is_execute (),
@@ -2596,13 +2498,10 @@ IS
     $IF DBMS_DB_VERSION.version = 12 AND DBMS_DB_VERSION.release = 1
     $THEN
         --<> object_privilege select = sys.v_$restore_point
-        --<> role = dbss_r_flashback
+        --<> api_group = dbss_r_flashback
         PROCEDURE get_rstr_pnts (
-            --<> logger_to_character = none
             p_rstr_pnts_cv_out                OUT dbss_type.rstr_pnts_cur,
-            --<> logger_to_character = false
             p_guaranteed_in                IN     SYS.v_$restore_point.guarantee_flashback_database%TYPE := 'ALL',
-            --<> logger_to_character = false
             p_preserved_in                 IN     SYS.v_$restore_point.preserved%TYPE := 'ALL',
             p_is_cursor_in                 IN     BOOLEAN := dbss_global.get_default_is_cursor (),
             p_is_show_in                   IN     BOOLEAN := dbss_global.get_default_is_show ());
@@ -2611,15 +2510,11 @@ IS
     $IF DBMS_DB_VERSION.version > 12 OR DBMS_DB_VERSION.version = 12 AND DBMS_DB_VERSION.release > 1
     $THEN
         --<> object_privilege select = sys.v_$restore_point
-        --<> role = dbss_r_flashback
+        --<> api_group = dbss_r_flashback
         PROCEDURE get_rstr_pnts (
-            --<> logger_to_character = none
             p_rstr_pnts_cv_out                OUT dbss_type.rstr_pnts_cur,
-            --<> logger_to_character = false
             p_clean_in                     IN     SYS.v_$restore_point.clean_pdb_restore_point%TYPE := 'ALL',
-            --<> logger_to_character = false
             p_guaranteed_in                IN     SYS.v_$restore_point.guarantee_flashback_database%TYPE := 'ALL',
-            --<> logger_to_character = false
             p_preserved_in                 IN     SYS.v_$restore_point.preserved%TYPE := 'ALL',
             p_is_cursor_in                 IN     BOOLEAN := dbss_global.get_default_is_cursor (),
             p_is_show_in                   IN     BOOLEAN := dbss_global.get_default_is_show ());
@@ -2629,7 +2524,6 @@ IS
     --<> system_privilege = alter database
     --<> system_privilege = set container
     PROCEDURE set_flashback_off (
-        --<> logger_to_character = none
         p_sqls_cv_in_out               IN OUT dbss_type.sqls_cur,
         p_is_cursor_in                 IN     BOOLEAN := dbss_global.get_default_is_cursor (),
         p_is_execute_in                IN     BOOLEAN := dbss_global.get_default_is_execute (),
@@ -2639,7 +2533,6 @@ IS
     --<> system_privilege = alter database
     --<> system_privilege = set container
     PROCEDURE set_flashback_on (
-        --<> logger_to_character = none
         p_sqls_cv_in_out               IN OUT dbss_type.sqls_cur,
         p_is_cursor_in                 IN     BOOLEAN := dbss_global.get_default_is_cursor (),
         p_is_execute_in                IN     BOOLEAN := dbss_global.get_default_is_execute (),
@@ -2656,22 +2549,18 @@ END dbss_flashback;
         <Condition>
             <IfEnd>DBMS_DB_VERSION.version = 12 AND DBMS_DB_VERSION.release = 1</IfEnd>
         </Condition>
-        <PrivilegeRole>
-            <Role>dbss_r_flashback</Role>
-        </PrivilegeRole>
-        <PrivilegeRole>
+        <ApiGroupPrivilege>
+            <ApiGroup>dbss_r_flashback</ApiGroup>
             <Privilege>
                 <Type>FLASHBACK ANY TABLE</Type>
             </Privilege>
-        </PrivilegeRole>
+        </ApiGroupPrivilege>
         <Parameter>
-            <LoggerToCharacter>none</LoggerToCharacter>
             <Name>p_sqls_cv_in_out</Name>
             <Mode>IN OUT</Mode>
             <DataType>dbss_type.sqls_cur</DataType>
         </Parameter>
         <Parameter>
-            <LoggerToCharacter>false</LoggerToCharacter>
             <Name>p_rstr_pnt_in</Name>
             <Mode>IN</Mode>
             <DataType>SYS.v_$restore_point.NAME%TYPE</DataType>
@@ -2717,22 +2606,18 @@ END dbss_flashback;
         <Condition>
             <IfEnd>DBMS_DB_VERSION.version > 12 OR DBMS_DB_VERSION.version = 12 AND DBMS_DB_VERSION.release > 1</IfEnd>
         </Condition>
-        <PrivilegeRole>
-            <Role>dbss_r_flashback</Role>
-        </PrivilegeRole>
-        <PrivilegeRole>
+        <ApiGroupPrivilege>
+            <ApiGroup>dbss_r_flashback</ApiGroup>
             <Privilege>
                 <Type>FLASHBACK ANY TABLE</Type>
             </Privilege>
-        </PrivilegeRole>
+        </ApiGroupPrivilege>
         <Parameter>
-            <LoggerToCharacter>none</LoggerToCharacter>
             <Name>p_sqls_cv_in_out</Name>
             <Mode>IN OUT</Mode>
             <DataType>dbss_type.sqls_cur</DataType>
         </Parameter>
         <Parameter>
-            <LoggerToCharacter>false</LoggerToCharacter>
             <Name>p_rstr_pnt_in</Name>
             <Mode>IN</Mode>
             <DataType>SYS.v_$restore_point.NAME%TYPE</DataType>
@@ -2786,22 +2671,18 @@ END dbss_flashback;
         <Condition>
             <IfEnd>DBMS_DB_VERSION.version = 12 AND DBMS_DB_VERSION.release = 1</IfEnd>
         </Condition>
-        <PrivilegeRole>
-            <Role>dbss_r_flashback</Role>
-        </PrivilegeRole>
-        <PrivilegeRole>
+        <ApiGroupPrivilege>
+            <ApiGroup>dbss_r_flashback</ApiGroup>
             <Privilege>
                 <Type>SYSDBA</Type>
             </Privilege>
-        </PrivilegeRole>
+        </ApiGroupPrivilege>
         <Parameter>
-            <LoggerToCharacter>none</LoggerToCharacter>
             <Name>p_sqls_cv_in_out</Name>
             <Mode>IN OUT</Mode>
             <DataType>dbss_type.sqls_cur</DataType>
         </Parameter>
         <Parameter>
-            <LoggerToCharacter>false</LoggerToCharacter>
             <Name>p_rstr_pnt_in</Name>
             <Mode>IN</Mode>
             <DataType>SYS.v_$restore_point.NAME%TYPE</DataType>
@@ -2847,22 +2728,18 @@ END dbss_flashback;
         <Condition>
             <IfEnd>DBMS_DB_VERSION.version > 12 OR DBMS_DB_VERSION.version = 12 AND DBMS_DB_VERSION.release > 1</IfEnd>
         </Condition>
-        <PrivilegeRole>
-            <Role>dbss_r_flashback</Role>
-        </PrivilegeRole>
-        <PrivilegeRole>
+        <ApiGroupPrivilege>
+            <ApiGroup>dbss_r_flashback</ApiGroup>
             <Privilege>
                 <Type>SYSDBA</Type>
             </Privilege>
-        </PrivilegeRole>
+        </ApiGroupPrivilege>
         <Parameter>
-            <LoggerToCharacter>none</LoggerToCharacter>
             <Name>p_sqls_cv_in_out</Name>
             <Mode>IN OUT</Mode>
             <DataType>dbss_type.sqls_cur</DataType>
         </Parameter>
         <Parameter>
-            <LoggerToCharacter>false</LoggerToCharacter>
             <Name>p_rstr_pnt_in</Name>
             <Mode>IN</Mode>
             <DataType>SYS.v_$restore_point.NAME%TYPE</DataType>
@@ -2916,22 +2793,18 @@ END dbss_flashback;
         <Condition>
             <IfEnd>DBMS_DB_VERSION.version = 12 AND DBMS_DB_VERSION.release = 1</IfEnd>
         </Condition>
-        <PrivilegeRole>
-            <Role>dbss_r_flashback</Role>
-        </PrivilegeRole>
-        <PrivilegeRole>
+        <ApiGroupPrivilege>
+            <ApiGroup>dbss_r_flashback</ApiGroup>
             <Privilege>
                 <Type>FLASHBACK ANY TABLE</Type>
             </Privilege>
-        </PrivilegeRole>
+        </ApiGroupPrivilege>
         <Parameter>
-            <LoggerToCharacter>none</LoggerToCharacter>
             <Name>p_sqls_cv_in_out</Name>
             <Mode>IN OUT</Mode>
             <DataType>dbss_type.sqls_cur</DataType>
         </Parameter>
         <Parameter>
-            <LoggerToCharacter>false</LoggerToCharacter>
             <Name>p_rstr_pnt_in</Name>
             <Mode>IN</Mode>
             <DataType>SYS.v_$restore_point.NAME%TYPE</DataType>
@@ -2977,22 +2850,18 @@ END dbss_flashback;
         <Condition>
             <IfEnd>DBMS_DB_VERSION.version > 12 OR DBMS_DB_VERSION.version = 12 AND DBMS_DB_VERSION.release > 1</IfEnd>
         </Condition>
-        <PrivilegeRole>
-            <Role>dbss_r_flashback</Role>
-        </PrivilegeRole>
-        <PrivilegeRole>
+        <ApiGroupPrivilege>
+            <ApiGroup>dbss_r_flashback</ApiGroup>
             <Privilege>
                 <Type>FLASHBACK ANY TABLE</Type>
             </Privilege>
-        </PrivilegeRole>
+        </ApiGroupPrivilege>
         <Parameter>
-            <LoggerToCharacter>none</LoggerToCharacter>
             <Name>p_sqls_cv_in_out</Name>
             <Mode>IN OUT</Mode>
             <DataType>dbss_type.sqls_cur</DataType>
         </Parameter>
         <Parameter>
-            <LoggerToCharacter>false</LoggerToCharacter>
             <Name>p_rstr_pnt_in</Name>
             <Mode>IN</Mode>
             <DataType>SYS.v_$restore_point.NAME%TYPE</DataType>
@@ -3043,22 +2912,18 @@ END dbss_flashback;
     </Procedure>
     <Procedure>
         <Name>del_rstr_pnt</Name>
-        <PrivilegeRole>
-            <Role>dbss_r_flashback</Role>
-        </PrivilegeRole>
-        <PrivilegeRole>
+        <ApiGroupPrivilege>
+            <ApiGroup>dbss_r_flashback</ApiGroup>
             <Privilege>
                 <Type>SYSDBA</Type>
             </Privilege>
-        </PrivilegeRole>
+        </ApiGroupPrivilege>
         <Parameter>
-            <LoggerToCharacter>none</LoggerToCharacter>
             <Name>p_sqls_cv_in_out</Name>
             <Mode>IN OUT</Mode>
             <DataType>dbss_type.sqls_cur</DataType>
         </Parameter>
         <Parameter>
-            <LoggerToCharacter>false</LoggerToCharacter>
             <Name>p_rstr_pnt_in</Name>
             <Mode>IN</Mode>
             <DataType>SYS.v_$restore_point.NAME%TYPE</DataType>
@@ -3093,16 +2958,13 @@ END dbss_flashback;
     </Procedure>
     <Procedure>
         <Name>del_rstr_pnts</Name>
-        <PrivilegeRole>
-            <Role>dbss_r_flashback</Role>
-        </PrivilegeRole>
-        <PrivilegeRole>
+        <ApiGroupPrivilege>
+            <ApiGroup>dbss_r_flashback</ApiGroup>
             <Privilege>
                 <Type>SYSDBA</Type>
             </Privilege>
-        </PrivilegeRole>
+        </ApiGroupPrivilege>
         <Parameter>
-            <LoggerToCharacter>none</LoggerToCharacter>
             <Name>p_sqls_cv_in_out</Name>
             <Mode>IN OUT</Mode>
             <DataType>dbss_type.sqls_cur</DataType>
@@ -3134,16 +2996,13 @@ END dbss_flashback;
     </Procedure>
     <Procedure>
         <Name>del_rstr_pnts_guar</Name>
-        <PrivilegeRole>
-            <Role>dbss_r_flashback</Role>
-        </PrivilegeRole>
-        <PrivilegeRole>
+        <ApiGroupPrivilege>
+            <ApiGroup>dbss_r_flashback</ApiGroup>
             <Privilege>
                 <Type>SYSDBA</Type>
             </Privilege>
-        </PrivilegeRole>
+        </ApiGroupPrivilege>
         <Parameter>
-            <LoggerToCharacter>none</LoggerToCharacter>
             <Name>p_sqls_cv_in_out</Name>
             <Mode>IN OUT</Mode>
             <DataType>dbss_type.sqls_cur</DataType>
@@ -3175,16 +3034,13 @@ END dbss_flashback;
     </Procedure>
     <Procedure>
         <Name>del_rstr_pnts_norm</Name>
-        <PrivilegeRole>
-            <Role>dbss_r_flashback</Role>
-        </PrivilegeRole>
-        <PrivilegeRole>
+        <ApiGroupPrivilege>
+            <ApiGroup>dbss_r_flashback</ApiGroup>
             <Privilege>
                 <Type>FLASHBACK ANY TABLE</Type>
             </Privilege>
-        </PrivilegeRole>
+        </ApiGroupPrivilege>
         <Parameter>
-            <LoggerToCharacter>none</LoggerToCharacter>
             <Name>p_sqls_cv_in_out</Name>
             <Mode>IN OUT</Mode>
             <DataType>dbss_type.sqls_cur</DataType>
@@ -3216,16 +3072,13 @@ END dbss_flashback;
     </Procedure>
     <Procedure>
         <Name>del_rstr_pnts_pres</Name>
-        <PrivilegeRole>
-            <Role>dbss_r_flashback</Role>
-        </PrivilegeRole>
-        <PrivilegeRole>
+        <ApiGroupPrivilege>
+            <ApiGroup>dbss_r_flashback</ApiGroup>
             <Privilege>
                 <Type>FLASHBACK ANY TABLE</Type>
             </Privilege>
-        </PrivilegeRole>
+        </ApiGroupPrivilege>
         <Parameter>
-            <LoggerToCharacter>none</LoggerToCharacter>
             <Name>p_sqls_cv_in_out</Name>
             <Mode>IN OUT</Mode>
             <DataType>dbss_type.sqls_cur</DataType>
@@ -3260,23 +3113,19 @@ END dbss_flashback;
         <Condition>
             <IfEnd>DBMS_DB_VERSION.version = 12 AND DBMS_DB_VERSION.release = 1</IfEnd>
         </Condition>
-        <PrivilegeRole>
+        <ApiGroupPrivilege>
             <Privilege>
                 <Type>SELECT</Type>
                 <Object>sys.v_$restore_point</Object>
             </Privilege>
-        </PrivilegeRole>
-        <PrivilegeRole>
-            <Role>dbss_r_flashback</Role>
-        </PrivilegeRole>
+            <ApiGroup>dbss_r_flashback</ApiGroup>
+        </ApiGroupPrivilege>
         <Parameter>
-            <LoggerToCharacter>none</LoggerToCharacter>
             <Name>p_rstr_pnts_cv_out</Name>
             <Mode>OUT</Mode>
             <DataType>dbss_type.rstr_pnts_cur</DataType>
         </Parameter>
         <Parameter>
-            <LoggerToCharacter>false</LoggerToCharacter>
             <Name>p_guaranteed_in</Name>
             <Mode>IN</Mode>
             <DataType>SYS.v_$restore_point.guarantee_flashback_database%TYPE</DataType>
@@ -3285,7 +3134,6 @@ END dbss_flashback;
             </DefaultValue>
         </Parameter>
         <Parameter>
-            <LoggerToCharacter>false</LoggerToCharacter>
             <Name>p_preserved_in</Name>
             <Mode>IN</Mode>
             <DataType>SYS.v_$restore_point.preserved%TYPE</DataType>
@@ -3315,23 +3163,19 @@ END dbss_flashback;
         <Condition>
             <IfEnd>DBMS_DB_VERSION.version > 12 OR DBMS_DB_VERSION.version = 12 AND DBMS_DB_VERSION.release > 1</IfEnd>
         </Condition>
-        <PrivilegeRole>
+        <ApiGroupPrivilege>
             <Privilege>
                 <Type>SELECT</Type>
                 <Object>sys.v_$restore_point</Object>
             </Privilege>
-        </PrivilegeRole>
-        <PrivilegeRole>
-            <Role>dbss_r_flashback</Role>
-        </PrivilegeRole>
+            <ApiGroup>dbss_r_flashback</ApiGroup>
+        </ApiGroupPrivilege>
         <Parameter>
-            <LoggerToCharacter>none</LoggerToCharacter>
             <Name>p_rstr_pnts_cv_out</Name>
             <Mode>OUT</Mode>
             <DataType>dbss_type.rstr_pnts_cur</DataType>
         </Parameter>
         <Parameter>
-            <LoggerToCharacter>false</LoggerToCharacter>
             <Name>p_clean_in</Name>
             <Mode>IN</Mode>
             <DataType>SYS.v_$restore_point.clean_pdb_restore_point%TYPE</DataType>
@@ -3340,7 +3184,6 @@ END dbss_flashback;
             </DefaultValue>
         </Parameter>
         <Parameter>
-            <LoggerToCharacter>false</LoggerToCharacter>
             <Name>p_guaranteed_in</Name>
             <Mode>IN</Mode>
             <DataType>SYS.v_$restore_point.guarantee_flashback_database%TYPE</DataType>
@@ -3349,7 +3192,6 @@ END dbss_flashback;
             </DefaultValue>
         </Parameter>
         <Parameter>
-            <LoggerToCharacter>false</LoggerToCharacter>
             <Name>p_preserved_in</Name>
             <Mode>IN</Mode>
             <DataType>SYS.v_$restore_point.preserved%TYPE</DataType>
@@ -3376,24 +3218,19 @@ END dbss_flashback;
     </Procedure>
     <Procedure>
         <Name>set_flashback_off</Name>
-        <PrivilegeRole>
+        <ApiGroupPrivilege>
             <Privilege>
                 <Type>SELECT</Type>
                 <Object>sys.v_$database</Object>
             </Privilege>
-        </PrivilegeRole>
-        <PrivilegeRole>
             <Privilege>
                 <Type>ALTER DATABASE</Type>
             </Privilege>
-        </PrivilegeRole>
-        <PrivilegeRole>
             <Privilege>
                 <Type>SET CONTAINER</Type>
             </Privilege>
-        </PrivilegeRole>
+        </ApiGroupPrivilege>
         <Parameter>
-            <LoggerToCharacter>none</LoggerToCharacter>
             <Name>p_sqls_cv_in_out</Name>
             <Mode>IN OUT</Mode>
             <DataType>dbss_type.sqls_cur</DataType>
@@ -3425,24 +3262,19 @@ END dbss_flashback;
     </Procedure>
     <Procedure>
         <Name>set_flashback_on</Name>
-        <PrivilegeRole>
+        <ApiGroupPrivilege>
             <Privilege>
                 <Type>SELECT</Type>
                 <Object>sys.v_$database</Object>
             </Privilege>
-        </PrivilegeRole>
-        <PrivilegeRole>
             <Privilege>
                 <Type>ALTER DATABASE</Type>
             </Privilege>
-        </PrivilegeRole>
-        <PrivilegeRole>
             <Privilege>
                 <Type>SET CONTAINER</Type>
             </Privilege>
-        </PrivilegeRole>
+        </ApiGroupPrivilege>
         <Parameter>
-            <LoggerToCharacter>none</LoggerToCharacter>
             <Name>p_sqls_cv_in_out</Name>
             <Mode>IN OUT</Mode>
             <DataType>dbss_type.sqls_cur</DataType>

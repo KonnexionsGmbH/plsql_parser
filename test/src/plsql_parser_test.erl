@@ -115,27 +115,9 @@ common_test_source(Source) ->
             end,
             ?assertEqual(ParseTree, ParseTree_TD),
             %% -----------------------------------------------------------------
-            %% 5. No redundant whitespaces.
-            %% -----------------------------------------------------------------
-            Source_TD_MultipleSpace = string:str(Source_TD, "  "),
-            case Source_TD_MultipleSpace of
-                0 -> ok;
-                _ ->
-                    ct:pal(
-                        "[TD] Error redundant whitespace(s) : 1. Redundant WS~n > ~p~n",
-                        [Source_TD_MultipleSpace]),
-                    ct:pal(
-                        "[TD] Error redundant whitespace(s) : Source         ~n > ~p~n",
-                        [Source]),
-                    ct:pal(
-                        "[TD] Error redundant whitespace(s) : Source_TD      ~n > ~p~n",
-                        [Source_TD]),
-                    throw("[TD] Error redundant whitespace(s)")
-            end,
-            %% -----------------------------------------------------------------
             %% Test DBSS
             %% -----------------------------------------------------------------
-            %% 6. ParseTree ==> Source_FORMAT
+            %% 5. ParseTree ==> Source_FORMAT
             %% -----------------------------------------------------------------
             _Source_FORMAT =
                 case plsql_parser_fold:top_down(plsql_parser_format_dbss,

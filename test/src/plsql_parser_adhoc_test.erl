@@ -33,7 +33,7 @@
 %%  - dbss,
 %%  - flat (= default value),
 %%  - full,
--define(TEST_VERSION, full).
+-define(TEST_VERSION, flat).
 
 -include_lib("eunit/include/eunit.hrl").
 -include("plsql_parser.hrl").
@@ -128,7 +128,14 @@ eunit_test_source(Source) ->
                 dbss -> ok;
                 _ -> {ok, ParseTree1} = plsql_parser:parsetree(Source),
                     {ok, ParseTree2} = plsql_parser:parsetree(Result),
-                    ParseTree1 = ParseTree2
+                    case ParseTree1 == ParseTree2 of
+                        true -> true;
+                        _ ->
+                            ?E(
+                                "ParseTree1 /= ParseTree2 ===>~n ParseTree1: ~p~n ParseTree2: ~p~n",
+                                [ParseTree1, ParseTree2]),
+                            ParseTree1 = ParseTree2
+                    end
             end;
         Result ->
             io:format(user, "~n", []),
@@ -137,9 +144,17 @@ eunit_test_source(Source) ->
                 [Result]),
             case ?TEST_VERSION of
                 dbss -> ok;
-                _ -> {ok, ParseTree1} = plsql_parser:parsetree(Source),
+                _ ->
+                    {ok, ParseTree1} = plsql_parser:parsetree(Source),
                     {ok, ParseTree2} = plsql_parser:parsetree(Result),
-                    ParseTree1 = ParseTree2
+                    case ParseTree1 == ParseTree2 of
+                        true -> true;
+                        _ ->
+                            ?E(
+                                "ParseTree1 /= ParseTree2 ===>~n ParseTree1: ~p~n ParseTree2: ~p~n",
+                                [ParseTree1, ParseTree2]),
+                            ParseTree1 = ParseTree2
+                    end
             end
     catch
         error:Reason:Stacktrace ->
