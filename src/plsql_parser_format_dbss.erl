@@ -99,9 +99,20 @@ fold(LOpts, _FunState, Ctx, #{apiGroupAnnotation := PTree},
                          ?TABULATOR,
                          ?TABULATOR,
                          ?TABULATOR,
+                         "<ApiGroupPrivilege>",
+                         ?CHAR_NEWLINE,
+                         ?TABULATOR,
+                         ?TABULATOR,
+                         ?TABULATOR,
+                         ?TABULATOR,
                          "<ApiGroup>",
                          maps:get(apiGroup@, PTree),
                          "</ApiGroup>",
+                         ?CHAR_NEWLINE,
+                         ?TABULATOR,
+                         ?TABULATOR,
+                         ?TABULATOR,
+                         "</ApiGroupPrivilege>",
                          ?CHAR_NEWLINE
                      ]);
              _ -> Ctx
@@ -120,6 +131,7 @@ fold(LOpts, _FunState, Ctx, #{apiHiddenAnnotation := PTree},
                  lists:append(
                      [
                          Ctx,
+                         ?TABULATOR,
                          ?TABULATOR,
                          ?TABULATOR,
                          "<ApiHidden>",
@@ -192,6 +204,7 @@ fold(LOpts, _FunState, Ctx, #{dataType := PTree}, {dataType, Step} = _FoldState)
              start -> lists:append(
                  [
                      Ctx,
+                     ?TABULATOR,
                      ?TABULATOR,
                      ?TABULATOR,
                      ?TABULATOR,
@@ -323,12 +336,14 @@ fold(LOpts, _FunState, Ctx, #{default := PTree}, {default, Step} = _FoldState)
                      ?TABULATOR,
                      ?TABULATOR,
                      ?TABULATOR,
+                     ?TABULATOR,
                      "<DefaultValue>",
                      ?CHAR_NEWLINE
                  ]);
              _ -> lists:append(
                  [
                      Ctx,
+                     ?TABULATOR,
                      ?TABULATOR,
                      ?TABULATOR,
                      ?TABULATOR,
@@ -354,6 +369,7 @@ fold(LOpts, _FunState, Ctx, #{defaultValue@_@ := PTree},
              start -> lists:append(
                  [
                      Ctx,
+                     ?TABULATOR,
                      ?TABULATOR,
                      ?TABULATOR,
                      ?TABULATOR,
@@ -431,33 +447,6 @@ fold(_LOpts, _FunState, Ctx, #{functionArg := PTree}, {functionArg, Step} =
     ?CUSTOM_RESULT(RT);
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% functionAnnotation & procedureAnnotation
-% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-fold(LOpts, _FunState, Ctx, _PTree, {Rule, Step} = _FoldState)
-    when Rule == functionAnnotation; Rule == procedureAnnotation ->
-    ?CUSTOM_INIT(_FunState, Ctx, _PTree, _FoldState),
-    RT = case Step of
-             start -> lists:append(
-                 [
-                     Ctx,
-                     ?TABULATOR,
-                     ?TABULATOR,
-                     "<ApiGroupPrivilege>",
-                     ?CHAR_NEWLINE
-                 ]);
-             _ -> lists:append(
-                 [
-                     Ctx,
-                     ?TABULATOR,
-                     ?TABULATOR,
-                     "</ApiGroupPrivilege>",
-                     ?CHAR_NEWLINE
-                 ])
-         end,
-    ?CUSTOM_RESULT(RT);
-
-% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % functionArgCommaList@
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -516,8 +505,15 @@ fold(LOpts, _FunState, Ctx, #{objectPrivilegeAnnotation := PTree},
                          ?TABULATOR,
                          ?TABULATOR,
                          ?TABULATOR,
+                         "<ApiGroupPrivilege>",
+                         ?CHAR_NEWLINE,
+                         ?TABULATOR,
+                         ?TABULATOR,
+                         ?TABULATOR,
+                         ?TABULATOR,
                          "<Privilege>",
                          ?CHAR_NEWLINE,
+                         ?TABULATOR,
                          ?TABULATOR,
                          ?TABULATOR,
                          ?TABULATOR,
@@ -530,6 +526,7 @@ fold(LOpts, _FunState, Ctx, #{objectPrivilegeAnnotation := PTree},
                          ?TABULATOR,
                          ?TABULATOR,
                          ?TABULATOR,
+                         ?TABULATOR,
                          "<Object>",
                          maps:get(object@, PTree),
                          "</Object>",
@@ -537,7 +534,13 @@ fold(LOpts, _FunState, Ctx, #{objectPrivilegeAnnotation := PTree},
                          ?TABULATOR,
                          ?TABULATOR,
                          ?TABULATOR,
+                         ?TABULATOR,
                          "</Privilege>",
+                         ?CHAR_NEWLINE,
+                         ?TABULATOR,
+                         ?TABULATOR,
+                         ?TABULATOR,
+                         "</ApiGroupPrivilege>",
                          ?CHAR_NEWLINE
                      ]);
              _ -> Ctx
@@ -609,10 +612,12 @@ fold(LOpts, _FunState, Ctx, #{packageItemConditional := PTree},
                      [
                          Ctx,
                          ?TABULATOR,
+                         ?TABULATOR,
                          "<",
                          Type,
                          ">",
                          ?CHAR_NEWLINE,
+                         ?TABULATOR,
                          ?TABULATOR,
                          ?TABULATOR,
                          "<Name>",
@@ -621,8 +626,10 @@ fold(LOpts, _FunState, Ctx, #{packageItemConditional := PTree},
                          ?CHAR_NEWLINE,
                          ?TABULATOR,
                          ?TABULATOR,
+                         ?TABULATOR,
                          "<Condition>",
                          ?CHAR_NEWLINE,
+                         ?TABULATOR,
                          ?TABULATOR,
                          ?TABULATOR,
                          ?TABULATOR,
@@ -643,6 +650,7 @@ fold(LOpts, _FunState, Ctx, #{packageItemConditional := PTree},
                                      ?CHAR_NEWLINE,
                                      ?TABULATOR,
                                      ?TABULATOR,
+                                     ?TABULATOR,
                                      "</Condition>",
                                      ?CHAR_NEWLINE
                                  ]);
@@ -654,10 +662,12 @@ fold(LOpts, _FunState, Ctx, #{packageItemConditional := PTree},
                                      ?TABULATOR,
                                      ?TABULATOR,
                                      ?TABULATOR,
+                                     ?TABULATOR,
                                      "<ManPage>",
                                      string:replace(string:replace(string:replace(maps:get(man_page@, PackageItem), "&", "&amp;", all), "<", "&lt;", all), ">",
                                          "&gt;", all),
                                      ?CHAR_NEWLINE,
+                                     ?TABULATOR,
                                      ?TABULATOR,
                                      ?TABULATOR,
                                      ?TABULATOR,
@@ -670,6 +680,7 @@ fold(LOpts, _FunState, Ctx, #{packageItemConditional := PTree},
              _ -> lists:append(
                  [
                      Ctx,
+                     ?TABULATOR,
                      ?TABULATOR,
                      "</",
                      Type,
@@ -725,10 +736,15 @@ fold(LOpts, _FunState, Ctx, #{packageItemSimple := PTree},
                      [
                          Ctx,
                          ?TABULATOR,
+                         "<FunctionProcedure>",
+                         ?CHAR_NEWLINE,
+                         ?TABULATOR,
+                         ?TABULATOR,
                          "<",
                          Type,
                          ">",
                          ?CHAR_NEWLINE,
+                         ?TABULATOR,
                          ?TABULATOR,
                          ?TABULATOR,
                          "<Name>",
@@ -740,10 +756,12 @@ fold(LOpts, _FunState, Ctx, #{packageItemSimple := PTree},
                                  [
                                      ?TABULATOR,
                                      ?TABULATOR,
+                                     ?TABULATOR,
                                      "<ManPage>",
                                      string:replace(string:replace(string:replace(maps:get(man_page@, PackageItem), "&", "&amp;", all), "<", "&lt;", all), ">",
                                          "&gt;", all),
                                      ?CHAR_NEWLINE,
+                                     ?TABULATOR,
                                      ?TABULATOR,
                                      ?TABULATOR,
                                      "</ManPage>",
@@ -756,9 +774,13 @@ fold(LOpts, _FunState, Ctx, #{packageItemSimple := PTree},
                  [
                      Ctx,
                      ?TABULATOR,
+                     ?TABULATOR,
                      "</",
                      Type,
                      ">",
+                     ?CHAR_NEWLINE,
+                     ?TABULATOR,
+                     "</FunctionProcedure>",
                      ?CHAR_NEWLINE
                  ])
          end,
@@ -784,10 +806,12 @@ fold(LOpts, _FunState, Ctx, #{parameterDeclaration := PTree},
                          ?TABULATOR,
                          ?TABULATOR,
                          ?TABULATOR,
+                         ?TABULATOR,
                          "<Name>",
                          maps:get(name@, PTree),
                          "</Name>",
                          ?CHAR_NEWLINE,
+                         ?TABULATOR,
                          ?TABULATOR,
                          ?TABULATOR,
                          ?TABULATOR,
@@ -818,12 +842,14 @@ fold(LOpts, _FunState, Ctx, PTree, {parameterDeclarationCommaList, Step, _Pos} =
                      Ctx,
                      ?TABULATOR,
                      ?TABULATOR,
+                     ?TABULATOR,
                      "<Parameter>",
                      ?CHAR_NEWLINE
                  ]);
              _ -> lists:append(
                  [
                      Ctx,
+                     ?TABULATOR,
                      ?TABULATOR,
                      ?TABULATOR,
                      "</Parameter>",
@@ -934,12 +960,14 @@ fold(LOpts, _FunState, Ctx, _PTree, {return, Step} = _FoldState) ->
                      Ctx,
                      ?TABULATOR,
                      ?TABULATOR,
+                     ?TABULATOR,
                      "<Return>",
                      ?CHAR_NEWLINE
                  ]);
              _ -> lists:append(
                  [
                      Ctx,
+                     ?TABULATOR,
                      ?TABULATOR,
                      ?TABULATOR,
                      "</Return>",
@@ -963,8 +991,15 @@ fold(LOpts, _FunState, Ctx, #{systemPrivilegeAnnotation := PTree},
                          ?TABULATOR,
                          ?TABULATOR,
                          ?TABULATOR,
+                         "<ApiGroupPrivilege>",
+                         ?CHAR_NEWLINE,
+                         ?TABULATOR,
+                         ?TABULATOR,
+                         ?TABULATOR,
+                         ?TABULATOR,
                          "<Privilege>",
                          ?CHAR_NEWLINE,
+                         ?TABULATOR,
                          ?TABULATOR,
                          ?TABULATOR,
                          ?TABULATOR,
@@ -976,7 +1011,13 @@ fold(LOpts, _FunState, Ctx, #{systemPrivilegeAnnotation := PTree},
                          ?TABULATOR,
                          ?TABULATOR,
                          ?TABULATOR,
+                         ?TABULATOR,
                          "</Privilege>",
+                         ?CHAR_NEWLINE,
+                         ?TABULATOR,
+                         ?TABULATOR,
+                         ?TABULATOR,
+                         "</ApiGroupPrivilege>",
                          ?CHAR_NEWLINE
                      ]);
              _ -> Ctx
@@ -1020,6 +1061,7 @@ fold(LOpts, _FunState, Ctx, PTree, {thenExpression@_@, Step} = _FoldState)
                                  [
                                      Match,
                                      ?CHAR_NEWLINE,
+                                     ?TABULATOR,
                                      ?TABULATOR,
                                      ?TABULATOR,
                                      "</Condition>",
@@ -1068,6 +1110,7 @@ fold(_LOpts, _FunState, Ctx, _PTree, {Rule, _Step}) when
     Rule == dataSourceCommaList;
     Rule == defaultCollationClause;
     Rule == expression;
+    Rule == functionAnnotation;
     Rule == functionArg;
     Rule == functionArgCommaList;
     Rule == functionHeading;
@@ -1087,6 +1130,7 @@ fold(_LOpts, _FunState, Ctx, _PTree, {Rule, _Step}) when
     Rule == plsqlUnit;
     Rule == plsqlUnitList;
     Rule == privilegeAnnotationList@_@;
+    Rule == procedureAnnotation;
     Rule == procedureHeading;
     Rule == resultCacheClause;
     Rule == scalarExpression;
