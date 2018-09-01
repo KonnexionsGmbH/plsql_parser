@@ -205,9 +205,9 @@ Editionable
 Package
 package_schema.package_name
 Sharing = Metadata
-Accessible By accessor_name_11,
-              accessor_schema_12.accessor_name_12,
-              Package accessor_name_13
+Accessible By (accessor_name_11,
+               accessor_schema_12.accessor_name_12,
+               Package accessor_name_13)
 Default Collation Using_nls_comp
 Authid Current_user
 As
@@ -222,9 +222,9 @@ Function function_name_1 (parameter_name_01               Bfile,
                           parameter_name_09 In Out        Char(6 Byte),
                           parameter_name_10 In Out Nocopy Char(7 Char))
          Return Clob
-         Accessible By accessor_name_21,
-                       accessor_schema_22.accessor_name_22,
-                       Package accessor_name_23
+         Accessible By (accessor_name_21,
+                        accessor_schema_22.accessor_name_22,
+                        Package accessor_name_23)
          Deterministic
          Parallel_enabled ( Partition partition_name_1 By Range (
                                                                   column_name_1,
@@ -280,9 +280,9 @@ Procedure procedure_name_1 (
                             parameter_name_09 In Out        Interval Year (15) To Month,
                             parameter_name_10 In Out Nocopy Char(7 Char)
                            )
-          Accessible By accessor_name_31,
-                        accessor_schema_32.accessor_name_32,
-                        Package accessor_name_33
+          Accessible By (accessor_name_31,
+                         accessor_schema_32.accessor_name_32,
+                         Package accessor_name_33)
           ;
 End package_name
 ;
