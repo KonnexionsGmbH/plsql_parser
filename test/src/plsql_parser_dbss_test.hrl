@@ -323,25 +323,27 @@ END my_package_impl;
 -define(TEST_06_RESULT_DEFAULT, "<?xml version='1.0' encoding='UTF-8'?>
 <Package xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:noNamespaceSchemaLocation='../../priv/dbss.xsd'>
     <Name>my_package_impl</Name>
-    <ManPage>/*&lt;&gt;
+    <ManPage><![CDATA[
+/*<>
         Line 1_1
         Line 1_2
         Line 1_3
         Line 1_4
         Line 1_5
     */
-    </ManPage>
+    ]]></ManPage>
     <FunctionProcedure>
         <Procedure>
             <Name>my_procedure</Name>
-            <ManPage>/*&lt;&gt;
+            <ManPage><![CDATA[
+/*<>
     Line 2_1
     Line 2_2
     Line 2_3
     Line 2_4
     Line 2_5
 */
-            </ManPage>
+            ]]></ManPage>
             <Parameter>
                 <Name>p_is_show_in</Name>
                 <Mode>IN</Mode>

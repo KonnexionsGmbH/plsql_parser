@@ -663,15 +663,15 @@ fold(LOpts, _FunState, Ctx, #{packageItemConditional := PTree},
                                      ?TABULATOR,
                                      ?TABULATOR,
                                      ?TABULATOR,
-                                     "<ManPage>",
-                                     string:replace(string:replace(string:replace(maps:get(man_page@, PackageItem), "&", "&amp;", all), "<", "&lt;", all), ">",
-                                         "&gt;", all),
+                                     "<ManPage><![CDATA[",
+                                     ?CHAR_NEWLINE,
+                                     maps:get(man_page@, PackageItem),
                                      ?CHAR_NEWLINE,
                                      ?TABULATOR,
                                      ?TABULATOR,
                                      ?TABULATOR,
                                      ?TABULATOR,
-                                     "</ManPage>",
+                                     "]]></ManPage>",
                                      ?CHAR_NEWLINE
                                  ]);
                              _ -> []
@@ -757,14 +757,14 @@ fold(LOpts, _FunState, Ctx, #{packageItemSimple := PTree},
                                      ?TABULATOR,
                                      ?TABULATOR,
                                      ?TABULATOR,
-                                     "<ManPage>",
-                                     string:replace(string:replace(string:replace(maps:get(man_page@, PackageItem), "&", "&amp;", all), "<", "&lt;", all), ">",
-                                         "&gt;", all),
+                                     "<ManPage><![CDATA[",
+                                     ?CHAR_NEWLINE,
+                                     maps:get(man_page@, PackageItem),
                                      ?CHAR_NEWLINE,
                                      ?TABULATOR,
                                      ?TABULATOR,
                                      ?TABULATOR,
-                                     "</ManPage>",
+                                     "]]></ManPage>",
                                      ?CHAR_NEWLINE
                                  ]);
                              _ -> []
@@ -909,12 +909,12 @@ fold(LOpts, _FunState, Ctx, #{plsqlPackageSource := PTree},
                          true -> lists:append(
                              [
                                  ?TABULATOR,
-                                 "<ManPage>",
-                                 string:replace(string:replace(string:replace(maps:get(man_page@, PTree), "&", "&amp;", all), "<", "&lt;", all), ">", "&gt;",
-                                     all),
+                                 "<ManPage><![CDATA[",
+                                 ?CHAR_NEWLINE,
+                                 maps:get(man_page@, PTree),
                                  ?CHAR_NEWLINE,
                                  ?TABULATOR,
-                                 "</ManPage>",
+                                 "]]></ManPage>",
                                  ?CHAR_NEWLINE
                              ]);
                          _ -> []
