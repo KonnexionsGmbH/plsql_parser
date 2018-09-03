@@ -296,34 +296,52 @@ end;
 %%------------------------------------------------------------------------------
 
 -define(TEST_06, "
-create or replace package my_package
-is
+CREATE OR REPLACE PACKAGE my_package_impl
+IS
     /*<>
-        Line 1
-        Line 2
-        Line 3
-        Line 4
-        Line 5
+        Line 1_1
+        Line 1_2
+        Line 1_3
+        Line 1_4
+        Line 1_5
     */
-    procedure my_procedure (
-        p_is_show_in                   in char);
-end my_package;
+    PROCEDURE my_procedure (
+        p_is_show_in                   IN CHAR
+    );
+/*<>
+    Line 2_1
+    Line 2_2
+    Line 2_3
+    Line 2_4
+    Line 2_5
+*/
+
+END my_package_impl;
+/
 ").
 
 -define(TEST_06_RESULT_DEFAULT, "<?xml version='1.0' encoding='UTF-8'?>
 <Package xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:noNamespaceSchemaLocation='../../priv/dbss.xsd'>
-    <Name>my_package</Name>
+    <Name>my_package_impl</Name>
     <ManPage>/*&lt;&gt;
-        Line 1
-        Line 2
-        Line 3
-        Line 4
-        Line 5
+        Line 1_1
+        Line 1_2
+        Line 1_3
+        Line 1_4
+        Line 1_5
     */
     </ManPage>
     <FunctionProcedure>
         <Procedure>
             <Name>my_procedure</Name>
+            <ManPage>/*&lt;&gt;
+    Line 2_1
+    Line 2_2
+    Line 2_3
+    Line 2_4
+    Line 2_5
+*/
+            </ManPage>
             <Parameter>
                 <Name>p_is_show_in</Name>
                 <Mode>IN</Mode>
