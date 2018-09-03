@@ -292,6 +292,48 @@ end;
 </Package>").
 
 %%------------------------------------------------------------------------------
+%% TEST 06 - parallel_enabled_clause.
+%%------------------------------------------------------------------------------
+
+-define(TEST_06, "
+create or replace package my_package
+is
+    /*<>
+        Line 1
+        Line 2
+        Line 3
+        Line 4
+        Line 5
+    */
+    procedure my_procedure (
+        p_is_show_in                   in char);
+end my_package;
+").
+
+-define(TEST_06_RESULT_DEFAULT, "<?xml version='1.0' encoding='UTF-8'?>
+<Package xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:noNamespaceSchemaLocation='../../priv/dbss.xsd'>
+    <Name>my_package</Name>
+    <ManPage>/*&lt;&gt;
+        Line 1
+        Line 2
+        Line 3
+        Line 4
+        Line 5
+    */
+    </ManPage>
+    <FunctionProcedure>
+        <Procedure>
+            <Name>my_procedure</Name>
+            <Parameter>
+                <Name>p_is_show_in</Name>
+                <Mode>IN</Mode>
+                <DataType>CHAR</DataType>
+            </Parameter>
+        </Procedure>
+    </FunctionProcedure>
+</Package>").
+
+%%------------------------------------------------------------------------------
 %% TEST 11 - Complete test.
 %%------------------------------------------------------------------------------
 
