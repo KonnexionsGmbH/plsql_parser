@@ -109,8 +109,9 @@ fold([], _FunState, Ctx, _PTree, {Rule, Step, Pos} = _FoldState)
 % apiGroupAnnotation
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-fold([], _FunState, Ctx, #{apiGroupAnnotation := PTree}, {apiGroupAnnotation, Step} =
-    _FoldState) ->
+fold([], _FunState, Ctx, #{apiGroupAnnotation := PTree},
+    {apiGroupAnnotation, Step} =
+        _FoldState) ->
     ?CUSTOM_INIT(_FunState, Ctx, PTree, _FoldState),
     RT = case Step of
              start -> lists:append(
@@ -130,8 +131,9 @@ fold([], _FunState, Ctx, #{apiGroupAnnotation := PTree}, {apiGroupAnnotation, St
 % apiHiddenAnnotation
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-fold([], _FunState, Ctx, #{apiHiddenAnnotation := PTree}, {apiHiddenAnnotation, Step} =
-    _FoldState) ->
+fold([], _FunState, Ctx, #{apiHiddenAnnotation := PTree},
+    {apiHiddenAnnotation, Step} =
+        _FoldState) ->
     ?CUSTOM_INIT(_FunState, Ctx, PTree, _FoldState),
     RT = case Step of
              start -> lists:append(
@@ -587,16 +589,23 @@ fold([], _FunState, Ctx, PTree, {operator, Step} = _FoldState)
     ?CUSTOM_RESULT(RT);
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% packageFunctionDeclaration & packageProcedureDeclaration
+% packageFunctionDeclaration
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-fold([], _FunState, Ctx, _PTree, {Rule, Step} = _FoldState)
-    when Rule == packageFunctionDeclaration; Rule ==
-    packageProcedureDeclaration ->
-    ?CUSTOM_INIT(_FunState, Ctx, _PTree, _FoldState),
+fold([], _FunState, Ctx, #{packageFunctionDeclaration := PTree},
+    {packageFunctionDeclaration, Step} = _FoldState) ->
+    ?CUSTOM_INIT(_FunState, Ctx, PTree, _FoldState),
     RT = case Step of
              start -> Ctx;
-             _ -> Ctx ++ ";"
+             _ -> lists:append(
+                 [
+                     Ctx,
+                     case maps:is_key(man_page@, PTree) of
+                         true -> maps:get(man_page@, PTree);
+                         _ -> []
+                     end,
+                     ";"
+                 ])
          end,
     ?CUSTOM_RESULT(RT);
 
@@ -616,27 +625,6 @@ fold([], _FunState, Ctx, #{packageFunctionDeclarationAttribute := PTree},
                      PTree
                  ]);
              _ -> Ctx
-         end,
-    ?CUSTOM_RESULT(RT);
-
-% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% packageItem
-% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-fold([], _FunState, Ctx, #{packageItem := PTree},
-    {packageItem, Step} = _FoldState)
-    when is_map(PTree) ->
-    ?CUSTOM_INIT(_FunState, Ctx, PTree, _FoldState),
-    RT = case Step of
-             start -> Ctx;
-             _ -> lists:append(
-                 [
-                     Ctx,
-                     case maps:is_key(man_page@, PTree) of
-                         true -> " " ++ maps:get(man_page@, PTree);
-                         _ -> []
-                     end
-                 ])
          end,
     ?CUSTOM_RESULT(RT);
 
@@ -689,6 +677,27 @@ fold([], _FunState, Ctx, #{packageItemList@_@ := PTree},
                          " "
                      ]);
              _ -> Ctx
+         end,
+    ?CUSTOM_RESULT(RT);
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% packageProcedureDeclaration
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+fold([], _FunState, Ctx, #{packageProcedureDeclaration := PTree},
+    {packageProcedureDeclaration, Step} = _FoldState) ->
+    ?CUSTOM_INIT(_FunState, Ctx, PTree, _FoldState),
+    RT = case Step of
+             start -> Ctx;
+             _ -> lists:append(
+                 [
+                     Ctx,
+                     case maps:is_key(man_page@, PTree) of
+                         true -> maps:get(man_page@, PTree);
+                         _ -> []
+                     end,
+                     ";"
+                 ])
          end,
     ?CUSTOM_RESULT(RT);
 
@@ -800,8 +809,11 @@ fold([], _FunState, Ctx, #{pipelinedClause := PTree}, {pipelinedClause, Step} =
                          true -> maps:get(type@, PTree) ++ " polymorphic ";
                          _ -> []
                      end,
-                     "using ",
-                     maps:get(implementationPackage@, PTree)
+                     case maps:is_key(implementationPackage@, PTree) of
+                         true -> " using " ++
+                         maps:get(implementationPackage@, PTree);
+                         _ -> []
+                     end
                  ]);
              _ -> Ctx
          end,

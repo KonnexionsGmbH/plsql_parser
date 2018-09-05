@@ -521,12 +521,8 @@ objectPrivilegeType -> UPDATE                    : unwrap_2_list('$1').
 objectPrivilegeType -> USE                       : unwrap_2_list('$1').
 objectPrivilegeType -> WRITE                     : unwrap_2_list('$1').
 
-packageItem -> packageFunctionDeclaration           : #{packageItem  => #{packageFunctionDeclaration@ => '$1'}}.
-packageItem -> packageFunctionDeclaration  MAN_PAGE : #{packageItem  => #{man_page@ => unwrap_2_list('$2'),
-                                                                          packageFunctionDeclaration@ => '$1'}}.
-packageItem -> packageProcedureDeclaration          : #{packageItem  => #{packageProcedureDeclaration@ => '$1'}}.
-packageItem -> packageProcedureDeclaration MAN_PAGE : #{packageItem  => #{man_page@ => unwrap_2_list('$2'),
-                                                                          packageProcedureDeclaration@ => '$1'}}.
+packageItem -> packageFunctionDeclaration  : '$1'.
+packageItem -> packageProcedureDeclaration : '$1'.
 
 packageItemList -> packageItemSimple                      : ['$1'].
 packageItemList -> packageItemConditional                 : ['$1'].
@@ -573,26 +569,54 @@ defaultCollationClause -> DEFAULT COLLATION USING_NLS_COMP : #{defaultCollationC
 invokerRightsClause -> AUTHID CURRENT_USER : #{invokerRightsClause => unwrap_2_list('$2')}.
 invokerRightsClause -> AUTHID DEFINER      : #{invokerRightsClause => unwrap_2_list('$2')}.
 
-packageFunctionDeclaration ->                                        functionHeading                                         ';' : #{packageFunctionDeclaration  => #{functionHeading@ => '$1'}}.
-packageFunctionDeclaration ->                                        functionHeading packageFunctionDeclarationAttributeList ';' : #{packageFunctionDeclaration  => #{functionHeading@ => '$1',
-                                                                                                                                                                      packageFunctionDeclarationAttributeList@ => '$2'}}.
-packageFunctionDeclaration ->                     functionAnnotation functionHeading                                         ';' : #{packageFunctionDeclaration  => #{functionAnnotation@ => '$1',
-                                                                                                                                                                      functionHeading@ => '$2'}}.
-packageFunctionDeclaration ->                     functionAnnotation functionHeading packageFunctionDeclarationAttributeList ';' : #{packageFunctionDeclaration  => #{functionAnnotation@ => '$1',
-                                                                                                                                                                      functionHeading@ => '$2',
-                                                                                                                                                                      packageFunctionDeclarationAttributeList@ => '$3'}}.
-packageFunctionDeclaration -> apiHiddenAnnotation                    functionHeading                                         ';' : #{packageFunctionDeclaration  => #{apiHiddenAnnotation@ => '$1',
-                                                                                                                                                                      functionHeading@ => '$2'}}.
-packageFunctionDeclaration -> apiHiddenAnnotation                    functionHeading packageFunctionDeclarationAttributeList ';' : #{packageFunctionDeclaration  => #{apiHiddenAnnotation@ => '$1',
-                                                                                                                                                                      functionHeading@ => '$2',
-                                                                                                                                                                      packageFunctionDeclarationAttributeList@ => '$3'}}.
-packageFunctionDeclaration -> apiHiddenAnnotation functionAnnotation functionHeading                                         ';' : #{packageFunctionDeclaration  => #{apiHiddenAnnotation@ => '$1',
-                                                                                                                                                                      functionAnnotation@ => '$2',
-                                                                                                                                                                      functionHeading@ => '$3'}}.
-packageFunctionDeclaration -> apiHiddenAnnotation functionAnnotation functionHeading packageFunctionDeclarationAttributeList ';' : #{packageFunctionDeclaration  => #{apiHiddenAnnotation@ => '$1',
-                                                                                                                                                                      functionAnnotation@ => '$2',
-                                                                                                                                                                      functionHeading@ => '$3',
-                                                                                                                                                                      packageFunctionDeclarationAttributeList@ => '$4'}}.
+packageFunctionDeclaration ->                                        functionHeading                                                  ';' : #{packageFunctionDeclaration  => #{functionHeading@ => '$1'}}.
+packageFunctionDeclaration ->                                        functionHeading                                         MAN_PAGE ';' : #{packageFunctionDeclaration  => #{functionHeading@ => '$1',
+                                                                                                                                                                               man_page@ => unwrap_2_list('$2')}}.
+packageFunctionDeclaration ->                                        functionHeading packageFunctionDeclarationAttributeList          ';' : #{packageFunctionDeclaration  => #{functionHeading@ => '$1',
+                                                                                                                                                                               packageFunctionDeclarationAttributeList@ => '$2'}}.
+packageFunctionDeclaration ->                                        functionHeading packageFunctionDeclarationAttributeList MAN_PAGE ';' : #{packageFunctionDeclaration  => #{functionHeading@ => '$1',
+                                                                                                                                                                               man_page@ => unwrap_2_list('$3'),
+                                                                                                                                                                               packageFunctionDeclarationAttributeList@ => '$2'}}.
+packageFunctionDeclaration ->                     functionAnnotation functionHeading                                                  ';' : #{packageFunctionDeclaration  => #{functionAnnotation@ => '$1',
+                                                                                                                                                                               functionHeading@ => '$2'}}.
+packageFunctionDeclaration ->                     functionAnnotation functionHeading                                         MAN_PAGE ';' : #{packageFunctionDeclaration  => #{functionAnnotation@ => '$1',
+                                                                                                                                                                               man_page@ => unwrap_2_list('$3'),
+                                                                                                                                                                               functionHeading@ => '$2'}}.
+packageFunctionDeclaration ->                     functionAnnotation functionHeading packageFunctionDeclarationAttributeList          ';' : #{packageFunctionDeclaration  => #{functionAnnotation@ => '$1',
+                                                                                                                                                                               functionHeading@ => '$2',
+                                                                                                                                                                               packageFunctionDeclarationAttributeList@ => '$3'}}.
+packageFunctionDeclaration ->                     functionAnnotation functionHeading packageFunctionDeclarationAttributeList MAN_PAGE ';' : #{packageFunctionDeclaration  => #{functionAnnotation@ => '$1',
+                                                                                                                                                                               functionHeading@ => '$2',
+                                                                                                                                                                               man_page@ => unwrap_2_list('$4'),
+                                                                                                                                                                               packageFunctionDeclarationAttributeList@ => '$3'}}.
+packageFunctionDeclaration -> apiHiddenAnnotation                    functionHeading                                                  ';' : #{packageFunctionDeclaration  => #{apiHiddenAnnotation@ => '$1',
+                                                                                                                                                                               functionHeading@ => '$2'}}.
+packageFunctionDeclaration -> apiHiddenAnnotation                    functionHeading                                         MAN_PAGE ';' : #{packageFunctionDeclaration  => #{apiHiddenAnnotation@ => '$1',
+                                                                                                                                                                               man_page@ => unwrap_2_list('$3'),
+                                                                                                                                                                               functionHeading@ => '$2'}}.
+packageFunctionDeclaration -> apiHiddenAnnotation                    functionHeading packageFunctionDeclarationAttributeList          ';' : #{packageFunctionDeclaration  => #{apiHiddenAnnotation@ => '$1',
+                                                                                                                                                                               functionHeading@ => '$2',
+                                                                                                                                                                               packageFunctionDeclarationAttributeList@ => '$3'}}.
+packageFunctionDeclaration -> apiHiddenAnnotation                    functionHeading packageFunctionDeclarationAttributeList MAN_PAGE ';' : #{packageFunctionDeclaration  => #{apiHiddenAnnotation@ => '$1',
+                                                                                                                                                                               functionHeading@ => '$2',
+                                                                                                                                                                               man_page@ => unwrap_2_list('$4'),
+                                                                                                                                                                               packageFunctionDeclarationAttributeList@ => '$3'}}.
+packageFunctionDeclaration -> apiHiddenAnnotation functionAnnotation functionHeading                                                  ';' : #{packageFunctionDeclaration  => #{apiHiddenAnnotation@ => '$1',
+                                                                                                                                                                               functionAnnotation@ => '$2',
+                                                                                                                                                                               functionHeading@ => '$3'}}.
+packageFunctionDeclaration -> apiHiddenAnnotation functionAnnotation functionHeading                                         MAN_PAGE ';' : #{packageFunctionDeclaration  => #{apiHiddenAnnotation@ => '$1',
+                                                                                                                                                                               functionAnnotation@ => '$2',
+                                                                                                                                                                               functionHeading@ => '$3',
+                                                                                                                                                                               man_page@ => unwrap_2_list('$4')}}.
+packageFunctionDeclaration -> apiHiddenAnnotation functionAnnotation functionHeading packageFunctionDeclarationAttributeList          ';' : #{packageFunctionDeclaration  => #{apiHiddenAnnotation@ => '$1',
+                                                                                                                                                                               functionAnnotation@ => '$2',
+                                                                                                                                                                               functionHeading@ => '$3',
+                                                                                                                                                                               packageFunctionDeclarationAttributeList@ => '$4'}}.
+packageFunctionDeclaration -> apiHiddenAnnotation functionAnnotation functionHeading packageFunctionDeclarationAttributeList MAN_PAGE ';' : #{packageFunctionDeclaration  => #{apiHiddenAnnotation@ => '$1',
+                                                                                                                                                                               functionAnnotation@ => '$2',
+                                                                                                                                                                               functionHeading@ => '$3',
+                                                                                                                                                                               man_page@ => unwrap_2_list('$5'),
+                                                                                                                                                                               packageFunctionDeclarationAttributeList@ => '$4'}}.
 
 packageItemConditional -> '$ELSE'                     packageItem  '$END' : #{packageItemConditional => #{start@ => unwrap_2_list('$1'),
                                                                                                           packageItem@ => '$2',
@@ -618,26 +642,54 @@ plsqlPackageSourceAttribute -> accessibleByClause     : #{plsqlPackageSourceAttr
 plsqlPackageSourceAttribute -> defaultCollationClause : #{plsqlPackageSourceAttribute => '$1'}.
 plsqlPackageSourceAttribute -> invokerRightsClause    : #{plsqlPackageSourceAttribute => '$1'}.
 
-packageProcedureDeclaration ->                                         procedureHeading                    ';' : #{packageProcedureDeclaration  => #{procedureHeading@ => '$1'}}.
-packageProcedureDeclaration ->                                         procedureHeading accessibleByClause ';' : #{packageProcedureDeclaration  => #{procedureHeading@ => '$1',
-                                                                                                                                                     accessibleByClause@ => '$2'}}.
-packageProcedureDeclaration ->                     procedureAnnotation procedureHeading                    ';' : #{packageProcedureDeclaration  => #{procedureAnnotation@ => '$1',
-                                                                                                                                                     procedureHeading@ => '$2'}}.
-packageProcedureDeclaration ->                     procedureAnnotation procedureHeading accessibleByClause ';' : #{packageProcedureDeclaration  => #{procedureAnnotation@ => '$1',
-                                                                                                                                                     procedureHeading@ => '$2',
-                                                                                                                                                     accessibleByClause@ => '$3'}}.
-packageProcedureDeclaration -> apiHiddenAnnotation                     procedureHeading                    ';' : #{packageProcedureDeclaration  => #{apiHiddenAnnotation@ => '$1',
-                                                                                                                                                     procedureHeading@ => '$2'}}.
-packageProcedureDeclaration -> apiHiddenAnnotation                     procedureHeading accessibleByClause ';' : #{packageProcedureDeclaration  => #{apiHiddenAnnotation@ => '$1',
-                                                                                                                                                     procedureHeading@ => '$2',
-                                                                                                                                                     accessibleByClause@ => '$3'}}.
-packageProcedureDeclaration -> apiHiddenAnnotation procedureAnnotation procedureHeading                    ';' : #{packageProcedureDeclaration  => #{apiHiddenAnnotation@ => '$1',
-                                                                                                                                                     procedureAnnotation@ => '$2',
-                                                                                                                                                     procedureHeading@ => '$3'}}.
-packageProcedureDeclaration -> apiHiddenAnnotation procedureAnnotation procedureHeading accessibleByClause ';' : #{packageProcedureDeclaration  => #{apiHiddenAnnotation@ => '$1',
-                                                                                                                                                     procedureAnnotation@ => '$2',
-                                                                                                                                                     procedureHeading@ => '$3',
-                                                                                                                                                     accessibleByClause@ => '$4'}}.
+packageProcedureDeclaration ->                                         procedureHeading                             ';' : #{packageProcedureDeclaration  => #{procedureHeading@ => '$1'}}.
+packageProcedureDeclaration ->                                         procedureHeading                    MAN_PAGE ';' : #{packageProcedureDeclaration  => #{man_page@ => unwrap_2_list('$2'),
+                                                                                                                                                              procedureHeading@ => '$1'}}.
+packageProcedureDeclaration ->                                         procedureHeading accessibleByClause          ';' : #{packageProcedureDeclaration  => #{accessibleByClause@ => '$2',
+                                                                                                                                                              procedureHeading@ => '$1'}}.
+packageProcedureDeclaration ->                                         procedureHeading accessibleByClause MAN_PAGE ';' : #{packageProcedureDeclaration  => #{accessibleByClause@ => '$2',
+                                                                                                                                                              man_page@ => unwrap_2_list('$3'),
+                                                                                                                                                              procedureHeading@ => '$1'}}.
+packageProcedureDeclaration ->                     procedureAnnotation procedureHeading                             ';' : #{packageProcedureDeclaration  => #{procedureAnnotation@ => '$1',
+                                                                                                                                                              procedureHeading@ => '$2'}}.
+packageProcedureDeclaration ->                     procedureAnnotation procedureHeading                    MAN_PAGE ';' : #{packageProcedureDeclaration  => #{man_page@ => unwrap_2_list('$3'),
+                                                                                                                                                              procedureAnnotation@ => '$1',
+                                                                                                                                                              procedureHeading@ => '$2'}}.
+packageProcedureDeclaration ->                     procedureAnnotation procedureHeading accessibleByClause          ';' : #{packageProcedureDeclaration  => #{accessibleByClause@ => '$3',
+                                                                                                                                                              procedureAnnotation@ => '$1',
+                                                                                                                                                              procedureHeading@ => '$2'}}.
+packageProcedureDeclaration ->                     procedureAnnotation procedureHeading accessibleByClause MAN_PAGE ';' : #{packageProcedureDeclaration  => #{accessibleByClause@ => '$3',
+                                                                                                                                                              man_page@ => unwrap_2_list('$4'),
+                                                                                                                                                              procedureAnnotation@ => '$1',
+                                                                                                                                                              procedureHeading@ => '$2'}}.
+packageProcedureDeclaration -> apiHiddenAnnotation                     procedureHeading                             ';' : #{packageProcedureDeclaration  => #{apiHiddenAnnotation@ => '$1',
+                                                                                                                                                              procedureHeading@ => '$2'}}.
+packageProcedureDeclaration -> apiHiddenAnnotation                     procedureHeading                    MAN_PAGE ';' : #{packageProcedureDeclaration  => #{apiHiddenAnnotation@ => '$1',
+                                                                                                                                                              man_page@ => unwrap_2_list('$3'),
+                                                                                                                                                              procedureHeading@ => '$2'}}.
+packageProcedureDeclaration -> apiHiddenAnnotation                     procedureHeading accessibleByClause          ';' : #{packageProcedureDeclaration  => #{apiHiddenAnnotation@ => '$1',
+                                                                                                                                                              procedureHeading@ => '$2',
+                                                                                                                                                              accessibleByClause@ => '$3'}}.
+packageProcedureDeclaration -> apiHiddenAnnotation                     procedureHeading accessibleByClause MAN_PAGE ';' : #{packageProcedureDeclaration  => #{apiHiddenAnnotation@ => '$1',
+                                                                                                                                                              man_page@ => unwrap_2_list('$4'),
+                                                                                                                                                              procedureHeading@ => '$2',
+                                                                                                                                                              accessibleByClause@ => '$3'}}.
+packageProcedureDeclaration -> apiHiddenAnnotation procedureAnnotation procedureHeading                             ';' : #{packageProcedureDeclaration  => #{apiHiddenAnnotation@ => '$1',
+                                                                                                                                                              procedureAnnotation@ => '$2',
+                                                                                                                                                              procedureHeading@ => '$3'}}.
+packageProcedureDeclaration -> apiHiddenAnnotation procedureAnnotation procedureHeading                    MAN_PAGE ';' : #{packageProcedureDeclaration  => #{apiHiddenAnnotation@ => '$1',
+                                                                                                                                                              man_page@ => unwrap_2_list('$4'),
+                                                                                                                                                              procedureAnnotation@ => '$2',
+                                                                                                                                                              procedureHeading@ => '$3'}}.
+packageProcedureDeclaration -> apiHiddenAnnotation procedureAnnotation procedureHeading accessibleByClause          ';' : #{packageProcedureDeclaration  => #{apiHiddenAnnotation@ => '$1',
+                                                                                                                                                              procedureAnnotation@ => '$2',
+                                                                                                                                                              procedureHeading@ => '$3',
+                                                                                                                                                              accessibleByClause@ => '$4'}}.
+packageProcedureDeclaration -> apiHiddenAnnotation procedureAnnotation procedureHeading accessibleByClause MAN_PAGE ';' : #{packageProcedureDeclaration  => #{apiHiddenAnnotation@ => '$1',
+                                                                                                                                                              man_page@ => unwrap_2_list('$5'),
+                                                                                                                                                              procedureAnnotation@ => '$2',
+                                                                                                                                                              procedureHeading@ => '$3',
+                                                                                                                                                              accessibleByClause@ => '$4'}}.
 
 %% Level 08 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -922,6 +974,7 @@ parallelEnabledClause -> PARALLEL_ENABLED '(' PARTITION NAME BY VALUE '(' column
                                                                                                                                                     type@ => unwrap_2_list('$6'),
                                                                                                                                                     columnRefCommaList@ => ['$8']}}.
 
+pipelinedClause -> PIPELINED                                       : #{pipelinedClause => #{}}.
 pipelinedClause -> PIPELINED                   USING          NAME : #{pipelinedClause => #{implementationPackage@ => unwrap_2_list('$3')}}.
 pipelinedClause -> PIPELINED                   USING NAME '.' NAME : #{pipelinedClause => #{implementationPackage@ => lists:append([unwrap_2_list('$3'), ".", unwrap_2_list('$5')])}}.
 pipelinedClause -> PIPELINED ROW   POLYMORPHIC USING          NAME : #{pipelinedClause => #{type@ => unwrap_2_list('$2'),

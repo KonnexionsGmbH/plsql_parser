@@ -307,15 +307,14 @@ IS
     */
     PROCEDURE my_procedure (
         p_is_show_in                   IN CHAR
-    );
-/*<>
-    Line 2_1
-    Line 2_2
-    Line 2_3
-    Line 2_4
-    Line 2_5
-*/
-
+    )/*<>
+         Line 2_1
+         Line 2_2
+         Line 2_3
+         Line 2_4
+         Line 2_5
+     */
+     ;
 END my_package_impl;
 /
 ").
@@ -337,12 +336,12 @@ END my_package_impl;
             <Name>my_procedure</Name>
             <ManPage><![CDATA[
 /*<>
-    Line 2_1
-    Line 2_2
-    Line 2_3
-    Line 2_4
-    Line 2_5
-*/
+         Line 2_1
+         Line 2_2
+         Line 2_3
+         Line 2_4
+         Line 2_5
+     */
             ]]></ManPage>
             <Parameter>
                 <Name>p_is_show_in</Name>
@@ -350,6 +349,34 @@ END my_package_impl;
                 <DataType>CHAR</DataType>
             </Parameter>
         </Procedure>
+    </FunctionProcedure>
+</Package>").
+
+%%------------------------------------------------------------------------------
+%% TEST 07 - pipelined function.
+%%------------------------------------------------------------------------------
+
+-define(TEST_07, "
+CREATE PACKAGE package_name_2
+AS
+    FUNCTION function_name_2
+        RETURN CLOB
+        PIPELINED;
+END;
+/
+").
+
+-define(TEST_07_RESULT_DEFAULT, "<?xml version='1.0' encoding='UTF-8'?>
+<Package xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:noNamespaceSchemaLocation='../../priv/dbss.xsd'>
+    <Name>package_name_2</Name>
+    <FunctionProcedure>
+        <Function>
+            <Name>function_name_2</Name>
+            <Return>
+                <DataType>CLOB</DataType>
+            </Return>
+            <Pipelined>TRUE</Pipelined>
+        </Function>
     </FunctionProcedure>
 </Package>").
 
@@ -519,7 +546,8 @@ End package_name
             <Return>
                 <DataType>CLOB</DataType>
             </Return>
- || ()        </Function>
+ ||             <Pipelined>TRUE</Pipelined>
+()        </Function>
     </FunctionProcedure>
     <FunctionProcedure>
         <Procedure>

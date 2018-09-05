@@ -480,19 +480,6 @@ fold_i(Fun, LOpts, FunState, Ctx, #{packageFunctionDeclaration := Value} =
     ?FOLD_RESULT(NewCtxE);
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% packageFunctionDeclaration@_@
-% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-fold_i(Fun, LOpts, FunState, Ctx, #{packageFunctionDeclaration@_@ := Value} =
-    PTree) ->
-    ?FOLD_INIT(FunState, Ctx, PTree),
-    Rule = packageFunctionDeclaration@_@,
-    NewCtxS = Fun(LOpts, FunState, Ctx, PTree, {Rule, start}),
-    NewCtx1 = fold_i(Fun, LOpts, FunState, NewCtxS, Value),
-    NewCtxE = Fun(LOpts, FunState, NewCtx1, PTree, {Rule, 'end'}),
-    ?FOLD_RESULT(NewCtxE);
-
-% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % packageFunctionDeclarationAttribute
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -525,28 +512,6 @@ fold_i(Fun, LOpts, FunState, Ctx, {packageFunctionDeclarationAttributeList =
         {Rule, start, Pos}),
     NewCtx1 = fold_i(Fun, LOpts, FunState, NewCtxS, PTree),
     NewCtxE = Fun(LOpts, FunState, NewCtx1, PTree, {Rule, 'end', Pos}),
-    ?FOLD_RESULT(NewCtxE);
-
-% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% packageItem
-% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-fold_i(Fun, LOpts, FunState, Ctx, #{packageItem := Value} =
-    PTree) ->
-    ?FOLD_INIT(FunState, Ctx, PTree),
-    Rule = packageItem,
-    NewCtxS = Fun(LOpts, FunState, Ctx, PTree, {Rule, start}),
-    NewCtx1 = case maps:is_key(packageFunctionDeclaration@, Value) of
-                  true ->
-                      fold_i(Fun, LOpts, FunState, NewCtxS,
-                          #{packageFunctionDeclaration@_@ => maps:get(
-                              packageFunctionDeclaration@, Value)});
-                  _ ->
-                      fold_i(Fun, LOpts, FunState, NewCtxS,
-                          #{packageProcedureDeclaration@_@ =>
-                          maps:get(packageProcedureDeclaration@, Value)})
-              end,
-    NewCtxE = Fun(LOpts, FunState, NewCtx1, PTree, {Rule, 'end'}),
     ?FOLD_RESULT(NewCtxE);
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -627,19 +592,6 @@ fold_i(Fun, LOpts, FunState, Ctx, #{packageProcedureDeclaration := Value} =
                   _ -> NewCtx3
               end,
     NewCtxE = Fun(LOpts, FunState, NewCtx4, PTree, {Rule, 'end'}),
-    ?FOLD_RESULT(NewCtxE);
-
-% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% packageProcedureDeclaration@_@
-% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-fold_i(Fun, LOpts, FunState, Ctx, #{packageProcedureDeclaration@_@ := Value} =
-    PTree) ->
-    ?FOLD_INIT(FunState, Ctx, PTree),
-    Rule = packageProcedureDeclaration@_@,
-    NewCtxS = Fun(LOpts, FunState, Ctx, PTree, {Rule, start}),
-    NewCtx1 = fold_i(Fun, LOpts, FunState, NewCtxS, Value),
-    NewCtxE = Fun(LOpts, FunState, NewCtx1, PTree, {Rule, 'end'}),
     ?FOLD_RESULT(NewCtxE);
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

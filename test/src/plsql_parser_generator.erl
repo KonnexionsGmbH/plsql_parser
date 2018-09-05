@@ -428,7 +428,8 @@ create_code(accessibleByClause = Rule) ->
             lists:append(
                 [
                     "Accessible By (",
-                    lists:nth(rand:uniform(AccessorCommaList_Length), AccessorCommaList),
+                    lists:nth(rand:uniform(AccessorCommaList_Length),
+                        AccessorCommaList),
                     ")"
                 ])
             || _ <- lists:seq(1, ?MAX_BASIC * 2)
@@ -1328,7 +1329,7 @@ create_code(functionArgCommaList = Rule) ->
 
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% functionHeading ::= 'FUNCTION' NAME ( '(' ( parameterDeclaration )* ')' )?
-%%                               'RETURN' dataType
+%%                               'RETURN' dataType 'PIPELINED'?
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 create_code(functionHeading = Rule) ->
@@ -1362,7 +1363,8 @@ create_code(functionHeading = Rule) ->
                             ])
                     end,
                     "Return ",
-                    lists:nth(rand:uniform(DataTypeReturn_Length), DataTypeReturn)
+                    lists:nth(rand:uniform(DataTypeReturn_Length),
+                        DataTypeReturn)
                 ])
             || _ <- lists:seq(1, ?MAX_BASIC * 2)
         ],
@@ -1736,7 +1738,7 @@ create_code(objectPrivilegeType = Rule) ->
     ?CREATE_CODE_END;
 
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% packageFunctionDeclaration ::= functionAnnotation? functionHeading packageFunctionDeclarationAttribute* ';'
+%% packageFunctionDeclaration ::= apiHiddenAnnotation? functionAnnotation? functionHeading packageFunctionDeclarationAttribute* 'MAN_PAGE'? ';'
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 create_code(packageFunctionDeclaration = Rule) ->
@@ -1747,6 +1749,8 @@ create_code(packageFunctionDeclaration = Rule) ->
     [{functionHeading, FunctionHeading}] = ets:lookup(?CODE_TEMPLATES,
         functionHeading),
     FunctionHeading_Length = length(FunctionHeading),
+    [{man_page, Man_Page}] = ets:lookup(?CODE_TEMPLATES, man_page),
+    Man_Page_Length = length(Man_Page),
     [{packageFunctionDeclarationAttributeList, PackageFunctionDeclarationAttributeList}] =
         ets:lookup(
             ?CODE_TEMPLATES, packageFunctionDeclarationAttributeList),
@@ -1771,6 +1775,10 @@ create_code(packageFunctionDeclaration = Rule) ->
                                 PackageFunctionDeclarationAttributeList);
                             _ -> []
                         end,
+                    case rand:uniform(5) rem 5 of
+                        1 -> lists:nth(rand:uniform(Man_Page_Length), Man_Page);
+                        _ -> []
+                    end,
                     ";"
                 ])
             || _ <- lists:seq(1, ?MAX_STATEMENT * 2)
@@ -1888,13 +1896,10 @@ create_code(packageFunctionDeclarationAttributeList = Rule) ->
 
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% packageItem ::= ( packageFunctionDeclaration
-%%                 | packageProcedureDeclaration ) man_page?
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 create_code(packageItem = Rule) ->
     ?CREATE_CODE_START,
-    [{man_page, Man_Page}] = ets:lookup(?CODE_TEMPLATES, man_page),
-    Man_Page_Length = length(Man_Page),
     [{packageFunctionDeclaration, PackageFunctionDeclaration}] = ets:lookup(
         ?CODE_TEMPLATES, packageFunctionDeclaration),
     PackageFunctionDeclaration_Length = length(PackageFunctionDeclaration),
@@ -1904,19 +1909,14 @@ create_code(packageItem = Rule) ->
 
     Code =
         [
-                case rand:uniform(2) rem 2 of
-                    1 -> lists:nth(
-                        rand:uniform(PackageFunctionDeclaration_Length),
-                        PackageFunctionDeclaration);
-                    _ -> lists:nth(
-                        rand:uniform(PackageProcedureDeclaration_Length),
-                        PackageProcedureDeclaration)
-                end
-                ++
-                case rand:uniform(5) rem 5 of
-                    1 -> lists:nth(rand:uniform(Man_Page_Length), Man_Page);
-                    _ -> []
-                end
+            case rand:uniform(2) rem 2 of
+                1 -> lists:nth(
+                    rand:uniform(PackageFunctionDeclaration_Length),
+                    PackageFunctionDeclaration);
+                _ -> lists:nth(
+                    rand:uniform(PackageProcedureDeclaration_Length),
+                    PackageProcedureDeclaration)
+            end
             || _ <- lists:seq(1, ?MAX_BASIC * 2)
         ],
     store_code(Rule, Code, ?MAX_BASIC, false),
@@ -2053,7 +2053,7 @@ create_code(packageItemList = Rule) ->
     ?CREATE_CODE_END;
 
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% packageProcedureDeclaration ::= procedureAnnotation? procedureHeading accessibleByClause? ';'
+%% packageProcedureDeclaration ::= apiHiddenAnnotation? procedureAnnotation? procedureHeading accessibleByClause? 'MAN_PAGE'? ';'
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 create_code(packageProcedureDeclaration = Rule) ->
@@ -2063,6 +2063,8 @@ create_code(packageProcedureDeclaration = Rule) ->
     AccessibleByClause_Length = length(AccessibleByClause),
     [{procedureAnnotation, ProcedureAnnotation}] = ets:lookup(?CODE_TEMPLATES,
         procedureAnnotation),
+    [{man_page, Man_Page}] = ets:lookup(?CODE_TEMPLATES, man_page),
+    Man_Page_Length = length(Man_Page),
     ProcedureAnnotation_Length = length(ProcedureAnnotation),
     [{procedureHeading, ProcedureHeading}] = ets:lookup(?CODE_TEMPLATES,
         procedureHeading),
@@ -2084,6 +2086,10 @@ create_code(packageProcedureDeclaration = Rule) ->
                         1 -> " " ++ lists:nth(
                             rand:uniform(AccessibleByClause_Length),
                             AccessibleByClause);
+                        _ -> []
+                    end,
+                    case rand:uniform(5) rem 5 of
+                        1 -> lists:nth(rand:uniform(Man_Page_Length), Man_Page);
                         _ -> []
                     end,
                     ";"
