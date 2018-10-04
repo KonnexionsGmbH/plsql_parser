@@ -110,6 +110,7 @@
     {"^(?i)(PIPELINED)$",                   'PIPELINED'},
     {"^(?i)(PLS_INTEGER)$",                 'PLS_INTEGER'},
     {"^(?i)(POLYMORPHIC)$",                 'POLYMORPHIC'},
+    {"^(?i)(PRIVILEGE)$",                   'PRIVILEGE'},
     {"^(?i)(PRIVILEGES)$",                  'PRIVILEGES'},
     {"^(?i)(PROCEDURE)$",                   'PROCEDURE'},
     {"^(?i)(PROFILE)$",                     'PROFILE'},

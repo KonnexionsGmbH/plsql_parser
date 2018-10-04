@@ -2963,6 +2963,7 @@ create_code(systemPrivilegeType = Rule) ->
             "DROP PROFILE",
             "DROP USER",
             "FLASHBACK ANY TABLE",
+            "GRANT ANY PRIVILEGE",
             "GRANT ANY ROLE",
             "INHERIT ANY PRIVILEGES",
             "SELECT ANY DIRECTORY",

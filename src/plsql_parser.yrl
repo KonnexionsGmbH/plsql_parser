@@ -198,6 +198,7 @@ Terminals
  PIPELINED
  PLS_INTEGER
  POLYMORPHIC
+ PRIVILEGE
  PRIVILEGES
  PROCEDURE
  PROFILE
@@ -564,6 +565,7 @@ systemPrivilegeType -> DROP ANY ROLE          : lists:append([unwrap_2_list('$1'
 systemPrivilegeType -> DROP PROFILE           : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2')]).
 systemPrivilegeType -> DROP USER              : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2')]).
 systemPrivilegeType -> FLASHBACK ANY TABLE    : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2'), " ", unwrap_2_list('$3')]).
+systemPrivilegeType -> GRANT ANY PRIVILEGE    : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2'), " ", unwrap_2_list('$3')]).
 systemPrivilegeType -> GRANT ANY ROLE         : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2'), " ", unwrap_2_list('$3')]).
 systemPrivilegeType -> INHERIT ANY PRIVILEGES : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2'), " ", unwrap_2_list('$3')]).
 systemPrivilegeType -> SELECT ANY DIRECTORY   : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2'), " ", unwrap_2_list('$3')]).
