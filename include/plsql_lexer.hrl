@@ -138,6 +138,7 @@
     {"^(?i)(SHARING)$",                     'SHARING'},
     {"^(?i)(SQL)$",                         'SQL'},
     {"^(?i)(SYSDBA)$",                      'SYSDBA'},
+    {"^(?i)(SYSTEM)$",                      'SYSTEM'},
     {"^(?i)(SYSTEM_PRIVILEGE)$",            'SYSTEM_PRIVILEGE'},
     {"^(?i)(TABLE)$",                       'TABLE'},
     {"^(?i)(TABLESPACE)$",                  'TABLESPACE'},

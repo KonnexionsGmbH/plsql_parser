@@ -2941,6 +2941,7 @@ create_code(systemPrivilegeType = Rule) ->
             "ALTER DATABASE",
             "ALTER PROFILE",
             "ALTER SESSION",
+            "ALTER SYSTEM",
             "ALTER USER",
             "CREATE ANY CONTEXT",
             "CREATE ANY CREDENTIAL",
