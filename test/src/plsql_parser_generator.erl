@@ -448,26 +448,8 @@ create_code(accessorCommaList = Rule) ->
 
     Code =
         [
-            case rand:uniform(4) rem 4 of
+            case rand:uniform(2) rem 2 of
                 1 -> lists:append(
-                    [
-                        lists:nth(rand:uniform(Accessor_Length), Accessor),
-                        ",",
-                        lists:nth(rand:uniform(Accessor_Length), Accessor),
-                        ",",
-                        lists:nth(rand:uniform(Accessor_Length), Accessor),
-                        ",",
-                        lists:nth(rand:uniform(Accessor_Length), Accessor)
-                    ]);
-                2 -> lists:append(
-                    [
-                        lists:nth(rand:uniform(Accessor_Length), Accessor),
-                        ",",
-                        lists:nth(rand:uniform(Accessor_Length), Accessor),
-                        ",",
-                        lists:nth(rand:uniform(Accessor_Length), Accessor)
-                    ]);
-                3 -> lists:append(
                     [
                         lists:nth(rand:uniform(Accessor_Length), Accessor),
                         ",",
@@ -566,20 +548,8 @@ create_code(columnRef = Rule) ->
 
     Code =
         [
-            case rand:uniform(3) rem 3 of
+            case rand:uniform(2) rem 2 of
                 1 -> lists:append(
-                    [
-                        lists:nth(rand:uniform(Name_Length), Name),
-                        ".",
-                        lists:nth(rand:uniform(Name_Length), Name),
-                        ".",
-                        lists:nth(rand:uniform(Name_Length), Name),
-                        case rand:uniform(2) rem 2 of
-                            1 -> " (+)";
-                            _ -> []
-                        end
-                    ]);
-                2 -> lists:append(
                     [
                         lists:nth(rand:uniform(Name_Length), Name),
                         ".",
@@ -614,26 +584,8 @@ create_code(columnRefCommaList = Rule) ->
 
     Code =
         [
-            case rand:uniform(4) rem 4 of
+            case rand:uniform(2) rem 2 of
                 1 -> lists:append(
-                    [
-                        lists:nth(rand:uniform(ColumnRef_Length), ColumnRef),
-                        ",",
-                        lists:nth(rand:uniform(ColumnRef_Length), ColumnRef),
-                        ",",
-                        lists:nth(rand:uniform(ColumnRef_Length), ColumnRef),
-                        ",",
-                        lists:nth(rand:uniform(ColumnRef_Length), ColumnRef)
-                    ]);
-                2 -> lists:append(
-                    [
-                        lists:nth(rand:uniform(ColumnRef_Length), ColumnRef),
-                        ",",
-                        lists:nth(rand:uniform(ColumnRef_Length), ColumnRef),
-                        ",",
-                        lists:nth(rand:uniform(ColumnRef_Length), ColumnRef)
-                    ]);
-                3 -> lists:append(
                     [
                         lists:nth(rand:uniform(ColumnRef_Length), ColumnRef),
                         ",",
@@ -741,26 +693,8 @@ create_code(dataSourceCommaList = Rule) ->
 
     Code =
         [
-            case rand:uniform(4) rem 4 of
+            case rand:uniform(2) rem 2 of
                 1 -> lists:append(
-                    [
-                        lists:nth(rand:uniform(DataSource_Length), DataSource),
-                        ",",
-                        lists:nth(rand:uniform(DataSource_Length), DataSource),
-                        ",",
-                        lists:nth(rand:uniform(DataSource_Length), DataSource),
-                        ",",
-                        lists:nth(rand:uniform(DataSource_Length), DataSource)
-                    ]);
-                2 -> lists:append(
-                    [
-                        lists:nth(rand:uniform(DataSource_Length), DataSource),
-                        ",",
-                        lists:nth(rand:uniform(DataSource_Length), DataSource),
-                        ",",
-                        lists:nth(rand:uniform(DataSource_Length), DataSource)
-                    ]);
-                3 -> lists:append(
                     [
                         lists:nth(rand:uniform(DataSource_Length), DataSource),
                         ",",
@@ -1274,40 +1208,8 @@ create_code(functionArgCommaList = Rule) ->
 
     Code =
         [
-            case rand:uniform(4) rem 4 of
+            case rand:uniform(2) rem 2 of
                 1 -> lists:append(
-                    [
-                        bracket_query_spec(
-                            lists:nth(rand:uniform(FunctionArg_Length),
-                                FunctionArg)),
-                        ",",
-                        bracket_query_spec(
-                            lists:nth(rand:uniform(FunctionArg_Length),
-                                FunctionArg)),
-                        ",",
-                        bracket_query_spec(
-                            lists:nth(rand:uniform(FunctionArg_Length),
-                                FunctionArg)),
-                        ",",
-                        bracket_query_spec(
-                            lists:nth(rand:uniform(FunctionArg_Length),
-                                FunctionArg))
-                    ]);
-                2 -> lists:append(
-                    [
-                        bracket_query_spec(
-                            lists:nth(rand:uniform(FunctionArg_Length),
-                                FunctionArg)),
-                        ",",
-                        bracket_query_spec(
-                            lists:nth(rand:uniform(FunctionArg_Length),
-                                FunctionArg)),
-                        ",",
-                        bracket_query_spec(
-                            lists:nth(rand:uniform(FunctionArg_Length),
-                                FunctionArg))
-                    ]);
-                3 -> lists:append(
                     [
                         bracket_query_spec(
                             lists:nth(rand:uniform(FunctionArg_Length),
@@ -1385,20 +1287,8 @@ create_code(functionRef = Rule) ->
 
     Code =
         [
-            case rand:uniform(3) rem 3 of
+            case rand:uniform(2) rem 2 of
                 1 -> lists:append(
-                    [
-                        lists:nth(rand:uniform(Name_Length), Name),
-                        ".",
-                        lists:nth(rand:uniform(Name_Length), Name),
-                        ".",
-                        lists:nth(rand:uniform(Name_Length), Name),
-                        " (",
-                        lists:nth(rand:uniform(FunctionArgCommaList_Length),
-                            FunctionArgCommaList),
-                        ")"
-                    ]);
-                2 -> lists:append(
                     [
                         lists:nth(rand:uniform(Name_Length), Name),
                         ".",
@@ -1524,35 +1414,8 @@ create_code(man_page = Rule) ->
                 ?CHAR_NEWLINE,
                 "/*<>",
                 ?CHAR_NEWLINE,
-                case rand:uniform(4) rem 4 of
+                case rand:uniform(2) rem 2 of
                     1 -> lists:append(
-                        [
-                            "Comment Line No. ",
-                            integer_to_list(rand:uniform(?MAX_BASIC)),
-                            ?CHAR_NEWLINE,
-                            "Comment Line No. ",
-                            integer_to_list(rand:uniform(?MAX_BASIC)),
-                            ?CHAR_NEWLINE,
-                            "Comment Line No. ",
-                            integer_to_list(rand:uniform(?MAX_BASIC)),
-                            ?CHAR_NEWLINE,
-                            "Comment Line No. ",
-                            integer_to_list(rand:uniform(?MAX_BASIC)),
-                            ?CHAR_NEWLINE
-                        ]);
-                    2 -> lists:append(
-                        [
-                            "Comment Line No. ",
-                            integer_to_list(rand:uniform(?MAX_BASIC)),
-                            ?CHAR_NEWLINE,
-                            "Comment Line No. ",
-                            integer_to_list(rand:uniform(?MAX_BASIC)),
-                            ?CHAR_NEWLINE,
-                            "Comment Line No. ",
-                            integer_to_list(rand:uniform(?MAX_BASIC)),
-                            ?CHAR_NEWLINE
-                        ]);
-                    3 -> lists:append(
                         [
                             "Comment Line No. ",
                             integer_to_list(rand:uniform(?MAX_BASIC)),
@@ -1685,26 +1548,25 @@ create_code(objectPrivilegeAnnotation = Rule) ->
 
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% objectPrivilegeType ::= 'ALTER'
-%%                       | 'DEBUG'
-%%                       | 'DELETE'
-%%                       | 'EXECUTE'
-%%                       | ('FLASHBACK' 'ARCHIVE' )
-%%                       | 'INDEX'
-%%                       | ( 'INHERIT' 'PRIVILEGES' ?)
-%%                       | ( 'INHERIT' 'REMOTE' 'PRIVILEGES' )
-%%                       | 'INSERT'
-%%                       | ( 'KEEP' 'SEQUENCE' )
-%%                       | ( 'MERGE' 'VIEW' )
-%%                       | ( 'ON' 'COMMIT' 'REFRESH' )
-%%                       | ( 'QUERY' 'REWRITE' )
-%%                       | 'READ'
-%%                       | 'REFERENCES'
-%%                       | 'SELECT'
-%%                       | ( 'TRANSLATE' 'SQL' )
-%%                       | 'UNDER'
-%%                       | 'UPDATE'
-%%                       | 'USE'
-%%                       | 'WRITE'
+%%                      | 'DEBUG'
+%%                      | 'DELETE'
+%%                      | 'EXECUTE'
+%%                      | ('FLASHBACK' 'ARCHIVE' )
+%%                      | 'INDEX'
+%%                      | ( 'INHERIT' 'REMOTE'? 'PRIVILEGES' )
+%%                      | 'INSERT'
+%%                      | ( 'KEEP' 'SEQUENCE' )
+%%                      | ( 'MERGE' 'VIEW' )
+%%                      | ( 'ON' 'COMMIT' 'REFRESH' )
+%%                      | ( 'QUERY' 'REWRITE' )
+%%                      | 'READ'
+%%                      | 'REFERENCES'
+%%                      | 'SELECT'
+%%                      | ( 'TRANSLATE' 'SQL' )
+%%                      | 'UNDER'
+%%                      | 'UPDATE'
+%%                      | 'USE'
+%%                      | 'WRITE'
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 create_code(objectPrivilegeType = Rule) ->
@@ -1842,40 +1704,8 @@ create_code(packageFunctionDeclarationAttributeList = Rule) ->
 
     Code =
         [
-            case rand:uniform(4) rem 4 of
+            case rand:uniform(2) rem 2 of
                 1 -> lists:append(
-                    [
-                        lists:nth(rand:uniform(
-                            PackageFunctionDeclarationAttribute_Length),
-                            PackageFunctionDeclarationAttribute),
-                        " ",
-                        lists:nth(rand:uniform(
-                            PackageFunctionDeclarationAttribute_Length),
-                            PackageFunctionDeclarationAttribute),
-                        " ",
-                        lists:nth(rand:uniform(
-                            PackageFunctionDeclarationAttribute_Length),
-                            PackageFunctionDeclarationAttribute),
-                        " ",
-                        lists:nth(rand:uniform(
-                            PackageFunctionDeclarationAttribute_Length),
-                            PackageFunctionDeclarationAttribute)
-                    ]);
-                2 -> lists:append(
-                    [
-                        lists:nth(rand:uniform(
-                            PackageFunctionDeclarationAttribute_Length),
-                            PackageFunctionDeclarationAttribute),
-                        " ",
-                        lists:nth(rand:uniform(
-                            PackageFunctionDeclarationAttribute_Length),
-                            PackageFunctionDeclarationAttribute),
-                        " ",
-                        lists:nth(rand:uniform(
-                            PackageFunctionDeclarationAttribute_Length),
-                            PackageFunctionDeclarationAttribute)
-                    ]);
-                3 -> lists:append(
                     [
                         lists:nth(rand:uniform(
                             PackageFunctionDeclarationAttribute_Length),
@@ -2269,33 +2099,8 @@ create_code(parameterDeclarationCommaList = Rule) ->
 
     Code =
         [
-            case rand:uniform(4) rem 4 of
+            case rand:uniform(2) rem 2 of
                 1 -> lists:append(
-                    [
-                        lists:nth(rand:uniform(ParameterDeclaration_Length),
-                            ParameterDeclaration),
-                        ",",
-                        lists:nth(rand:uniform(ParameterDeclaration_Length),
-                            ParameterDeclaration),
-                        ",",
-                        lists:nth(rand:uniform(ParameterDeclaration_Length),
-                            ParameterDeclaration),
-                        ",",
-                        lists:nth(rand:uniform(ParameterDeclaration_Length),
-                            ParameterDeclaration)
-                    ]);
-                2 -> lists:append(
-                    [
-                        lists:nth(rand:uniform(ParameterDeclaration_Length),
-                            ParameterDeclaration),
-                        ",",
-                        lists:nth(rand:uniform(ParameterDeclaration_Length),
-                            ParameterDeclaration),
-                        ",",
-                        lists:nth(rand:uniform(ParameterDeclaration_Length),
-                            ParameterDeclaration)
-                    ]);
-                3 -> lists:append(
                     [
                         lists:nth(rand:uniform(ParameterDeclaration_Length),
                             ParameterDeclaration),
@@ -2481,40 +2286,8 @@ create_code(plsqlPackageSourceAttributeList = Rule) ->
 
     Code =
         [
-            case rand:uniform(4) rem 4 of
+            case rand:uniform(2) rem 2 of
                 1 -> lists:append(
-                    [
-                        lists:nth(
-                            rand:uniform(PlsqlPackageSourceAttribute_Length),
-                            PlsqlPackageSourceAttribute),
-                        " ",
-                        lists:nth(
-                            rand:uniform(PlsqlPackageSourceAttribute_Length),
-                            PlsqlPackageSourceAttribute),
-                        " ",
-                        lists:nth(
-                            rand:uniform(PlsqlPackageSourceAttribute_Length),
-                            PlsqlPackageSourceAttribute),
-                        " ",
-                        lists:nth(
-                            rand:uniform(PlsqlPackageSourceAttribute_Length),
-                            PlsqlPackageSourceAttribute)
-                    ]);
-                2 -> lists:append(
-                    [
-                        lists:nth(
-                            rand:uniform(PlsqlPackageSourceAttribute_Length),
-                            PlsqlPackageSourceAttribute),
-                        " ",
-                        lists:nth(
-                            rand:uniform(PlsqlPackageSourceAttribute_Length),
-                            PlsqlPackageSourceAttribute),
-                        " ",
-                        lists:nth(
-                            rand:uniform(PlsqlPackageSourceAttribute_Length),
-                            PlsqlPackageSourceAttribute)
-                    ]);
-                3 -> lists:append(
                     [
                         lists:nth(
                             rand:uniform(PlsqlPackageSourceAttribute_Length),
@@ -2550,112 +2323,8 @@ create_code(privilegeAnnotationList = Rule) ->
 
     Code =
         [
-            case rand:uniform(4) rem 4 of
-                1 -> lists:append(
-                    [
-                        case rand:uniform(3) rem 3 of
-                            1 ->
-                                lists:nth(rand:uniform(
-                                    ObjectPrivilegeAnnotation_Length),
-                                    ObjectPrivilegeAnnotation);
-                            2 ->
-                                lists:nth(
-                                    rand:uniform(ApiGroupAnnotation_Length),
-                                    ApiGroupAnnotation);
-                            _ ->
-                                lists:nth(rand:uniform(
-                                    SystemPrivilegeAnnotation_Length),
-                                    SystemPrivilegeAnnotation)
-                        end,
-                        case rand:uniform(3) rem 3 of
-                            1 ->
-                                lists:nth(rand:uniform(
-                                    ObjectPrivilegeAnnotation_Length),
-                                    ObjectPrivilegeAnnotation);
-                            2 ->
-                                lists:nth(
-                                    rand:uniform(ApiGroupAnnotation_Length),
-                                    ApiGroupAnnotation);
-                            _ ->
-                                lists:nth(rand:uniform(
-                                    SystemPrivilegeAnnotation_Length),
-                                    SystemPrivilegeAnnotation)
-                        end,
-                        case rand:uniform(3) rem 3 of
-                            1 ->
-                                lists:nth(rand:uniform(
-                                    ObjectPrivilegeAnnotation_Length),
-                                    ObjectPrivilegeAnnotation);
-                            2 ->
-                                lists:nth(
-                                    rand:uniform(ApiGroupAnnotation_Length),
-                                    ApiGroupAnnotation);
-                            _ ->
-                                lists:nth(rand:uniform(
-                                    SystemPrivilegeAnnotation_Length),
-                                    SystemPrivilegeAnnotation)
-                        end,
-                        case rand:uniform(3) rem 3 of
-                            1 ->
-                                lists:nth(rand:uniform(
-                                    ObjectPrivilegeAnnotation_Length),
-                                    ObjectPrivilegeAnnotation);
-                            2 ->
-                                lists:nth(
-                                    rand:uniform(ApiGroupAnnotation_Length),
-                                    ApiGroupAnnotation);
-                            _ ->
-                                lists:nth(rand:uniform(
-                                    SystemPrivilegeAnnotation_Length),
-                                    SystemPrivilegeAnnotation)
-                        end
-                    ]);
-                2 -> lists:append(
-                    [
-                        case rand:uniform(3) rem 3 of
-                            1 ->
-                                lists:nth(rand:uniform(
-                                    ObjectPrivilegeAnnotation_Length),
-                                    ObjectPrivilegeAnnotation);
-                            2 ->
-                                lists:nth(
-                                    rand:uniform(ApiGroupAnnotation_Length),
-                                    ApiGroupAnnotation);
-                            _ ->
-                                lists:nth(rand:uniform(
-                                    SystemPrivilegeAnnotation_Length),
-                                    SystemPrivilegeAnnotation)
-                        end,
-                        case rand:uniform(3) rem 3 of
-                            1 ->
-                                lists:nth(rand:uniform(
-                                    ObjectPrivilegeAnnotation_Length),
-                                    ObjectPrivilegeAnnotation);
-                            2 ->
-                                lists:nth(
-                                    rand:uniform(ApiGroupAnnotation_Length),
-                                    ApiGroupAnnotation);
-                            _ ->
-                                lists:nth(rand:uniform(
-                                    SystemPrivilegeAnnotation_Length),
-                                    SystemPrivilegeAnnotation)
-                        end,
-                        case rand:uniform(3) rem 3 of
-                            1 ->
-                                lists:nth(rand:uniform(
-                                    ObjectPrivilegeAnnotation_Length),
-                                    ObjectPrivilegeAnnotation);
-                            2 ->
-                                lists:nth(
-                                    rand:uniform(ApiGroupAnnotation_Length),
-                                    ApiGroupAnnotation);
-                            _ ->
-                                lists:nth(rand:uniform(
-                                    SystemPrivilegeAnnotation_Length),
-                                    SystemPrivilegeAnnotation)
-                        end
-                    ]);
-                3 ->
+            case rand:uniform(2) rem 2 of
+                1 ->
                     case rand:uniform(3) rem 3 of
                         1 ->
                             lists:nth(rand:uniform(
@@ -2906,30 +2575,16 @@ create_code(systemPrivilegeAnnotation = Rule) ->
     ?CREATE_CODE_END;
 
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% systemPrivilegeType ::= ( 'ALTER' 'DATABASE' )
-%%                       | ( 'ALTER' 'SESSION' )
-%%                       | ( 'ALTER' 'USER' )
-%%                       | ( 'CREATE' 'ANY' 'CONTEXT' )
-%%                       | ( 'CREATE' 'ANY' 'CREDENTIA' )
-%%                       | ( 'CREATE' 'ANY' 'DIRECTORY' )
-%%                       | ( 'CREATE' 'CREDENTIAL' )
-%%                       | ( 'CREATE' 'EXTERNAL' 'JOB' )
-%%                       | ( 'CREATE' 'JOB' )
-%%                       | ( 'CREATE' 'PROCEDURE' )
-%%                       | ( 'CREATE' 'SEQUENCE' )
-%%                       | ( 'CREATE' 'SESSION' )
-%%                       | ( 'CREATE' 'TABLE' )
-%%                       | ( 'CREATE' 'TRIGGER' )
-%%                       | ( 'CREATE' 'TYPE' )
-%%                       | ( 'CREATE' 'VIEW' )
-%%                       | ( 'DROP' 'ANY' 'DIRECTORY' )
-%%                       | ( 'FLASHBACK' 'ANY' 'TABLE' )
-%%                       | ( 'INHERIT' 'ANY' 'PRIVILEGES' )
-%%                       | ( 'SELECT' 'ANY' 'DIRECTORY' )
-%%                       | ( 'SELECT' 'ANY' 'TABLE' )
-%%                       | ( 'SET' 'CONTAINER' )
-%%                       | 'SYSDBA'
-%%                       | ( 'UNLIMITED' 'TABLESPACE' )
+%% systemPrivilegeType ::= ( 'ALTER' ( ( 'ANY' 'ROLE' ) | 'DATABASE' | 'PROFILE' | 'SESSION' | 'SYSTEM' | 'USER' ) )
+%%                      | ( 'CREATE' ( ( 'ANY' ( 'CONTEXT' | 'CREDENTIAL' | 'DIRECTORY' | 'SYNONYM' ) ) |  'CREDENTIAL' | ( 'EXTERNAL' 'JOB' ) | 'JOB? | ''PROCEDURE' | 'PROFILE' | 'ROLE' | 'SEQUENCE' | 'SESSION' | 'TABLE' | 'TRIGGER' | 'TYPE' | 'USER' | 'VIEW' ) )
+%%                      | ( 'DROP' ( 'ANY' ( 'DIRECTORY' | 'ROLE') | 'PROFILE' | 'USER' ) )
+%%                      | ( 'FLASHBACK' 'ANY' 'TABLE' )
+%%                      | ( 'GRANT' 'ANY' ( ( 'OBJECT'? 'PRIVILEGE' ) | 'ROLE' ) )
+%%                      | ( 'INHERIT' 'ANY' 'PRIVILEGES' )
+%%                      | ( 'SELECT' 'ANY' ( 'DIRECTORY'  | 'TABLE' ) )
+%%                      | ( 'SET' 'CONTAINER' )
+%%                      | 'SYSDBA'
+%%                      | ( 'UNLIMITED' 'TABLESPACE' )
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 create_code(systemPrivilegeType = Rule) ->
@@ -2946,6 +2601,7 @@ create_code(systemPrivilegeType = Rule) ->
             "CREATE ANY CONTEXT",
             "CREATE ANY CREDENTIAL",
             "CREATE ANY DIRECTORY",
+            "CREATE ANY SYNONYM",
             "CREATE CREDENTIAL",
             "CREATE EXTERNAL JOB",
             "CREATE JOB",
@@ -2964,6 +2620,7 @@ create_code(systemPrivilegeType = Rule) ->
             "DROP PROFILE",
             "DROP USER",
             "FLASHBACK ANY TABLE",
+            "GRANT ANY OBJECT PRIVILEGE",
             "GRANT ANY PRIVILEGE",
             "GRANT ANY ROLE",
             "INHERIT ANY PRIVILEGES",

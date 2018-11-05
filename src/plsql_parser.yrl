@@ -186,6 +186,7 @@ Terminals
  NULLX
  NUMBER
  NVARCHAR2
+ OBJECT
  OBJECT_PRIVILEGE
  ON
  OR
@@ -226,6 +227,7 @@ Terminals
  SHARING
  SQL
  STRING
+ SYNONYM
  SYSDBA
  SYSTEM
  SYSTEM_PRIVILEGE
@@ -540,41 +542,43 @@ plsqlPackageSourceAttributeList -> plsqlPackageSourceAttribute plsqlPackageSourc
 sharingClause -> SHARING '=' METADATA : #{sharingClause => unwrap_2_list('$3')}.
 sharingClause -> SHARING '=' NONE     : #{sharingClause => unwrap_2_list('$3')}.
 
-systemPrivilegeType -> ALTER ANY ROLE         : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2'), " ", unwrap_2_list('$3')]).
-systemPrivilegeType -> ALTER DATABASE         : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2')]).
-systemPrivilegeType -> ALTER PROFILE          : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2')]).
-systemPrivilegeType -> ALTER SESSION          : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2')]).
-systemPrivilegeType -> ALTER SYSTEM           : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2')]).
-systemPrivilegeType -> ALTER USER             : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2')]).
-systemPrivilegeType -> CREATE ANY CONTEXT     : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2'), " ", unwrap_2_list('$3')]).
-systemPrivilegeType -> CREATE ANY CREDENTIAL  : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2'), " ", unwrap_2_list('$3')]).
-systemPrivilegeType -> CREATE ANY DIRECTORY   : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2'), " ", unwrap_2_list('$3')]).
-systemPrivilegeType -> CREATE CREDENTIAL      : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2')]).
-systemPrivilegeType -> CREATE EXTERNAL JOB    : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2'), " ", unwrap_2_list('$3')]).
-systemPrivilegeType -> CREATE JOB             : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2')]).
-systemPrivilegeType -> CREATE PROCEDURE       : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2')]).
-systemPrivilegeType -> CREATE PROFILE         : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2')]).
-systemPrivilegeType -> CREATE ROLE            : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2')]).
-systemPrivilegeType -> CREATE SEQUENCE        : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2')]).
-systemPrivilegeType -> CREATE SESSION         : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2')]).
-systemPrivilegeType -> CREATE TABLE           : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2')]).
-systemPrivilegeType -> CREATE TRIGGER         : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2')]).
-systemPrivilegeType -> CREATE TYPE            : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2')]).
-systemPrivilegeType -> CREATE USER            : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2')]).
-systemPrivilegeType -> CREATE VIEW            : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2')]).
-systemPrivilegeType -> DROP ANY DIRECTORY     : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2'), " ", unwrap_2_list('$3')]).
-systemPrivilegeType -> DROP ANY ROLE          : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2'), " ", unwrap_2_list('$3')]).
-systemPrivilegeType -> DROP PROFILE           : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2')]).
-systemPrivilegeType -> DROP USER              : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2')]).
-systemPrivilegeType -> FLASHBACK ANY TABLE    : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2'), " ", unwrap_2_list('$3')]).
-systemPrivilegeType -> GRANT ANY PRIVILEGE    : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2'), " ", unwrap_2_list('$3')]).
-systemPrivilegeType -> GRANT ANY ROLE         : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2'), " ", unwrap_2_list('$3')]).
-systemPrivilegeType -> INHERIT ANY PRIVILEGES : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2'), " ", unwrap_2_list('$3')]).
-systemPrivilegeType -> SELECT ANY DIRECTORY   : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2'), " ", unwrap_2_list('$3')]).
-systemPrivilegeType -> SELECT ANY TABLE       : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2'), " ", unwrap_2_list('$3')]).
-systemPrivilegeType -> SET CONTAINER          : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2')]).
-systemPrivilegeType -> SYSDBA                 : unwrap_2_list('$1').
-systemPrivilegeType -> UNLIMITED TABLESPACE   : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2')]).
+systemPrivilegeType -> ALTER ANY ROLE             : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2'), " ", unwrap_2_list('$3')]).
+systemPrivilegeType -> ALTER DATABASE             : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2')]).
+systemPrivilegeType -> ALTER PROFILE              : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2')]).
+systemPrivilegeType -> ALTER SESSION              : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2')]).
+systemPrivilegeType -> ALTER SYSTEM               : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2')]).
+systemPrivilegeType -> ALTER USER                 : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2')]).
+systemPrivilegeType -> CREATE ANY CONTEXT         : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2'), " ", unwrap_2_list('$3')]).
+systemPrivilegeType -> CREATE ANY CREDENTIAL      : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2'), " ", unwrap_2_list('$3')]).
+systemPrivilegeType -> CREATE ANY DIRECTORY       : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2'), " ", unwrap_2_list('$3')]).
+systemPrivilegeType -> CREATE ANY SYNONYM         : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2'), " ", unwrap_2_list('$3')]).
+systemPrivilegeType -> CREATE CREDENTIAL          : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2')]).
+systemPrivilegeType -> CREATE EXTERNAL JOB        : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2'), " ", unwrap_2_list('$3')]).
+systemPrivilegeType -> CREATE JOB                 : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2')]).
+systemPrivilegeType -> CREATE PROCEDURE           : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2')]).
+systemPrivilegeType -> CREATE PROFILE             : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2')]).
+systemPrivilegeType -> CREATE ROLE                : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2')]).
+systemPrivilegeType -> CREATE SEQUENCE            : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2')]).
+systemPrivilegeType -> CREATE SESSION             : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2')]).
+systemPrivilegeType -> CREATE TABLE               : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2')]).
+systemPrivilegeType -> CREATE TRIGGER             : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2')]).
+systemPrivilegeType -> CREATE TYPE                : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2')]).
+systemPrivilegeType -> CREATE USER                : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2')]).
+systemPrivilegeType -> CREATE VIEW                : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2')]).
+systemPrivilegeType -> DROP ANY DIRECTORY         : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2'), " ", unwrap_2_list('$3')]).
+systemPrivilegeType -> DROP ANY ROLE              : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2'), " ", unwrap_2_list('$3')]).
+systemPrivilegeType -> DROP PROFILE               : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2')]).
+systemPrivilegeType -> DROP USER                  : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2')]).
+systemPrivilegeType -> FLASHBACK ANY TABLE        : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2'), " ", unwrap_2_list('$3')]).
+systemPrivilegeType -> GRANT ANY OBJECT PRIVILEGE : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2'), " ", unwrap_2_list('$3'), " ", unwrap_2_list('$4')]).
+systemPrivilegeType -> GRANT ANY PRIVILEGE        : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2'), " ", unwrap_2_list('$3')]).
+systemPrivilegeType -> GRANT ANY ROLE             : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2'), " ", unwrap_2_list('$3')]).
+systemPrivilegeType -> INHERIT ANY PRIVILEGES     : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2'), " ", unwrap_2_list('$3')]).
+systemPrivilegeType -> SELECT ANY DIRECTORY       : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2'), " ", unwrap_2_list('$3')]).
+systemPrivilegeType -> SELECT ANY TABLE           : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2'), " ", unwrap_2_list('$3')]).
+systemPrivilegeType -> SET CONTAINER              : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2')]).
+systemPrivilegeType -> SYSDBA                     : unwrap_2_list('$1').
+systemPrivilegeType -> UNLIMITED TABLESPACE       : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2')]).
 
 %% Level 07 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
