@@ -84,6 +84,7 @@
     {"^(?i)(IS)$",                          'IS'},
     {"^(?i)(JOB)$",                         'JOB'},
     {"^(?i)(KEEP)$",                        'KEEP'},
+    {"^(?i)(LINK)$",                        'LINK'},
     {"^(?i)(LOCAL)$",                       'LOCAL'},
     {"^(?i)(LONG)$",                        'LONG'},
     {"^(?i)(MERGE)$",                       'MERGE'},

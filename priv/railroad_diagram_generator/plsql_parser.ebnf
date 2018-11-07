@@ -323,6 +323,7 @@ systemPrivilegeType -> CREATE ANY CREDENTIAL      : lists:append([unwrap_2_list(
 systemPrivilegeType -> CREATE ANY DIRECTORY       : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2'), " ", unwrap_2_list('$3')]).
 systemPrivilegeType -> CREATE ANY SYNONYM         : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2'), " ", unwrap_2_list('$3')]).
 systemPrivilegeType -> CREATE CREDENTIAL          : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2')]).
+systemPrivilegeType -> CREATE DATABASE LINK       : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2'), " ", unwrap_2_list('$3')]).
 systemPrivilegeType -> CREATE EXTERNAL JOB        : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2'), " ", unwrap_2_list('$3')]).
 systemPrivilegeType -> CREATE JOB                 : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2')]).
 systemPrivilegeType -> CREATE PROCEDURE           : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2')]).
@@ -378,7 +379,7 @@ packageItem ::= packageFunctionDeclaration
 sharingClause ::= 'SHARING' '=' ( 'METADATA' | 'NONE' )
 
 systemPrivilegeType ::= ( 'ALTER' ( ( 'ANY' 'ROLE' ) | 'DATABASE' | 'PROFILE' | 'SESSION' | 'SYSTEM' | 'USER' ) )
-                      | ( 'CREATE' ( ( 'ANY' ( 'CONTEXT' | 'CREDENTIAL' | 'DIRECTORY' | 'SYNONYM' ) ) |  'CREDENTIAL' | ( 'EXTERNAL' 'JOB' ) | 'JOB? | ''PROCEDURE' | 'PROFILE' | 'ROLE' | 'SEQUENCE' | 'SESSION' | 'TABLE' | 'TRIGGER' | 'TYPE' | 'USER' | 'VIEW' ) )
+                      | ( 'CREATE' ( ( 'ANY' ( 'CONTEXT' | 'CREDENTIAL' | 'DIRECTORY' | 'SYNONYM' ) ) |  'CREDENTIAL' | ( 'DATABASE' 'LINK' ) | ( 'EXTERNAL' 'JOB' ) | 'JOB? | ''PROCEDURE' | 'PROFILE' | 'ROLE' | 'SEQUENCE' | 'SESSION' | 'TABLE' | 'TRIGGER' | 'TYPE' | 'USER' | 'VIEW' ) )
                       | ( 'DROP' ( 'ANY' ( 'DIRECTORY' | 'ROLE') | 'PROFILE' | 'USER' ) )
                       | ( 'FLASHBACK' 'ANY' 'TABLE' )
                       | ( 'GRANT' 'ANY' ( ( 'OBJECT'? 'PRIVILEGE' ) | 'ROLE' ) )

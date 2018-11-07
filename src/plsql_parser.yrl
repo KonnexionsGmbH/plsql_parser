@@ -170,6 +170,7 @@ Terminals
  IS
  JOB
  KEEP
+ LINK
  LOCAL
  LONG
  MAN_PAGE
@@ -553,6 +554,7 @@ systemPrivilegeType -> CREATE ANY CREDENTIAL      : lists:append([unwrap_2_list(
 systemPrivilegeType -> CREATE ANY DIRECTORY       : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2'), " ", unwrap_2_list('$3')]).
 systemPrivilegeType -> CREATE ANY SYNONYM         : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2'), " ", unwrap_2_list('$3')]).
 systemPrivilegeType -> CREATE CREDENTIAL          : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2')]).
+systemPrivilegeType -> CREATE DATABASE LINK       : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2'), " ", unwrap_2_list('$3')]).
 systemPrivilegeType -> CREATE EXTERNAL JOB        : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2'), " ", unwrap_2_list('$3')]).
 systemPrivilegeType -> CREATE JOB                 : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2')]).
 systemPrivilegeType -> CREATE PROCEDURE           : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2')]).

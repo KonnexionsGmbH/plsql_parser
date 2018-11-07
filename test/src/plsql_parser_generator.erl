@@ -2603,6 +2603,7 @@ create_code(systemPrivilegeType = Rule) ->
             "CREATE ANY DIRECTORY",
             "CREATE ANY SYNONYM",
             "CREATE CREDENTIAL",
+            "CREATE DATABASE LINK",
             "CREATE EXTERNAL JOB",
             "CREATE JOB",
             "CREATE PROCEDURE",
