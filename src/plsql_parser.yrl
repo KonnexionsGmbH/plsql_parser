@@ -117,7 +117,7 @@ Terminals
  API_GROUP
  API_HIDDEN
  APPROXNUM
- ARCHIVE
+%% wwe ARCHIVE
  AS
  AUTHID
  BFILE
@@ -155,7 +155,7 @@ Terminals
  EXECUTE
  EXTERNAL
  FALSE
- FLASHBACK
+%% wwe FLASHBACK
  FLOAT
  FUNCTION
  GRANT
@@ -511,7 +511,7 @@ objectPrivilegeType -> ALTER                     : unwrap_2_list('$1').
 objectPrivilegeType -> DEBUG                     : unwrap_2_list('$1').
 objectPrivilegeType -> DELETE                    : unwrap_2_list('$1').
 objectPrivilegeType -> EXECUTE                   : unwrap_2_list('$1').
-objectPrivilegeType -> FLASHBACK ARCHIVE         : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2')]).
+%% wwe objectPrivilegeType -> FLASHBACK ARCHIVE         : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2')]).
 objectPrivilegeType -> INDEX                     : unwrap_2_list('$1').
 objectPrivilegeType -> INHERIT PRIVILEGES        : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2')]).
 objectPrivilegeType -> INHERIT REMOTE PRIVILEGES : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2'), " ", unwrap_2_list('$3')]).
@@ -571,7 +571,7 @@ systemPrivilegeType -> DROP ANY DIRECTORY         : lists:append([unwrap_2_list(
 systemPrivilegeType -> DROP ANY ROLE              : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2'), " ", unwrap_2_list('$3')]).
 systemPrivilegeType -> DROP PROFILE               : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2')]).
 systemPrivilegeType -> DROP USER                  : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2')]).
-systemPrivilegeType -> FLASHBACK ANY TABLE        : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2'), " ", unwrap_2_list('$3')]).
+%% wwe systemPrivilegeType -> FLASHBACK ANY TABLE        : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2'), " ", unwrap_2_list('$3')]).
 systemPrivilegeType -> GRANT ANY OBJECT PRIVILEGE : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2'), " ", unwrap_2_list('$3'), " ", unwrap_2_list('$4')]).
 systemPrivilegeType -> GRANT ANY PRIVILEGE        : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2'), " ", unwrap_2_list('$3')]).
 systemPrivilegeType -> GRANT ANY ROLE             : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2'), " ", unwrap_2_list('$3')]).

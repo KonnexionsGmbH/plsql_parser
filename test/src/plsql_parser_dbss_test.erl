@@ -71,32 +71,33 @@ real_world_12_test_() ->
         end
     }.
 
-real_world_13_test_() ->
-    ?D("Start ~n"),
-    LOpts = maps:from_list([{indent_space, 4}, {indent_with, space}]),
-    {
-        setup,
-        fun setup_default/0,
-        fun() ->
-            [
-                {formatter("TEST_13", ?TEST_13, ?TEST_13_RESULT_DEFAULT, LOpts)}
-            ]
-        end
-    }.
-
-real_world_14_test_() ->
-    ?D("Start ~n"),
-    LOpts = maps:from_list([{indent_space, 4}, {indent_with, space}]),
-    {
-        setup,
-        fun setup_default/0,
-        fun() ->
-            [
-                {formatter("TEST_14", ?TEST_14, ?TEST_14_RESULT_DEFAULT, LOpts)}
-            ]
-        end
-    }.
-
+%% wwe
+%%real_world_13_test_() ->
+%%    ?D("Start ~n"),
+%%    LOpts = maps:from_list([{indent_space, 4}, {indent_with, space}]),
+%%    {
+%%        setup,
+%%        fun setup_default/0,
+%%        fun() ->
+%%            [
+%%                {formatter("TEST_13", ?TEST_13, ?TEST_13_RESULT_DEFAULT, LOpts)}
+%%            ]
+%%        end
+%%    }.
+%%
+%%real_world_14_test_() ->
+%%    ?D("Start ~n"),
+%%    LOpts = maps:from_list([{indent_space, 4}, {indent_with, space}]),
+%%    {
+%%        setup,
+%%        fun setup_default/0,
+%%        fun() ->
+%%            [
+%%                {formatter("TEST_14", ?TEST_14, ?TEST_14_RESULT_DEFAULT, LOpts)}
+%%            ]
+%%        end
+%%    }.
+%%
 %%------------------------------------------------------------------------------
 %% Helper functions.
 %%------------------------------------------------------------------------------
