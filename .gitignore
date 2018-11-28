@@ -5,6 +5,6 @@ rebar.lock
 rebar3.crashdump
 /src/plsql_lexer.erl
 /src/plsql_parser.erl
-test/generated/ct/reliability_*
+test/generated/ct/
 test/generated/eunit
 tmp
