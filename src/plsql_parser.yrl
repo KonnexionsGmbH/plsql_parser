@@ -482,10 +482,8 @@ systemPrivilegeType -> CREATE TABLE               : lists:append([unwrap_2_list(
 systemPrivilegeType -> CREATE TRIGGER             : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2')]).
 systemPrivilegeType -> CREATE TYPE                : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2')]).
 systemPrivilegeType -> NAME                       : unwrap_2_list('$1').
-systemPrivilegeType -> NAME   ANY       FUNCTION  : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2'), " ", unwrap_2_list('$3')]).
 systemPrivilegeType -> NAME   ANY       NAME      : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2'), " ", unwrap_2_list('$3')]).
 systemPrivilegeType -> NAME   ANY       NAME NAME : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2'), " ", unwrap_2_list('$3'), " ", unwrap_2_list('$4')]).
-systemPrivilegeType -> NAME   ANY       PACKAGE   : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2'), " ", unwrap_2_list('$3')]).
 systemPrivilegeType -> NAME   ANY       PROCEDURE : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2'), " ", unwrap_2_list('$3')]).
 systemPrivilegeType -> NAME   ANY       TABLE     : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2'), " ", unwrap_2_list('$3')]).
 systemPrivilegeType -> NAME   ANY       TRIGGER   : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2'), " ", unwrap_2_list('$3')]).
