@@ -135,7 +135,6 @@ Terminals
  CURRENT_USER
  CURSOR
  DATE
- DATABASE
  DAY
  DEFAULT
  DEFINER
@@ -151,7 +150,6 @@ Terminals
  INTERVAL
  INTNUM
  IS
- LINK
  LOCAL
  LONG
  MAN_PAGE
@@ -477,7 +475,6 @@ sharingClause -> SHARING '=' METADATA : #{sharingClause => unwrap_2_list('$3')}.
 sharingClause -> SHARING '=' NONE     : #{sharingClause => unwrap_2_list('$3')}.
 
 systemPrivilegeType -> CREATE ANY       NAME      : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2'), " ", unwrap_2_list('$3')]).
-systemPrivilegeType -> CREATE DATABASE  LINK      : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2'), " ", unwrap_2_list('$3')]).
 systemPrivilegeType -> CREATE NAME                : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2')]).
 systemPrivilegeType -> CREATE NAME      NAME      : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2'), " ", unwrap_2_list('$3')]).
 systemPrivilegeType -> CREATE PROCEDURE           : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2')]).
@@ -485,10 +482,14 @@ systemPrivilegeType -> CREATE TABLE               : lists:append([unwrap_2_list(
 systemPrivilegeType -> CREATE TRIGGER             : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2')]).
 systemPrivilegeType -> CREATE TYPE                : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2')]).
 systemPrivilegeType -> NAME                       : unwrap_2_list('$1').
+systemPrivilegeType -> NAME   ANY       FUNCTION  : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2'), " ", unwrap_2_list('$3')]).
 systemPrivilegeType -> NAME   ANY       NAME      : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2'), " ", unwrap_2_list('$3')]).
 systemPrivilegeType -> NAME   ANY       NAME NAME : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2'), " ", unwrap_2_list('$3'), " ", unwrap_2_list('$4')]).
+systemPrivilegeType -> NAME   ANY       PACKAGE   : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2'), " ", unwrap_2_list('$3')]).
+systemPrivilegeType -> NAME   ANY       PROCEDURE : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2'), " ", unwrap_2_list('$3')]).
 systemPrivilegeType -> NAME   ANY       TABLE     : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2'), " ", unwrap_2_list('$3')]).
-systemPrivilegeType -> NAME   DATABASE            : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2')]).
+systemPrivilegeType -> NAME   ANY       TRIGGER   : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2'), " ", unwrap_2_list('$3')]).
+systemPrivilegeType -> NAME   ANY       TYPE      : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2'), " ", unwrap_2_list('$3')]).
 systemPrivilegeType -> NAME   NAME                : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2')]).
 systemPrivilegeType -> NAME   NAME      NAME      : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2'), " ", unwrap_2_list('$3')]).
 systemPrivilegeType -> NAME   NAME      NAME NAME : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2'), " ", unwrap_2_list('$3'), " ", unwrap_2_list('$4')]).
