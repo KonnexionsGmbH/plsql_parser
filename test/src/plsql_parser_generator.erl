@@ -2617,8 +2617,6 @@ create_code(systemPrivilegeType = Rule) ->
             "CREATE USER",
             "CREATE VIEW",
             "DROP ANY DIRECTORY",
-            "DROP ANY FUNCTION",
-            "DROP ANY PACKAGE",
             "DROP ANY PROCEDURE",
             "DROP ANY ROLE",
             "DROP ANY TRIGGER",
