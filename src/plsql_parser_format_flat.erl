@@ -91,13 +91,14 @@ fold([], _FunState, Ctx, #{accessor := PTree}, {accessor, Step} = _FoldState) ->
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % accessorCommaList & columnRefCommaList & dataSourceCommaList &
-% functionArgCommaList & parameterDeclarationCommaList
+% fieldDefinitionCommaList & functionArgCommaList &
+% parameterDeclarationCommaList
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 fold([], _FunState, Ctx, _PTree, {Rule, Step, Pos} = _FoldState)
     when Rule == accessorCommaList;Rule == columnRefCommaList;
-         Rule == dataSourceCommaList;Rule == functionArgCommaList;
-         Rule == parameterDeclarationCommaList ->
+         Rule == dataSourceCommaList;Rule == fieldDefinitionCommaList;
+         Rule == functionArgCommaList;Rule == parameterDeclarationCommaList ->
     ?CUSTOM_INIT(_FunState, Ctx, _PTree, _FoldState),
     RT = case {Step, Pos} of
              {'end', other} -> Ctx ++ ",";
@@ -178,20 +179,12 @@ fold([], _FunState, Ctx, _PTree, {columnRefCommaList@, Step} = _FoldState) ->
 % constantDeclaration
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-fold([], _FunState, Ctx, #{constantDeclaration := PTree},
+fold([], _FunState, Ctx, #{constantDeclaration := _PTree},
     {constantDeclaration, Step} = _FoldState) ->
-    ?CUSTOM_INIT(_FunState, Ctx, PTree, _FoldState),
+    ?CUSTOM_INIT(_FunState, Ctx, _PTree, _FoldState),
     RT = case Step of
              start -> Ctx;
-             _ -> lists:append(
-                 [
-                     Ctx,
-                     case maps:is_key(man_page@, PTree) of
-                         true -> maps:get(man_page@, PTree);
-                         _ -> []
-                     end,
-                     ";"
-                 ])
+             _ -> Ctx ++ ";"
          end,
     ?CUSTOM_RESULT(RT);
 
@@ -199,7 +192,8 @@ fold([], _FunState, Ctx, #{constantDeclaration := PTree},
 % constantName
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-fold([], _FunState, Ctx, #{constantName := PTree}, {constantName, Step} = _FoldState) ->
+fold([], _FunState, Ctx, #{constantName := PTree}, {constantName, Step} =
+    _FoldState) ->
     ?CUSTOM_INIT(_FunState, Ctx, PTree, _FoldState),
     RT = case Step of
              start -> lists:append(
@@ -499,6 +493,20 @@ fold([], _FunState, Ctx, #{expression := PTree}, {expression, Step} =
                              '(' -> ")";
                              _ -> []
                          end
+         end,
+    ?CUSTOM_RESULT(RT);
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% fieldDefinition
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+fold([], _FunState, Ctx, #{fieldDefinition := PTree},
+    {fieldDefinition, Step} = _FoldState)
+    when is_map(PTree) ->
+    ?CUSTOM_INIT(_FunState, Ctx, PTree, _FoldState),
+    RT = case Step of
+             start -> Ctx ++ maps:get(name@, PTree);
+             _ -> Ctx
          end,
     ?CUSTOM_RESULT(RT);
 
@@ -933,6 +941,19 @@ fold([], _FunState, Ctx, #{procedureHeading := PTree},
     ?CUSTOM_RESULT(RT);
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% recordTypeDefinition
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+fold([], _FunState, Ctx, #{recordTypeDefinition := _PTree},
+    {recordTypeDefinition, Step} = _FoldState) ->
+    ?CUSTOM_INIT(_FunState, Ctx, _PTree, _FoldState),
+    RT = case Step of
+             start -> Ctx;
+             _ -> Ctx ++ ");"
+         end,
+    ?CUSTOM_RESULT(RT);
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % resultCacheClause
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -1046,6 +1067,24 @@ fold([], _FunState, Ctx, _PTree, {thenExpression@_@, Step} = _FoldState) ->
     RT = case Step of
              start -> Ctx;
              _ -> Ctx ++ " $then "
+         end,
+    ?CUSTOM_RESULT(RT);
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% typeName
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+fold([], _FunState, Ctx, #{typeName := PTree}, {typeName, Step} = _FoldState) ->
+    ?CUSTOM_INIT(_FunState, Ctx, PTree, _FoldState),
+    RT = case Step of
+             start -> lists:append(
+                 [
+                     Ctx,
+                     "type ",
+                     PTree,
+                     " is record ("
+                 ]);
+             _ -> Ctx
          end,
     ?CUSTOM_RESULT(RT);
 

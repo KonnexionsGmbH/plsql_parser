@@ -93,6 +93,7 @@
     {"^(?i)(PROCEDURE)$",                   'PROCEDURE'},
     {"^(?i)(RANGE)$",                       'RANGE'},
     {"^(?i)(RAW)$",                         'RAW'},
+    {"^(?i)(RECORD)$",                      'RECORD'},
     {"^(?i)(REF)$",                         'REF'},
     {"^(?i)(RELIES_ON)$",                   'RELIES_ON'},
     {"^(?i)(REPLACE)$",                     'REPLACE'},

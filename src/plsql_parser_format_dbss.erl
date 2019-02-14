@@ -637,9 +637,8 @@ fold(LOpts, _FunState, Ctx, #{packageItemConditional := PTree},
     PackageItem@ = maps:get(packageItem@, PTree),
     Type = maps:get(type, PackageItem@),
     RT = case {Step, Type} of
-             {_, "Constant"} ->
-                 Ctx;
-             {_, "Exception"} ->
+             {_, TypeArg} when TypeArg =/= "Function", TypeArg =/=
+                 "Procedure" ->
                  Ctx;
              {start, _} ->
                  Name = case Type of
@@ -735,9 +734,8 @@ fold(LOpts, _FunState, Ctx, #{packageItemSimple := PTree},
     PackageItem@ = maps:get(packageItem@, PTree),
     Type = maps:get(type, PackageItem@),
     RT = case {Step, Type} of
-             {_, "Exception"} ->
-                 Ctx;
-             {_, "Constant"} ->
+             {_, TypeArg} when TypeArg =/= "Function", TypeArg =/=
+                 "Procedure" ->
                  Ctx;
              {start, _} ->
                  Name = case Type of
@@ -1123,6 +1121,7 @@ fold(_LOpts, _FunState, Ctx, _PTree, {Rule, _Step, _Pos}) when
     Rule == accessorCommaList;
     Rule == columnRefCommaList;
     Rule == dataSourceCommaList;
+    Rule == fieldDefinitionCommaList;
     Rule == functionArgCommaList;
     Rule == packageFunctionDeclarationAttributeList;
     Rule == packageItemList;
@@ -1142,6 +1141,7 @@ fold(_LOpts, _FunState, Ctx, _PTree, {Rule, _Step}) when
     Rule == defaultCollationClause;
     Rule == exceptionDeclaration;
     Rule == expression;
+    Rule == fieldDefinition;
     Rule == functionAnnotation;
     Rule == functionArg;
     Rule == functionArgCommaList;
@@ -1162,12 +1162,14 @@ fold(_LOpts, _FunState, Ctx, _PTree, {Rule, _Step}) when
     Rule == privilegeAnnotationList@_@;
     Rule == procedureAnnotation;
     Rule == procedureHeading;
+    Rule == recordTypeDefinition;
     Rule == resultCacheClause;
     Rule == scalarExpression;
     Rule == scalarSubExpression;
     Rule == sharingClause;
     Rule == streamingClause;
-    Rule == streamingClauseExpression@_@ ->
+    Rule == streamingClauseExpression@_@;
+    Rule == typeName ->
     Ctx;
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

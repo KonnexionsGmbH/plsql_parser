@@ -557,6 +557,37 @@ END package_1;
 /
 ".
 
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Exception & Constant & Record Type.
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+"
+CREATE PACKAGE package_name
+AS
+    my_exception                            EXCEPTION;
+
+    my_constant_1                  CONSTANT NUMBER (1, 2) := 5;
+    my_constant_2                  CONSTANT VARCHAR2 (10) NOT NULL DEFAULT 'test';
+    my_constant_3                  CONSTANT VARCHAR2 (10) NOT NULL := 'test';
+
+    TYPE my_record_type IS RECORD
+    (
+        field_1 NUMBER (1, 2),
+        field_2 NUMBER (1, 2) DEFAULT 2,
+        field_3 NUMBER (1, 2) := 3,
+        field_4 NUMBER (1, 2) NOT NULL DEFAULT 4,
+        field_5 NUMBER (1, 2) NOT NULL := 5
+    );
+
+    FUNCTION function_name_1
+        RETURN CLOB;
+
+    PROCEDURE procedure_name_1 (
+        parameter_1                             IN OUT DATE,
+        parameter_2                             IN OUT DATE);
+END package_name;
+".
+
 %% -----------------------------------------------------------------------------
 %% TESTS: End  special tests.
 %% =============================================================================

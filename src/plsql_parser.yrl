@@ -46,6 +46,8 @@ Nonterminals
  defaultCollationClause
  exceptionDeclaration
  expression
+ fieldDefinition
+ fieldDefinitionCommaList
  functionAnnotation
  functionArg
  functionArgCommaList
@@ -76,6 +78,7 @@ Nonterminals
  privilegeAnnotationList
  procedureAnnotation
  procedureHeading
+ recordTypeDefinition
  resultCacheClause
  sharingClause
  streamingClause
@@ -183,6 +186,7 @@ Terminals
  PROCEDURE
  RANGE
  RAW
+ RECORD
  REF
  RELIES_ON
  REPLACE
@@ -468,6 +472,7 @@ packageItem -> constantDeclaration         : '$1'.
 packageItem -> exceptionDeclaration        : '$1'.
 packageItem -> packageFunctionDeclaration  : '$1'.
 packageItem -> packageProcedureDeclaration : '$1'.
+packageItem -> recordTypeDefinition        : '$1'.
 
 packageItemList -> packageItemSimple                      : ['$1'].
 packageItemList -> packageItemConditional                 : ['$1'].
@@ -673,10 +678,17 @@ packageProcedureDeclaration -> apiHiddenAnnotation procedureAnnotation procedure
                                                                                                                                                              procedureHeading@ => '$3',
                                                                                                                                                              accessibleByClause@ => '$4'}}.
 
+recordTypeDefinition -> TYPE NAME IS RECORD '(' fieldDefinitionCommaList ')' ';' : #{type => "RecordType",
+                                                                                     recordTypeDefinition => #{typeName@ => #{typeName => unwrap_2_list('$2')},
+                                                                                                               fieldDefinitionCommaList@ => '$6'}}.
+
 %% Level 08 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 accessorCommaList -> accessor                       : ['$1'].
 accessorCommaList -> accessor ',' accessorCommaList : ['$1' | '$3'].
+
+fieldDefinitionCommaList -> fieldDefinition                              : ['$1'].
+fieldDefinitionCommaList -> fieldDefinition ',' fieldDefinitionCommaList : ['$1' | '$3'].
 
 functionAnnotation -> privilegeAnnotationList : #{functionAnnotation => #{privilegeAnnotationList@ => '$1'}}.
 
@@ -845,6 +857,16 @@ dataType -> VARCHAR2      '(' INTNUM CHAR       ')'                          : #
                                                                                                sizeType@ => unwrap_2_list('$4')}}.
 dataType -> XMLTYPE                                                          : #{dataType => #{class@ => sql,
                                                                                                type@ => unwrap_2_list('$1')}}.
+
+fieldDefinition -> NAME dataType                   : #{fieldDefinition => #{name@ => unwrap_2_list('$1'),
+                                                                            dataType@ => '$2'}}.
+fieldDefinition -> NAME dataType           default : #{fieldDefinition => #{name@ => unwrap_2_list('$1'),
+                                                                            dataType@ => '$2',
+                                                                            default@ => '$3'}}.
+fieldDefinition -> NAME dataType NOT NULLX default : #{fieldDefinition => #{name@ => unwrap_2_list('$1'),
+                                                                            dataType@ => '$2',
+                                                                            notNull@ => #{notNull => "not null"},
+                                                                            default@ => '$5'}}.
 
 packageFunctionDeclarationAttribute -> accessibleByClause    : #{packageFunctionDeclarationAttribute => '$1'}.
 packageFunctionDeclarationAttribute -> DETERMINISTIC         : #{packageFunctionDeclarationAttribute => unwrap_2_list('$1')}.

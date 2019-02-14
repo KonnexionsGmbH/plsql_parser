@@ -100,14 +100,16 @@ fold_i(Fun, LOpts, FunState, Ctx, #{accessor := _Value} = PTree) ->
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % accessorCommaList & columnRefCommaList & dataSourceCommaList & 
-% functionArgCommaList & packageItemList & parameterDeclarationCommaList & 
-% plsqlPackageSourceAttributeList & plsqlUnit & privilegeAnnotationList
+% fieldDefinitionCommaList, functionArgCommaList & packageItemList &
+% parameterDeclarationCommaList & plsqlPackageSourceAttributeList & plsqlUnit &
+% privilegeAnnotationList
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 fold_i(Fun, LOpts, FunState, Ctx, {Rule, Pos, PTree})
     when Rule == accessorCommaList;Rule == columnRefCommaList;
-         Rule == dataSourceCommaList;Rule == functionArgCommaList;
-         Rule == packageItemList; Rule == parameterDeclarationCommaList;
+         Rule == dataSourceCommaList;Rule == fieldDefinitionCommaList;
+         Rule == functionArgCommaList;Rule == packageItemList;
+         Rule == parameterDeclarationCommaList;
          Rule == plsqlPackageSourceAttributeList;Rule == plsqlUnit;
          Rule == privilegeAnnotationList ->
     ?FOLD_INIT(FunState, Ctx, PTree),
@@ -172,7 +174,8 @@ fold_i(Fun, LOpts, FunState, Ctx, #{constantDeclaration := Value} = PTree) ->
     ?FOLD_INIT(FunState, Ctx, PTree),
     Rule = constantDeclaration,
     NewCtxS = Fun(LOpts, FunState, Ctx, PTree, {Rule, start}),
-    NewCtx1 = fold_i(Fun, LOpts, FunState, NewCtxS, maps:get(constantName@, Value)),
+    NewCtx1 =
+        fold_i(Fun, LOpts, FunState, NewCtxS, maps:get(constantName@, Value)),
     NewCtx2 = fold_i(Fun, LOpts, FunState, NewCtx1, maps:get(dataType@, Value)),
     NewCtx3 = case maps:is_key(notNull@,
         Value) of
@@ -346,6 +349,31 @@ fold_i(Fun, LOpts, FunState, Ctx, #{expression := Value} = PTree)
         {operator, maps:get(operator@, Value)}),
     NewCtx3 = fold_i(Fun, LOpts, FunState, NewCtx2,
         maps:get(expressionRight@, Value)),
+    NewCtxE = Fun(LOpts, FunState, NewCtx3, PTree, {Rule, 'end'}),
+    ?FOLD_RESULT(NewCtxE);
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% fieldDefinition
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+fold_i(Fun, LOpts, FunState, Ctx, #{fieldDefinition := Value} = PTree) ->
+    ?FOLD_INIT(FunState, Ctx, PTree),
+    Rule = fieldDefinition,
+    NewCtxS = Fun(LOpts, FunState, Ctx, PTree, {Rule, start}),
+    NewCtx1 = fold_i(Fun, LOpts, FunState, NewCtxS, maps:get(dataType@, Value)),
+    NewCtx2 = case maps:is_key(notNull@,
+        Value) of
+                  true ->
+                      fold_i(Fun, LOpts, FunState, NewCtx1,
+                          maps:get(notNull@, Value));
+                  _ -> NewCtx1
+              end,
+    NewCtx3 = case maps:is_key(default@, Value) of
+                  true ->
+                      fold_i(Fun, LOpts, FunState, NewCtx2,
+                          maps:get(default@, Value));
+                  _ -> NewCtx2
+              end,
     NewCtxE = Fun(LOpts, FunState, NewCtx3, PTree, {Rule, 'end'}),
     ?FOLD_RESULT(NewCtxE);
 
@@ -832,6 +860,20 @@ fold_i(Fun, LOpts, FunState, Ctx, #{procedureHeading := Value} = PTree) ->
     ?FOLD_RESULT(NewCtxE);
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% recordTypeDefinition
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+fold_i(Fun, LOpts, FunState, Ctx, #{recordTypeDefinition := Value} = PTree) ->
+    ?FOLD_INIT(FunState, Ctx, PTree),
+    Rule = recordTypeDefinition,
+    NewCtxS = Fun(LOpts, FunState, Ctx, PTree, {Rule, start}),
+    NewCtx1 = fold_i(Fun, LOpts, FunState, NewCtxS, maps:get(typeName@, Value)),
+    NewCtx2 = list_elem_ext_rule(Fun, LOpts, FunState, NewCtx1,
+        fieldDefinitionCommaList, maps:get(fieldDefinitionCommaList@, Value)),
+    NewCtxE = Fun(LOpts, FunState, NewCtx2, PTree, {Rule, 'end'}),
+    ?FOLD_RESULT(NewCtxE);
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % resultCacheClause
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -918,6 +960,17 @@ fold_i(Fun, LOpts, FunState, Ctx, #{thenExpression@_@ := Value} = PTree) ->
     NewCtxS = Fun(LOpts, FunState, Ctx, PTree, {Rule, start}),
     NewCtx1 = fold_i(Fun, LOpts, FunState, NewCtxS, Value),
     NewCtxE = Fun(LOpts, FunState, NewCtx1, PTree, {Rule, 'end'}),
+    ?FOLD_RESULT(NewCtxE);
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% typeName
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+fold_i(Fun, LOpts, FunState, Ctx, #{typeName := _Value} = PTree) ->
+    ?FOLD_INIT(FunState, Ctx, PTree),
+    Rule = typeName,
+    NewCtxS = Fun(LOpts, FunState, Ctx, PTree, {Rule, start}),
+    NewCtxE = Fun(LOpts, FunState, NewCtxS, PTree, {Rule, 'end'}),
     ?FOLD_RESULT(NewCtxE);
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
