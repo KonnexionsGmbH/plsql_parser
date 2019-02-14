@@ -91,13 +91,14 @@ fold([], _FunState, Ctx, #{accessor := PTree}, {accessor, Step} = _FoldState) ->
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % accessorCommaList & columnRefCommaList & dataSourceCommaList &
-% functionArgCommaList & parameterDeclarationCommaList
+% fieldDefinitionCommaList & functionArgCommaList &
+% parameterDeclarationCommaList
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 fold([], _FunState, Ctx, _PTree, {Rule, Step, Pos} = _FoldState)
     when Rule == accessorCommaList;Rule == columnRefCommaList;
-         Rule == dataSourceCommaList;Rule == functionArgCommaList;
-         Rule == parameterDeclarationCommaList ->
+         Rule == dataSourceCommaList;Rule == fieldDefinitionCommaList;
+         Rule == functionArgCommaList;Rule == parameterDeclarationCommaList ->
     ?CUSTOM_INIT(_FunState, Ctx, _PTree, _FoldState),
     RT = case {Step, Pos} of
              {'end', other} -> Ctx ++ ",";
@@ -171,6 +172,37 @@ fold([], _FunState, Ctx, _PTree, {columnRefCommaList@, Step} = _FoldState) ->
     RT = case Step of
              start -> Ctx ++ "(";
              _ -> Ctx ++ ")"
+         end,
+    ?CUSTOM_RESULT(RT);
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% constantDeclaration
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+fold([], _FunState, Ctx, #{constantDeclaration := _PTree},
+    {constantDeclaration, Step} = _FoldState) ->
+    ?CUSTOM_INIT(_FunState, Ctx, _PTree, _FoldState),
+    RT = case Step of
+             start -> Ctx;
+             _ -> Ctx ++ ";"
+         end,
+    ?CUSTOM_RESULT(RT);
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% constantName
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+fold([], _FunState, Ctx, #{constantName := PTree}, {constantName, Step} =
+    _FoldState) ->
+    ?CUSTOM_INIT(_FunState, Ctx, PTree, _FoldState),
+    RT = case Step of
+             start -> lists:append(
+                 [
+                     Ctx,
+                     PTree,
+                     " constant"
+                 ]);
+             _ -> Ctx
          end,
     ?CUSTOM_RESULT(RT);
 
@@ -409,6 +441,24 @@ fold([], _FunState, Ctx, _PTree, {defaultValue@_@, Step} = _FoldState) ->
     ?CUSTOM_RESULT(RT);
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% eceptionDeclaration
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+fold([], _FunState, Ctx, #{exceptionDeclaration := PTree},
+    {exceptionDeclaration, Step} = _FoldState) ->
+    ?CUSTOM_INIT(_FunState, Ctx, PTree, _FoldState),
+    RT = case Step of
+             start -> Ctx;
+             _ -> lists:append(
+                 [
+                     Ctx,
+                     PTree,
+                     " exception;"
+                 ])
+         end,
+    ?CUSTOM_RESULT(RT);
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % expression
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -443,6 +493,20 @@ fold([], _FunState, Ctx, #{expression := PTree}, {expression, Step} =
                              '(' -> ")";
                              _ -> []
                          end
+         end,
+    ?CUSTOM_RESULT(RT);
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% fieldDefinition
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+fold([], _FunState, Ctx, #{fieldDefinition := PTree},
+    {fieldDefinition, Step} = _FoldState)
+    when is_map(PTree) ->
+    ?CUSTOM_INIT(_FunState, Ctx, PTree, _FoldState),
+    RT = case Step of
+             start -> Ctx ++ maps:get(name@, PTree);
+             _ -> Ctx
          end,
     ?CUSTOM_RESULT(RT);
 
@@ -542,6 +606,18 @@ fold([], _FunState, Ctx, #{literal := PTree}, {literal, Step} = _FoldState)
                      Ctx,
                      PTree
                  ]);
+             _ -> Ctx
+         end,
+    ?CUSTOM_RESULT(RT);
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% notNull
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+fold([], _FunState, Ctx, #{notNull := _PTree}, {notNull, Step} = _FoldState) ->
+    ?CUSTOM_INIT(_FunState, Ctx, _PTree, _FoldState),
+    RT = case Step of
+             start -> Ctx ++ " not null";
              _ -> Ctx
          end,
     ?CUSTOM_RESULT(RT);
@@ -865,6 +941,19 @@ fold([], _FunState, Ctx, #{procedureHeading := PTree},
     ?CUSTOM_RESULT(RT);
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% recordTypeDefinition
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+fold([], _FunState, Ctx, #{recordTypeDefinition := _PTree},
+    {recordTypeDefinition, Step} = _FoldState) ->
+    ?CUSTOM_INIT(_FunState, Ctx, _PTree, _FoldState),
+    RT = case Step of
+             start -> Ctx;
+             _ -> Ctx ++ ");"
+         end,
+    ?CUSTOM_RESULT(RT);
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % resultCacheClause
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -978,6 +1067,24 @@ fold([], _FunState, Ctx, _PTree, {thenExpression@_@, Step} = _FoldState) ->
     RT = case Step of
              start -> Ctx;
              _ -> Ctx ++ " $then "
+         end,
+    ?CUSTOM_RESULT(RT);
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% typeName
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+fold([], _FunState, Ctx, #{typeName := PTree}, {typeName, Step} = _FoldState) ->
+    ?CUSTOM_INIT(_FunState, Ctx, PTree, _FoldState),
+    RT = case Step of
+             start -> lists:append(
+                 [
+                     Ctx,
+                     "type ",
+                     PTree,
+                     " is record ("
+                 ]);
+             _ -> Ctx
          end,
     ?CUSTOM_RESULT(RT);
 

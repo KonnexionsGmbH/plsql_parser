@@ -635,12 +635,12 @@ fold(LOpts, _FunState, Ctx, #{packageItemConditional := PTree},
     when is_map(PTree) ->
     ?CUSTOM_INIT(_FunState, Ctx, PTree, _FoldState),
     PackageItem@ = maps:get(packageItem@, PTree),
-    Type = case maps:is_key(packageFunctionDeclaration, PackageItem@) of
-               true -> "Function";
-               _ -> "Procedure"
-           end,
-    RT = case Step of
-             start ->
+    Type = maps:get(type, PackageItem@),
+    RT = case {Step, Type} of
+             {_, TypeArg} when TypeArg =/= "Function", TypeArg =/=
+                 "Procedure" ->
+                 Ctx;
+             {start, _} ->
                  Name = case Type of
                             "Function" ->
                                 PackageFunctionDeclaration =
@@ -710,7 +710,7 @@ fold(LOpts, _FunState, Ctx, #{packageItemConditional := PTree},
                              _ -> []
                          end
                      ]);
-             _ -> lists:append(
+             {_, _} -> lists:append(
                  [
                      Ctx,
                      ?TABULATOR,
@@ -732,12 +732,12 @@ fold(LOpts, _FunState, Ctx, #{packageItemSimple := PTree},
     when is_map(PTree) ->
     ?CUSTOM_INIT(_FunState, Ctx, PTree, _FoldState),
     PackageItem@ = maps:get(packageItem@, PTree),
-    Type = case maps:is_key(packageFunctionDeclaration, PackageItem@) of
-               true -> "Function";
-               _ -> "Procedure"
-           end,
-    RT = case Step of
-             start ->
+    Type = maps:get(type, PackageItem@),
+    RT = case {Step, Type} of
+             {_, TypeArg} when TypeArg =/= "Function", TypeArg =/=
+                 "Procedure" ->
+                 Ctx;
+             {start, _} ->
                  Name = case Type of
                             "Function" ->
                                 PackageFunctionDeclaration =
@@ -778,7 +778,7 @@ fold(LOpts, _FunState, Ctx, #{packageItemSimple := PTree},
                          "</Name>",
                          ?CHAR_NEWLINE
                      ]);
-             _ -> lists:append(
+             {_, _} -> lists:append(
                  [
                      Ctx,
                      ?TABULATOR,
@@ -1121,6 +1121,7 @@ fold(_LOpts, _FunState, Ctx, _PTree, {Rule, _Step, _Pos}) when
     Rule == accessorCommaList;
     Rule == columnRefCommaList;
     Rule == dataSourceCommaList;
+    Rule == fieldDefinitionCommaList;
     Rule == functionArgCommaList;
     Rule == packageFunctionDeclarationAttributeList;
     Rule == packageItemList;
@@ -1132,16 +1133,21 @@ fold(_LOpts, _FunState, Ctx, _PTree, {Rule, _Step}) when
     Rule == accessibleByClause;
     Rule == accessor;
     Rule == columnRefCommaList;
+    Rule == constantDeclaration;
+    Rule == constantName;
     Rule == createPackage;
     Rule == dataSource;
     Rule == dataSourceCommaList;
     Rule == defaultCollationClause;
+    Rule == exceptionDeclaration;
     Rule == expression;
+    Rule == fieldDefinition;
     Rule == functionAnnotation;
     Rule == functionArg;
     Rule == functionArgCommaList;
     Rule == functionHeading;
     Rule == invokerRightsClause;
+    Rule == notNull;
     Rule == packageFunctionDeclaration@_@;
     Rule == packageFunctionDeclarationAttribute;
     Rule == packageItem;
@@ -1156,12 +1162,14 @@ fold(_LOpts, _FunState, Ctx, _PTree, {Rule, _Step}) when
     Rule == privilegeAnnotationList@_@;
     Rule == procedureAnnotation;
     Rule == procedureHeading;
+    Rule == recordTypeDefinition;
     Rule == resultCacheClause;
     Rule == scalarExpression;
     Rule == scalarSubExpression;
     Rule == sharingClause;
     Rule == streamingClause;
-    Rule == streamingClauseExpression@_@ ->
+    Rule == streamingClauseExpression@_@;
+    Rule == typeName ->
     Ctx;
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
