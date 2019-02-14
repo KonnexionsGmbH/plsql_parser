@@ -56,6 +56,7 @@
     {"^(?i)(DETERMINISTIC)$",               'DETERMINISTIC'},
     {"^(?i)(EDITIONABLE)$",                 'EDITIONABLE'},
     {"^(?i)(END)$",                         'END'},
+    {"^(?i)(EXCEPTION)$",                   'EXCEPTION'},
     {"^(?i)(FALSE)$",                       'FALSE'},
     {"^(?i)(FLOAT)$",                       'FLOAT'},
     {"^(?i)(FUNCTION)$",                    'FUNCTION'},

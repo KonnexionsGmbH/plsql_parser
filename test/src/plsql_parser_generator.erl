@@ -127,6 +127,7 @@ create_code() ->
     create_code(dataSource),
     create_code(dataType),
     create_code(dataTypeReturn),
+    create_code(exceptionDeclaration),
     create_code(literal),
     create_code(objectPrivilegeAnnotation),
     create_code(parameterRef),
@@ -1062,6 +1063,23 @@ create_code(defaultCollationClause = Rule) ->
     ?CREATE_CODE_END;
 
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% exceptionDeclaration ::= NAME 'EXCEPTION' ';'
+%% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+create_code(exceptionDeclaration = Rule) ->
+    ?CREATE_CODE_START,
+    [{name, Name}] = ets:lookup(?CODE_TEMPLATES, name),
+    Name_Length = length(Name),
+
+    Code =
+        [
+                lists:nth(rand:uniform(Name_Length), Name) ++ " exception;"
+            || _ <- lists:seq(1, ?MAX_BASIC * 2)
+        ],
+    store_code(Rule, Code, ?MAX_BASIC, false),
+    ?CREATE_CODE_END;
+
+%% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% expression ::= columnRef
 %%              | functionRef
 %%              | literal
@@ -1725,11 +1743,16 @@ create_code(packageFunctionDeclarationAttributeList = Rule) ->
     ?CREATE_CODE_END;
 
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% packageItem ::= ( packageFunctionDeclaration
+%% packageItem ::= exceptionDeclaration
+%%               | packageFunctionDeclaration
+%%               | packageProcedureDeclaration
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 create_code(packageItem = Rule) ->
     ?CREATE_CODE_START,
+    [{exceptionDeclaration, ExceptionDeclaration}] = ets:lookup(
+        ?CODE_TEMPLATES, exceptionDeclaration),
+    ExceptionDeclaration_Length = length(ExceptionDeclaration),
     [{packageFunctionDeclaration, PackageFunctionDeclaration}] = ets:lookup(
         ?CODE_TEMPLATES, packageFunctionDeclaration),
     PackageFunctionDeclaration_Length = length(PackageFunctionDeclaration),
@@ -1739,13 +1762,18 @@ create_code(packageItem = Rule) ->
 
     Code =
         [
-            case rand:uniform(2) rem 2 of
+            case rand:uniform(20) rem 20 of
                 1 -> lists:nth(
-                    rand:uniform(PackageFunctionDeclaration_Length),
-                    PackageFunctionDeclaration);
-                _ -> lists:nth(
-                    rand:uniform(PackageProcedureDeclaration_Length),
-                    PackageProcedureDeclaration)
+                    rand:uniform(ExceptionDeclaration_Length),
+                    ExceptionDeclaration);
+                _ -> case rand:uniform(2) rem 2 of
+                         1 -> lists:nth(
+                             rand:uniform(PackageFunctionDeclaration_Length),
+                             PackageFunctionDeclaration);
+                         _ -> lists:nth(
+                             rand:uniform(PackageProcedureDeclaration_Length),
+                             PackageProcedureDeclaration)
+                     end
             end
             || _ <- lists:seq(1, ?MAX_BASIC * 2)
         ],

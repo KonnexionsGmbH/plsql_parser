@@ -635,12 +635,11 @@ fold(LOpts, _FunState, Ctx, #{packageItemConditional := PTree},
     when is_map(PTree) ->
     ?CUSTOM_INIT(_FunState, Ctx, PTree, _FoldState),
     PackageItem@ = maps:get(packageItem@, PTree),
-    Type = case maps:is_key(packageFunctionDeclaration, PackageItem@) of
-               true -> "Function";
-               _ -> "Procedure"
-           end,
-    RT = case Step of
-             start ->
+    Type = maps:get(type, PackageItem@),
+    RT = case {Step, Type} of
+             {_, "Exception"} ->
+                 Ctx;
+             {start, _} ->
                  Name = case Type of
                             "Function" ->
                                 PackageFunctionDeclaration =
@@ -710,7 +709,7 @@ fold(LOpts, _FunState, Ctx, #{packageItemConditional := PTree},
                              _ -> []
                          end
                      ]);
-             _ -> lists:append(
+             {_, _} -> lists:append(
                  [
                      Ctx,
                      ?TABULATOR,
@@ -732,12 +731,11 @@ fold(LOpts, _FunState, Ctx, #{packageItemSimple := PTree},
     when is_map(PTree) ->
     ?CUSTOM_INIT(_FunState, Ctx, PTree, _FoldState),
     PackageItem@ = maps:get(packageItem@, PTree),
-    Type = case maps:is_key(packageFunctionDeclaration, PackageItem@) of
-               true -> "Function";
-               _ -> "Procedure"
-           end,
-    RT = case Step of
-             start ->
+    Type = maps:get(type, PackageItem@),
+    RT = case {Step, Type} of
+             {_, "Exception"} ->
+                 Ctx;
+             {start, _} ->
                  Name = case Type of
                             "Function" ->
                                 PackageFunctionDeclaration =
@@ -778,7 +776,7 @@ fold(LOpts, _FunState, Ctx, #{packageItemSimple := PTree},
                          "</Name>",
                          ?CHAR_NEWLINE
                      ]);
-             _ -> lists:append(
+             {_, _} -> lists:append(
                  [
                      Ctx,
                      ?TABULATOR,
@@ -1136,6 +1134,7 @@ fold(_LOpts, _FunState, Ctx, _PTree, {Rule, _Step}) when
     Rule == dataSource;
     Rule == dataSourceCommaList;
     Rule == defaultCollationClause;
+    Rule == exceptionDeclaration;
     Rule == expression;
     Rule == functionAnnotation;
     Rule == functionArg;
