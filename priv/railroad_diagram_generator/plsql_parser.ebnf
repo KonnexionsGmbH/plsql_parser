@@ -280,6 +280,7 @@ objectPrivilegeType -> NAME           : unwrap_2_list('$1').
 objectPrivilegeType -> NAME NAME      : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2')]).
 objectPrivilegeType -> NAME NAME NAME : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2'), " ", unwrap_2_list('$3')]).
 
+packageItem -> constantDeclaration         : '$1'.
 packageItem -> exceptionDeclaration        : '$1'.
 packageItem -> packageFunctionDeclaration  : '$1'.
 packageItem -> packageProcedureDeclaration : '$1'.
@@ -318,7 +319,8 @@ objectPrivilegeType ::= NAME
                       | ( NAME NAME )
                       | ( NAME NAME NAME )
 
-packageItem ::= exceptionDeclaration
+packageItem ::= constantDeclaration
+              | exceptionDeclaration
               | packageFunctionDeclaration
               | packageProcedureDeclaration
 
@@ -334,6 +336,16 @@ systemPrivilegeType ::= NAME
 
 /* =============================================================================
 accessibleByClause -> ACCESSIBLE BY '(' accessorCommaList ')' : #{accessibleByClause => #{accessorCommaList@ => '$4'}}.
+
+constantDeclaration -> NAME CONSTANT dataType           default ';' : #{type => "Constant",
+                                                                        constantDeclaration => #{constantName@ => #{constantName => unwrap_2_list('$1')},
+                                                                                                 dataType@ => '$3',
+                                                                                                 default@ => '$4'}}.
+constantDeclaration -> NAME CONSTANT dataType NOT NULLX default ';' : #{type => "Constant",
+                                                                        constantDeclaration => #{constantName@ => #{constantName => unwrap_2_list('$1')},
+                                                                                                 dataType@ => '$3',
+                                                                                                 notNull@ => #{notNull => "not null"},
+                                                                                                 default@ => '$6'}}.
 
 defaultCollationClause -> DEFAULT COLLATION USING_NLS_COMP : #{defaultCollationClause => lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2'), " ", unwrap_2_list('$3')])}.
 
@@ -498,6 +510,8 @@ packageProcedureDeclaration -> apiHiddenAnnotation procedureAnnotation procedure
 ============================================================================= */
 
 accessibleByClause ::= 'ACCESSIBLE' 'BY' '(' accessor+ ')'
+
+constantDeclaration ::= NAME 'CONSTANT' dataType ( 'NOT' 'NULL' )? default ';'
 
 defaultCollationClause ::= 'DEFAULT' 'COLLATION' 'USING_NLS_COMP'
 

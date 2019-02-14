@@ -637,6 +637,8 @@ fold(LOpts, _FunState, Ctx, #{packageItemConditional := PTree},
     PackageItem@ = maps:get(packageItem@, PTree),
     Type = maps:get(type, PackageItem@),
     RT = case {Step, Type} of
+             {_, "Constant"} ->
+                 Ctx;
              {_, "Exception"} ->
                  Ctx;
              {start, _} ->
@@ -734,6 +736,8 @@ fold(LOpts, _FunState, Ctx, #{packageItemSimple := PTree},
     Type = maps:get(type, PackageItem@),
     RT = case {Step, Type} of
              {_, "Exception"} ->
+                 Ctx;
+             {_, "Constant"} ->
                  Ctx;
              {start, _} ->
                  Name = case Type of
@@ -1130,6 +1134,8 @@ fold(_LOpts, _FunState, Ctx, _PTree, {Rule, _Step}) when
     Rule == accessibleByClause;
     Rule == accessor;
     Rule == columnRefCommaList;
+    Rule == constantDeclaration;
+    Rule == constantName;
     Rule == createPackage;
     Rule == dataSource;
     Rule == dataSourceCommaList;
@@ -1141,6 +1147,7 @@ fold(_LOpts, _FunState, Ctx, _PTree, {Rule, _Step}) when
     Rule == functionArgCommaList;
     Rule == functionHeading;
     Rule == invokerRightsClause;
+    Rule == notNull;
     Rule == packageFunctionDeclaration@_@;
     Rule == packageFunctionDeclarationAttribute;
     Rule == packageItem;

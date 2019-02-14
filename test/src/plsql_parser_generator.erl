@@ -360,6 +360,7 @@ create_code_layer(Version) ->
         " : ================================================> create_code_layer: Level 13/~s <===================~n",
         [Version])),
 
+    create_code(constantDeclaration),
     create_code(functionArgCommaList),
 
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -616,6 +617,37 @@ create_code(comparison = Rule) ->
             ">",
             "<=",
             ">="
+        ],
+    store_code(Rule, Code, ?MAX_BASIC, false),
+    ?CREATE_CODE_END;
+
+%% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% constantDeclaration ::= NAME 'CONSTANT' dataType ( 'NOT' 'NULL' )? default ';'
+%% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+create_code(constantDeclaration = Rule) ->
+    ?CREATE_CODE_START,
+    [{dataType, DataType}] = ets:lookup(?CODE_TEMPLATES, dataType),
+    DataType_Length = length(DataType),
+    [{default, Default}] = ets:lookup(?CODE_TEMPLATES, default),
+    Default_Length = length(Default),
+    [{name, Name}] = ets:lookup(?CODE_TEMPLATES, name),
+    Name_Length = length(Name),
+
+    Code =
+        [
+            lists:append(
+                [
+                    lists:nth(rand:uniform(Name_Length), Name), " constant ",
+                    lists:nth(rand:uniform(DataType_Length), DataType),
+                    case rand:uniform(2) rem 2 of
+                        1 -> " not null ";
+                        _ -> []
+                    end,
+                    lists:nth(rand:uniform(Default_Length), Default),
+                    ";"
+                ])
+            || _ <- lists:seq(1, ?MAX_BASIC * 2)
         ],
     store_code(Rule, Code, ?MAX_BASIC, false),
     ?CREATE_CODE_END;
@@ -1743,13 +1775,17 @@ create_code(packageFunctionDeclarationAttributeList = Rule) ->
     ?CREATE_CODE_END;
 
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% packageItem ::= exceptionDeclaration
+%% packageItem ::= constantDeclaration
+%%               | exceptionDeclaration
 %%               | packageFunctionDeclaration
 %%               | packageProcedureDeclaration
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 create_code(packageItem = Rule) ->
     ?CREATE_CODE_START,
+    [{constantDeclaration, ConstantDeclaration}] = ets:lookup(
+        ?CODE_TEMPLATES, constantDeclaration),
+    ConstantDeclaration_Length = length(ConstantDeclaration),
     [{exceptionDeclaration, ExceptionDeclaration}] = ets:lookup(
         ?CODE_TEMPLATES, exceptionDeclaration),
     ExceptionDeclaration_Length = length(ExceptionDeclaration),
@@ -1763,9 +1799,14 @@ create_code(packageItem = Rule) ->
     Code =
         [
             case rand:uniform(20) rem 20 of
-                1 -> lists:nth(
-                    rand:uniform(ExceptionDeclaration_Length),
-                    ExceptionDeclaration);
+                1 -> case rand:uniform(2) rem 2 of
+                         1 -> lists:nth(
+                             rand:uniform(ConstantDeclaration_Length),
+                             ConstantDeclaration);
+                         _ -> lists:nth(
+                             rand:uniform(ExceptionDeclaration_Length),
+                             ExceptionDeclaration)
+                     end;
                 _ -> case rand:uniform(2) rem 2 of
                          1 -> lists:nth(
                              rand:uniform(PackageFunctionDeclaration_Length),

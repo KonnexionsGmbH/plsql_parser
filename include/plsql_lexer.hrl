@@ -46,6 +46,7 @@
     {"^(?i)(CLOB)$",                        'CLOB'},
     {"^(?i)(CLUSTER)$",                     'CLUSTER'},
     {"^(?i)(COLLATION)$",                   'COLLATION'},
+    {"^(?i)(CONSTANT)$",                    'CONSTANT'},
     {"^(?i)(CREATE)$",                      'CREATE'},
     {"^(?i)(CURRENT_USER)$",                'CURRENT_USER'},
     {"^(?i)(CURSOR)$",                      'CURSOR'},
