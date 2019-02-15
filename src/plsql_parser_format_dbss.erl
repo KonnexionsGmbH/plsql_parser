@@ -1204,6 +1204,8 @@ fold(_LOpts, _FunState, Ctx, _PTree, {Rule, _Step}) when
     Rule == sharingClause;
     Rule == streamingClause;
     Rule == streamingClauseExpression@_@;
+    Rule == subtypeDefinition;
+    Rule == subtypeName;
     Rule == typeName ->
     Ctx;
 

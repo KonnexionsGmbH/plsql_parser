@@ -1038,6 +1038,38 @@ fold([], _FunState, Ctx, _PTree, {streamingClauseExpression@_@, Step} =
     ?CUSTOM_RESULT(RT);
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% subtypeDefinition
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+fold([], _FunState, Ctx, #{subtypeDefinition := _PTree},
+    {subtypeDefinition, Step} = _FoldState) ->
+    ?CUSTOM_INIT(_FunState, Ctx, _PTree, _FoldState),
+    RT = case Step of
+             start -> Ctx;
+             _ -> Ctx ++ ";"
+         end,
+    ?CUSTOM_RESULT(RT);
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% subtypeName
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+fold([], _FunState, Ctx, #{subtypeName := PTree}, {subtypeName, Step} =
+    _FoldState) ->
+    ?CUSTOM_INIT(_FunState, Ctx, PTree, _FoldState),
+    RT = case Step of
+             start -> lists:append(
+                 [
+                     Ctx,
+                     "subtype ",
+                     PTree,
+                     " is"
+                 ]);
+             _ -> Ctx
+         end,
+    ?CUSTOM_RESULT(RT);
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % systemPrivilegeAnnotation
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

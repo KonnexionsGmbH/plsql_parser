@@ -280,11 +280,10 @@ objectPrivilegeType -> NAME           : unwrap_2_list('$1').
 objectPrivilegeType -> NAME NAME      : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2')]).
 objectPrivilegeType -> NAME NAME NAME : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2'), " ", unwrap_2_list('$3')]).
 
-packageItem -> constantDeclaration         : '$1'.
-packageItem -> exceptionDeclaration        : '$1'.
+packageItem -> itemDeclaration             : '$1'.
 packageItem -> packageFunctionDeclaration  : '$1'.
 packageItem -> packageProcedureDeclaration : '$1'.
-packageItem -> recordTypeDefinition        : '$1'.
+packageItem -> typeDefinition              : '$1'.
 
 packageItemList -> packageItemSimple                      : ['$1'].
 packageItemList -> packageItemConditional                 : ['$1'].
@@ -320,11 +319,10 @@ objectPrivilegeType ::= NAME
                       | ( NAME NAME )
                       | ( NAME NAME NAME )
 
-packageItem ::= constantDeclaration
-              | exceptionDeclaration
+packageItem ::= itemDeclaration
               | packageFunctionDeclaration
               | packageProcedureDeclaration
-              | recordTypeDefinition
+              | typeDefinition
 
 sharingClause ::= 'SHARING' '=' ( 'METADATA' | 'NONE' )
 
@@ -343,19 +341,13 @@ constantDeclaration -> NAME CONSTANT dataType           default ';' : #{type => 
                                                                         constantDeclaration => #{constantName@ => #{constantName => unwrap_2_list('$1')},
                                                                                                  dataType@ => '$3',
                                                                                                  default@ => '$4'}}.
-constantDeclaration -> NAME CONSTANT dataType NOT NULLX default ';' : #{type => "Constant",
-                                                                        constantDeclaration => #{constantName@ => #{constantName => unwrap_2_list('$1')},
-                                                                                                 dataType@ => '$3',
-                                                                                                 notNull@ => #{notNull => "not null"},
-                                                                                                 default@ => '$6'}}.
-
 defaultCollationClause -> DEFAULT COLLATION USING_NLS_COMP : #{defaultCollationClause => lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2'), " ", unwrap_2_list('$3')])}.
-
-exceptionDeclaration -> NAME EXCEPTION ';' : #{type => "Exception",
-                                               exceptionDeclaration  => unwrap_2_list('$1')}.
 
 invokerRightsClause -> AUTHID CURRENT_USER : #{invokerRightsClause => unwrap_2_list('$2')}.
 invokerRightsClause -> AUTHID DEFINER      : #{invokerRightsClause => unwrap_2_list('$2')}.
+
+itemDeclaration -> constantDeclaration  : '$1'.
+itemDeclaration -> exceptionDeclaration : '$1'.
 
 packageFunctionDeclaration ->                                        functionHeading                                                  ';' : #{type => "Function",
                                                                                                                                               packageFunctionDeclaration  => #{functionHeading@ => '$1'}}.
@@ -509,21 +501,19 @@ packageProcedureDeclaration -> apiHiddenAnnotation procedureAnnotation procedure
                                                                                                                                                               procedureAnnotation@ => '$2',
                                                                                                                                                               procedureHeading@ => '$3',
                                                                                                                                                               accessibleByClause@ => '$4'}}.
-recordTypeDefinition -> TYPE NAME IS RECORD '(' fieldDefinitionCommaList ')' ';' : #{type => "RecordType",
-                                                                                     recordTypeDefinition => #{typeName@ => #{typeName => unwrap_2_list('$2')},
-                                                                                                               filedDefinitionList@ => '$6'}}.
+typeDefinition -> recordTypeDefinition : '$1'.
+typeDefinition -> subtypeDefinition    : '$1'.
 
 ============================================================================= */
 
 accessibleByClause ::= 'ACCESSIBLE' 'BY' '(' accessor+ ')'
 
-constantDeclaration ::= NAME 'CONSTANT' dataType ( 'NOT' 'NULL' )? default ';'
-
 defaultCollationClause ::= 'DEFAULT' 'COLLATION' 'USING_NLS_COMP'
 
-exceptionDeclaration ::= NAME 'EXCEPTION' ';'
-
 invokerRightsClause ::= 'AUTHID' ( 'CURRENT_USER' | 'DEFINER' )
+
+itemDeclaration ::= constantDeclaration
+                  | exceptionDeclaration
 
 packageFunctionDeclaration ::= apiHiddenAnnotation? functionAnnotation? functionHeading packageFunctionDeclarationAttribute* 'MAN_PAGE'? ';'
 
@@ -538,11 +528,25 @@ plsqlPackageSourceAttribute ::= accessibleByClause
 
 packageProcedureDeclaration ::= apiHiddenAnnotation? procedureAnnotation? procedureHeading accessibleByClause? 'MAN_PAGE'? ';'
 
-recordTypeDefinition ::= 'TYPE' NAME 'IS' 'RECORD' '(' fieldDefinition ( ',' fieldDefinition )* ')' ';'
+typeDefinition ::= recordTypeDefinition
+                 | subtypeDefinition
 
 /* =============================================================================
 accessorCommaList -> accessor                       : ['$1'].
 accessorCommaList -> accessor ',' accessorCommaList : ['$1' | '$3'].
+
+constantDeclaration -> NAME CONSTANT dataType           default ';' : #{type => "Constant",
+                                                                        constantDeclaration => #{constantName@ => #{constantName => unwrap_2_list('$1')},
+                                                                                                 dataType@ => '$3',
+                                                                                                 default@ => '$4'}}.
+constantDeclaration -> NAME CONSTANT dataType NOT NULLX default ';' : #{type => "Constant",
+                                                                        constantDeclaration => #{constantName@ => #{constantName => unwrap_2_list('$1')},
+                                                                                                 dataType@ => '$3',
+                                                                                                 notNull@ => #{notNull => "not null"},
+                                                                                                 default@ => '$6'}}.
+
+exceptionDeclaration -> NAME EXCEPTION ';' : #{type => "Exception",
+                                               exceptionDeclaration => unwrap_2_list('$1')}.
 
 fieldDefinitionCommaList -> fieldDefinition                              : ['$1'].
 fieldDefinitionCommaList -> fieldDefinition ',' fieldDefinitionCommaList : ['$1' | '$3'].
@@ -564,7 +568,22 @@ procedureAnnotation -> privilegeAnnotationList : #{procedureAnnotation => #{priv
 procedureHeading -> PROCEDURE NAME                                       : #{procedureHeading => #{name@ => unwrap_2_list('$2')}}.
 procedureHeading -> PROCEDURE NAME '(' parameterDeclarationCommaList ')' : #{procedureHeading => #{name@ => unwrap_2_list('$2'),
                                                                                                    parameterDeclarationCommaList@ => '$4'}}.
+recordTypeDefinition -> TYPE NAME IS RECORD '(' fieldDefinitionCommaList ')' ';' : #{type => "RecordType",
+                                                                                     recordTypeDefinition => #{typeName@ => #{typeName => unwrap_2_list('$2')},
+                                                                                                               fieldDefinitionCommaList@ => '$6'}}.
+
+subtypeDefinition -> SUBTYPE NAME IS dataType           ';' : #{type => "Subtype",
+                                                                subtypeDefinition => #{subtypeName@ => #{subtypeName => unwrap_2_list('$2')},
+                                                                                       dataType@ => '$4'}}.
+subtypeDefinition -> SUBTYPE NAME IS dataType NOT NULLX ';' : #{type => "Subtype",
+                                                                subtypeDefinition => #{subtypeName@ => #{subtypeName => unwrap_2_list('$2')},
+                                                                                       dataType@ => '$4',
+                                                                                       notNull@ => #{notNull => "not null"}}}.
 ============================================================================= */
+
+constantDeclaration ::= NAME 'CONSTANT' dataType ( 'NOT' 'NULL' )? default ';'
+
+exceptionDeclaration ::= NAME 'EXCEPTION' ';'
 
 functionAnnotation ::= privilegeRoleAnnotationList
 
@@ -574,6 +593,10 @@ functionHeading ::= 'FUNCTION' NAME ( '(' ( parameterAnnotation? parameterDeclar
 procedureAnnotation ::= privilegeRoleAnnotationList
 
 procedureHeading ::= 'PROCEDURE' NAME ( '(' ( parameterAnnotation? parameterDeclaration )+ ')' )?
+
+recordTypeDefinition ::= 'TYPE' NAME 'IS' 'RECORD' '(' fieldDefinition ( ',' fieldDefinition )* ')' ';'
+
+subtypeDefinition ::= 'SUBTYPE' NAME 'IS'  dataType ( 'NOT' 'NULL' )? ';'
 
 /* =============================================================================
 accessor ->                   NAME : #{accessor => #{name@ => unwrap_2_list('$1')}}.

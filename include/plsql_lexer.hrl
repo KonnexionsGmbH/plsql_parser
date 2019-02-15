@@ -103,6 +103,7 @@
     {"^(?i)(ROWID)$",                       'ROWID'},
     {"^(?i)(SECOND)$",                      'SECOND'},
     {"^(?i)(SHARING)$",                     'SHARING'},
+    {"^(?i)(SUBTYPE)$",                     'SUBTYPE'},
     {"^(?i)(SYSTEM_PRIVILEGE)$",            'SYSTEM_PRIVILEGE'},
     {"^(?i)(TABLE)$",                       'TABLE'},
     {"^(?i)(TIME)$",                        'TIME'},

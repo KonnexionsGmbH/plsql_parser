@@ -297,7 +297,8 @@ fold_i(Fun, LOpts, FunState, Ctx, #{defaultValue@_@ := Value} = PTree) ->
 % exceptionDeclaration
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-fold_i(Fun, LOpts, FunStateIn, Ctx, #{exceptionDeclaration := _Value} = PTree) ->
+fold_i(Fun, LOpts, FunStateIn, Ctx, #{exceptionDeclaration := _Value} =
+    PTree) ->
     Rule = exceptionDeclaration,
     FunState = ?FOLD_INIT_STMNT(FunStateIn, Ctx, PTree, Rule),
     NewCtxS = Fun(LOpts, FunState, Ctx, PTree, {Rule, start}),
@@ -940,6 +941,38 @@ fold_i(Fun, LOpts, FunState, Ctx, #{streamingClauseExpression@_@ := Value} =
     ?FOLD_RESULT(NewCtxE);
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% subtypeDefinition
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+fold_i(Fun, LOpts, FunStateIn, Ctx, #{subtypeDefinition := Value} = PTree) ->
+    Rule = subtypeDefinition,
+    FunState = ?FOLD_INIT_STMNT(FunStateIn, Ctx, PTree, Rule),
+    NewCtxS = Fun(LOpts, FunState, Ctx, PTree, {Rule, start}),
+    NewCtx1 =
+        fold_i(Fun, LOpts, FunState, NewCtxS, maps:get(subtypeName@, Value)),
+    NewCtx2 = fold_i(Fun, LOpts, FunState, NewCtx1, maps:get(dataType@, Value)),
+    NewCtx3 = case maps:is_key(notNull@,
+        Value) of
+                  true ->
+                      fold_i(Fun, LOpts, FunState, NewCtx2,
+                          maps:get(notNull@, Value));
+                  _ -> NewCtx2
+              end,
+    NewCtxE = Fun(LOpts, FunState, NewCtx3, PTree, {Rule, 'end'}),
+    ?FOLD_RESULT(NewCtxE);
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% subtypeName
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+fold_i(Fun, LOpts, FunState, Ctx, #{subtypeName := _Value} = PTree) ->
+    ?FOLD_INIT(FunState, Ctx, PTree),
+    Rule = subtypeName,
+    NewCtxS = Fun(LOpts, FunState, Ctx, PTree, {Rule, start}),
+    NewCtxE = Fun(LOpts, FunState, NewCtxS, PTree, {Rule, 'end'}),
+    ?FOLD_RESULT(NewCtxE);
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % systemPrivilegeAnnotation
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -1044,42 +1077,14 @@ list_elem_ext_rule(Fun, LOpts, FunState, Ctx, Rule, [Head | Tail], Counter, Leng
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Set the function state for a new statement:
 % -------------------------------------------
-%     alter_user_def
-%     close_statement
-%     commit_statement
-%     create_index_def
-%     create_role_def
-%     create_table_def
-%     create_user_def
-%     cursor_def
-%     delete_statement
-%     drop_index_def
-%     drop_role_def
-%     drop_table_def
-%     drop_user_def
-%     fetch_statement
-%     grant_def
-%     insert_statement
-%     open_statement
-%     procedure_call
-%     query_exp (intersect, minus, union, union all)
-%     query_spec (select)
-%     revoke_def
-%     rollback_statement
-%     schema
-%     truncate_table
-%     update_statement
-%     view_def
-%     when_not_found
-%     when_sql_err
+%     constantDeclaration
+%     exceptionDeclaration
+%     packageFunctionDeclaration
+%     packageProcedureDeclaration
+%     recordTypeDefinition
+%     subtypeDefinition
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 set_state_stmnt(FunState, Stmnt) ->
-    {StmntCurr, _, _} = get_stmnt_clause_curr(FunState),
-    case Stmnt == query_spec andalso StmntCurr == query_exp of
-        true ->
-            FunState#fstate{stmnts = FunState#fstate.stmnts ++
-            [{Stmnt, none, none}]};
-        _ -> FunState#fstate{indent_lvl = FunState#fstate.indent_lvl +
-            1, stmnts = FunState#fstate.stmnts ++ [{Stmnt, none, none}]}
-    end.
+    FunState#fstate{indent_lvl = FunState#fstate.indent_lvl + 1,
+        stmnts = FunState#fstate.stmnts ++ [{Stmnt, none, none}]}.

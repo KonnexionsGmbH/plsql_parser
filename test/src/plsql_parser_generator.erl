@@ -146,6 +146,7 @@ create_code() ->
     create_code(columnRefCommaList),
     create_code(dataSourceCommaList),
     create_code(privilegeAnnotationList),
+    create_code(subtypeDefinition),
 
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Level 04
@@ -1872,20 +1873,26 @@ create_code(packageItem = Rule) ->
     [{recordTypeDefinition, RecordTypeDefinition}] = ets:lookup(
         ?CODE_TEMPLATES, recordTypeDefinition),
     RecordTypeDefinition_Length = length(RecordTypeDefinition),
+    [{subtypeDefinition, SubtypeDefinition}] =
+        ets:lookup(?CODE_TEMPLATES, subtypeDefinition),
+    SubtypeDefinition_Length = length(SubtypeDefinition),
 
     Code =
         [
             case rand:uniform(20) rem 20 of
-                1 -> case rand:uniform(3) rem 3 of
+                1 -> case rand:uniform(4) rem 4 of
                          1 -> lists:nth(
                              rand:uniform(ConstantDeclaration_Length),
                              ConstantDeclaration);
                          2 -> lists:nth(
                              rand:uniform(ExceptionDeclaration_Length),
                              ExceptionDeclaration);
-                         _ -> lists:nth(
+                         3 -> lists:nth(
                              rand:uniform(RecordTypeDefinition_Length),
-                             RecordTypeDefinition)
+                             RecordTypeDefinition);
+                         _ -> lists:nth(
+                             rand:uniform(SubtypeDefinition_Length),
+                             SubtypeDefinition)
                      end;
                 _ -> case rand:uniform(2) rem 2 of
                          1 -> lists:nth(
@@ -2723,6 +2730,36 @@ create_code(string = Rule) ->
             "'STRING_65'",
             "'string_65_1'",
             "'string_65_2_'"
+        ],
+    store_code(Rule, Code, ?MAX_BASIC, false),
+    ?CREATE_CODE_END;
+
+%% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% subtypeDefinition ::= 'SUBTYPE' NAME 'IS'  dataType ( 'NOT' 'NULL' )? ';'
+%% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+create_code(subtypeDefinition = Rule) ->
+    ?CREATE_CODE_START,
+    [{dataType, DataType}] = ets:lookup(?CODE_TEMPLATES, dataType),
+    DataType_Length = length(DataType),
+    [{name, Name}] = ets:lookup(?CODE_TEMPLATES, name),
+    Name_Length = length(Name),
+
+    Code =
+        [
+            lists:append(
+                [
+                    "subtype ",
+                    lists:nth(rand:uniform(Name_Length), Name),
+                    " is ",
+                    lists:nth(rand:uniform(DataType_Length), DataType),
+                    case rand:uniform(2) rem 2 of
+                        1 -> " not null ";
+                        _ -> []
+                    end,
+                    ";"
+                ])
+            || _ <- lists:seq(1, ?MAX_BASIC * 2)
         ],
     store_code(Rule, Code, ?MAX_BASIC, false),
     ?CREATE_CODE_END;

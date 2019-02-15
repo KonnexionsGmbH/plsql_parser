@@ -570,6 +570,10 @@ AS
     my_constant_2                  CONSTANT VARCHAR2 (10) NOT NULL DEFAULT 'test';
     my_constant_3                  CONSTANT VARCHAR2 (10) NOT NULL := 'test';
 
+    SUBTYPE my_subtype_1 IS my_record%ROWTYPE;
+
+    SUBTYPE my_subtype_2 IS my_record.my_column%TYPE NOT NULL;
+
     TYPE my_record_type IS RECORD
     (
         field_1 NUMBER (1, 2),
