@@ -944,21 +944,6 @@ create_code(dataType_1 = Rule) ->
                     "To Month"
                 ]),
             "Long Raw",
-            lists:nth(rand:uniform(Name_Length), Name),
-            lists:append(
-                [
-                    lists:nth(rand:uniform(Name_Length), Name),
-                    ".",
-                    lists:nth(rand:uniform(Name_Length), Name)
-                ]),
-            lists:append(
-                [
-                    lists:nth(rand:uniform(Name_Length), Name),
-                    ".",
-                    lists:nth(rand:uniform(Name_Length), Name),
-                    ".",
-                    lists:nth(rand:uniform(Name_Length), Name)
-                ]),
             lists:append(
                 [
                     "Nchar(",
@@ -1059,14 +1044,29 @@ create_code(dataType_2 = Rule) ->
     Code =
         [
             "Binary_integer",
+            lists:nth(rand:uniform(Name_Length), Name),
                 lists:nth(rand:uniform(Name_Length), Name) ++ "%Rowtype",
                 lists:nth(rand:uniform(Name_Length), Name) ++ "%Type",
             lists:append(
                 [
                     lists:nth(rand:uniform(Name_Length), Name),
                     ".",
+                    lists:nth(rand:uniform(Name_Length), Name)
+                ]),
+            lists:append(
+                [
+                    lists:nth(rand:uniform(Name_Length), Name),
+                    ".",
                     lists:nth(rand:uniform(Name_Length), Name),
                     "%Type"
+                ]),
+            lists:append(
+                [
+                    lists:nth(rand:uniform(Name_Length), Name),
+                    ".",
+                    lists:nth(rand:uniform(Name_Length), Name),
+                    ".",
+                    lists:nth(rand:uniform(Name_Length), Name)
                 ]),
             lists:append(
                 [
