@@ -974,24 +974,26 @@ dataType_2 -> VARCHAR2      '(' INTNUM            ')'                          :
 dataType_3 -> LONG                                                             : #{dataType => #{class@ => sql,
                                                                                                  type@ => "LONG"}}.
 
-fieldDefinition -> NAME dataType_1                   : #{fieldDefinition => #{name@ => unwrap_2_list('$1'),
-                                                                              dataType@ => '$2'}}.
-fieldDefinition -> NAME dataType_2                   : #{fieldDefinition => #{name@ => unwrap_2_list('$1'),
-                                                                              dataType@ => '$2'}}.
-fieldDefinition -> NAME dataType_1           default : #{fieldDefinition => #{name@ => unwrap_2_list('$1'),
-                                                                              dataType@ => '$2',
-                                                                              default@ => '$3'}}.
-fieldDefinition -> NAME dataType_2           default : #{fieldDefinition => #{name@ => unwrap_2_list('$1'),
-                                                                              dataType@ => '$2',
-                                                                              default@ => '$3'}}.
-fieldDefinition -> NAME dataType_1 NOT NULLX default : #{fieldDefinition => #{name@ => unwrap_2_list('$1'),
-                                                                              dataType@ => '$2',
-                                                                              notNull@ => #{notNull => "not null"},
-                                                                              default@ => '$5'}}.
-fieldDefinition -> NAME dataType_2 NOT NULLX default : #{fieldDefinition => #{name@ => unwrap_2_list('$1'),
-                                                                              dataType@ => '$2',
-                                                                              notNull@ => #{notNull => "not null"},
-                                                                              default@ => '$5'}}.
+fieldDefinition -> API_GROUP dataType_1                   : #{fieldDefinition => #{name@ => "API_GROUP",
+                                                                                   dataType@ => '$2'}}.
+fieldDefinition -> NAME      dataType_1                   : #{fieldDefinition => #{name@ => unwrap_2_list('$1'),
+                                                                                   dataType@ => '$2'}}.
+fieldDefinition -> NAME      dataType_2                   : #{fieldDefinition => #{name@ => unwrap_2_list('$1'),
+                                                                                   dataType@ => '$2'}}.
+fieldDefinition -> NAME      dataType_1           default : #{fieldDefinition => #{name@ => unwrap_2_list('$1'),
+                                                                                   dataType@ => '$2',
+                                                                                   default@ => '$3'}}.
+fieldDefinition -> NAME      dataType_2           default : #{fieldDefinition => #{name@ => unwrap_2_list('$1'),
+                                                                                   dataType@ => '$2',
+                                                                                   default@ => '$3'}}.
+fieldDefinition -> NAME      dataType_1 NOT NULLX default : #{fieldDefinition => #{name@ => unwrap_2_list('$1'),
+                                                                                   dataType@ => '$2',
+                                                                                   notNull@ => #{notNull => "not null"},
+                                                                                   default@ => '$5'}}.
+fieldDefinition -> NAME      dataType_2 NOT NULLX default : #{fieldDefinition => #{name@ => unwrap_2_list('$1'),
+                                                                                   dataType@ => '$2',
+                                                                                   notNull@ => #{notNull => "not null"},
+                                                                                   default@ => '$5'}}.
 
 packageFunctionDeclarationAttribute -> accessibleByClause    : #{packageFunctionDeclarationAttribute => '$1'}.
 packageFunctionDeclarationAttribute -> DETERMINISTIC         : #{packageFunctionDeclarationAttribute => unwrap_2_list('$1')}.
