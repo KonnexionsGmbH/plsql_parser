@@ -853,6 +853,12 @@ dataType_1 -> INTERVAL YEAR '(' INTNUM            ')' TO MONTH                 :
                                                                                                  precision@ => unwrap_2_list('$4')}}.
 dataType_1 -> LONG RAW                                                         : #{dataType => #{class@ => sql,
                                                                                                  type@ => "LONG RAW"}}.
+dataType_1 -> NAME                                                             : #{dataType => #{class@ => user_defined,
+                                                                                                 type@ => unwrap_2_list('$1')}}.
+dataType_1 -> NAME '.' NAME                                                    : #{dataType => #{class@ => user_defined,
+                                                                                                 type@ => lists:append([unwrap_2_list('$1'), ".", unwrap_2_list('$3')])}}.
+dataType_1 -> NAME '.' NAME '.' NAME                                           : #{dataType => #{class@ => user_defined,
+                                                                                                 type@ => lists:append([unwrap_2_list('$1'), ".", unwrap_2_list('$3'), ".", unwrap_2_list('$5')])}}.
 dataType_1 -> NCHAR         '(' INTNUM            ')'                          : #{dataType => #{class@ => sql,
                                                                                                  type@ => unwrap_2_list('$1'),
                                                                                                  size@ => unwrap_2_list('$3')}}.
@@ -918,21 +924,18 @@ dataType_1 -> XMLTYPE                                                          :
   
 dataType_2 -> BINARY_INTEGER                                                   : #{dataType => #{class@ => plsql,
                                                                                                  type@ => unwrap_2_list('$1')}}.
-dataType_2 -> NAME                                                             : #{dataType => #{class@ => user_defined,
-                                                                                                 type@ => unwrap_2_list('$1')}}.
 dataType_2 -> NAME                   '%ROWTYPE'                                : #{dataType => #{class@ => user_defined,
                                                                                                  type@ => unwrap_2_list('$1'),
                                                                                                  attribute@ => unwrap_2_list('$2')}}.
 dataType_2 -> NAME                   '%TYPE'                                   : #{dataType => #{class@ => user_defined,
                                                                                                  type@ => unwrap_2_list('$1'),
                                                                                                  attribute@ => unwrap_2_list('$2')}}.
-dataType_2 -> NAME '.' NAME                                                    : #{dataType => #{class@ => user_defined,
-                                                                                                 type@ => lists:append([unwrap_2_list('$1'), ".", unwrap_2_list('$3')])}}.
+dataType_2 -> NAME '.' NAME          '%ROWTYPE'                                : #{dataType => #{class@ => user_defined,
+                                                                                                 type@ => lists:append([unwrap_2_list('$1'), ".", unwrap_2_list('$3')]),
+                                                                                                 attribute@ => unwrap_2_list('$4')}}.
 dataType_2 -> NAME '.' NAME          '%TYPE'                                   : #{dataType => #{class@ => user_defined,
                                                                                                  type@ => lists:append([unwrap_2_list('$1'), ".", unwrap_2_list('$3')]),
                                                                                                  attribute@ => unwrap_2_list('$4')}}.
-dataType_2 -> NAME '.' NAME '.' NAME                                           : #{dataType => #{class@ => user_defined,
-                                                                                                 type@ => lists:append([unwrap_2_list('$1'), ".", unwrap_2_list('$3'), ".", unwrap_2_list('$5')])}}.
 dataType_2 -> NAME '.' NAME '.' NAME '%TYPE'                                   : #{dataType => #{class@ => user_defined,
                                                                                                  type@ => lists:append([unwrap_2_list('$1'), ".", unwrap_2_list('$3'), ".", unwrap_2_list('$5')]),
                                                                                                  attribute@ => unwrap_2_list('$6')}}.
