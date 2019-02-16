@@ -962,6 +962,17 @@ fold_i(Fun, LOpts, FunState, Ctx, #{recordTypeName := _Value} = PTree) ->
     ?FOLD_RESULT(NewCtxE);
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% refCursorTypeDefinition
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+fold_i(Fun, LOpts, FunStateIn, Ctx, #{refCursorTypeDefinition := _Value} = PTree) ->
+    Rule = refCursorTypeDefinition,
+    FunState = ?FOLD_INIT_STMNT(FunStateIn, Ctx, PTree, Rule),
+    NewCtxS = Fun(LOpts, FunState, Ctx, PTree, {Rule, start}),
+    NewCtxE = Fun(LOpts, FunState, NewCtxS, PTree, {Rule, 'end'}),
+    ?FOLD_RESULT(NewCtxE);
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % resultCacheClause
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -1215,6 +1226,7 @@ list_elem_ext_rule(Fun, LOpts, FunState, Ctx, Rule, [Head | Tail], Counter, Leng
 %     packageFunctionDeclaration
 %     packageProcedureDeclaration
 %     recordTypeDefinition
+%     refCursorTypeDefinition
 %     subtypeDefinition
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

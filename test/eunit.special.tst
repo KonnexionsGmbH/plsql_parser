@@ -613,6 +613,18 @@ AS
 
     TYPE my_varry_table_6 IS VARRAY (100) OF VARCHAR2 (200) NOT NULL;
 
+    TYPE my_ref_cursor_1 IS REF CURSOR RETURN my_column_1%TYPE;
+
+    TYPE my_ref_cursor_2 IS REF CURSOR RETURN my_record_type_1;
+
+    TYPE my_ref_cursor_3 IS REF CURSOR RETURN my_table_1%ROWTYPE;
+
+    TYPE my_ref_cursor_4 IS REF CURSOR RETURN my_table_1.my_column_1%TYPE;
+
+    TYPE my_ref_cursor_5 IS REF CURSOR RETURN my_schema_1.my_table_1%ROWTYPE;
+
+    TYPE my_ref_cursor_6 IS REF CURSOR RETURN my_schema_1.my_table_1.my_column_1%TYPE;
+
     FUNCTION function_name_1
         RETURN CLOB;
 

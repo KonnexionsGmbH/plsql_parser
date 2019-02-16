@@ -595,6 +595,30 @@ recordTypeDefinition -> TYPE NAME IS RECORD '(' fieldDefinitionCommaList ')' ';'
                                                                                      recordTypeDefinition => #{recordTypeName@ => #{typeName => unwrap_2_list('$2')},
                                                                                                                fieldDefinitionCommaList@ => '$6'}}.
 
+refCursorTypeDefinition -> TYPE NAME IS REF CURSOR RETURN NAME                              ';' : #{type => "RefCursorType",
+                                                                                                    refCursrTpeDefinition => #{refCursorTypeName@ => #{refCursorTypeName => unwrap_2_list('$2')},
+                                                                                                    type@ => unwrap_2_list('$7')}}.
+refCursorTypeDefinition -> TYPE NAME IS REF CURSOR RETURN NAME                   '%ROWTYPE' ';' : #{type => "RefCursorType",
+                                                                                                    refCursrTpeDefinition => #{refCursorTypeName@ => #{refCursorTypeName => unwrap_2_list('$2')},
+                                                                                                    type@ => unwrap_2_list('$7'),
+                                                                                                    attribute@ => unwrap_2_list('$8')}}.
+refCursorTypeDefinition -> TYPE NAME IS REF CURSOR RETURN NAME                   '%TYPE'    ';' : #{type => "RefCursorType",
+                                                                                                    refCursrTpeDefinition => #{refCursorTypeName@ => #{refCursorTypeName => unwrap_2_list('$2')},
+                                                                                                    type@ => unwrap_2_list('$7'),
+                                                                                                    attribute@ => unwrap_2_list('$8')}}.
+refCursorTypeDefinition -> TYPE NAME IS REF CURSOR RETURN NAME '.' NAME          '%ROWTYPE' ';' : #{type => "RefCursorType",
+                                                                                                    refCursrTpeDefinition => #{refCursorTypeName@ => #{refCursorTypeName => unwrap_2_list('$2')},
+                                                                                                    type@ => lists:append([unwrap_2_list('$7'), ".", unwrap_2_list('$9')]),
+                                                                                                    attribute@ => unwrap_2_list('$10')}}.
+refCursorTypeDefinition -> TYPE NAME IS REF CURSOR RETURN NAME '.' NAME          '%TYPE'    ';' : #{type => "RefCursorType",
+                                                                                                    refCursrTpeDefinition => #{refCursorTypeName@ => #{refCursorTypeName => unwrap_2_list('$2')},
+                                                                                                    type@ => lists:append([unwrap_2_list('$7'), ".", unwrap_2_list('$9')]),
+                                                                                                    attribute@ => unwrap_2_list('$10')}}.
+refCursorTypeDefinition -> TYPE NAME IS REF CURSOR RETURN NAME '.' NAME '.' NAME '%TYPE'    ';' : #{type => "RefCursorType",
+                                                                                                    refCursrTpeDefinition => #{refCursorTypeName@ => #{refCursorTypeName => unwrap_2_list('$2')},
+                                                                                                    type@ => lists:append([unwrap_2_list('$7'), ".", unwrap_2_list('$9'), ".", unwrap_2_list('$11')]),
+                                                                                                    attribute@ => unwrap_2_list('$12')}}.
+
 subtypeDefinition -> SUBTYPE NAME IS dataType_1           ';' : #{type => "Subtype",
                                                                   subtypeDefinition => #{subtypeName@ => #{subtypeName => unwrap_2_list('$2')},
                                                                                          dataType@ => '$4'}}.
@@ -627,6 +651,10 @@ procedureAnnotation ::= privilegeRoleAnnotationList
 procedureHeading ::= 'PROCEDURE' NAME ( '(' ( parameterAnnotation? parameterDeclaration )+ ')' )?
 
 recordTypeDefinition ::= 'TYPE' NAME 'IS' 'RECORD' '(' fieldDefinition ( ',' fieldDefinition )* ')' ';'
+
+refCursorTypeDefinition ::= 'TYPE' NAME 'IS' 'REF' 'CURSOR' 'RETURN' ( NAME
+                                                                 | ( ( NAME '.' )?  NAME ( '%ROWTYPE' | '%TYPE' )? )
+                                                                 |   ( NAME '.' NAME '.' NAME '%TYPE'? ) )  ';'
 
 subtypeDefinition ::= 'SUBTYPE' NAME 'IS'  ( dataType_1 | dataType_2 )  ( 'NOT' 'NULL' )? ';'
 

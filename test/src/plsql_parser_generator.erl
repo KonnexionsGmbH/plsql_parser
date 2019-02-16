@@ -134,6 +134,7 @@ create_code() ->
     create_code(objectPrivilegeAnnotation),
     create_code(parameterRef),
     create_code(pipelinedClause),
+    create_code(refCursorTypeDefinition),
     create_code(systemPrivilegeAnnotation),
 
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -2020,6 +2021,9 @@ create_code(packageItem = Rule) ->
     [{recordTypeDefinition, RecordTypeDefinition}] = ets:lookup(
         ?CODE_TEMPLATES, recordTypeDefinition),
     RecordTypeDefinition_Length = length(RecordTypeDefinition),
+    [{refCursorTypeDefinition, RefCursorTypeDefinition}] = ets:lookup(
+        ?CODE_TEMPLATES, refCursorTypeDefinition),
+    RefCursorTypeDefinition_Length = length(RefCursorTypeDefinition),
     [{subtypeDefinition, SubtypeDefinition}] =
         ets:lookup(?CODE_TEMPLATES, subtypeDefinition),
     SubtypeDefinition_Length = length(SubtypeDefinition),
@@ -2027,7 +2031,7 @@ create_code(packageItem = Rule) ->
     Code =
         [
             case rand:uniform(20) rem 20 of
-                1 -> case rand:uniform(4) rem 4 of
+                1 -> case rand:uniform(5) rem 5 of
                          1 -> lists:nth(
                              rand:uniform(ConstantDeclaration_Length),
                              ConstantDeclaration);
@@ -2037,6 +2041,9 @@ create_code(packageItem = Rule) ->
                          3 -> lists:nth(
                              rand:uniform(RecordTypeDefinition_Length),
                              RecordTypeDefinition);
+                         4 -> lists:nth(
+                             rand:uniform(RefCursorTypeDefinition_Length),
+                             RefCursorTypeDefinition);
                          _ -> case rand:uniform(4) rem 4 of
                                   1 -> lists:nth(
                                       rand:uniform(SubtypeDefinition_Length),
@@ -2781,6 +2788,61 @@ create_code(recordTypeDefinition = Rule) ->
                     lists:nth(rand:uniform(FieldDefinitionCommaList_Length),
                         FieldDefinitionCommaList),
                     ");"
+                ])
+            || _ <- lists:seq(1, ?MAX_BASIC * 2)
+        ],
+    store_code(Rule, Code, ?MAX_BASIC, false),
+    ?CREATE_CODE_END;
+
+%% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% refCursorTypeDefinition ::= 'TYPE' NAME 'IS' 'REF' 'CURSOR' 'RETURN' ( NAME
+%%                                                                 | ( ( NAME '.' )?  NAME ( '%ROWTYPE' | '%TYPE' )? )
+%%                                                                 |   ( NAME '.' NAME '.' NAME '%TYPE'? ) )  ';'
+%% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+create_code(refCursorTypeDefinition = Rule) ->
+    ?CREATE_CODE_START,
+    [{name, Name}] = ets:lookup(?CODE_TEMPLATES, name),
+    Name_Length = length(Name),
+
+    Code =
+        [
+            lists:append(
+                [
+                    "Type ",
+                    lists:nth(rand:uniform(Name_Length), Name),
+                    " Is ref Cursor Return ",
+                    case rand:uniform(6) rem 6 of
+                        1 -> lists:nth(rand:uniform(Name_Length), Name);
+                        2 -> lists:nth(rand:uniform(Name_Length), Name) ++
+                        "%Rowtype";
+                        3 -> lists:nth(rand:uniform(Name_Length), Name) ++
+                        "%Type";
+                        4 -> lists:append(
+                            [
+                                lists:nth(rand:uniform(Name_Length), Name),
+                                ".",
+                                lists:nth(rand:uniform(Name_Length), Name),
+                                "%Rowtype"
+                            ]);
+                        5 -> lists:append(
+                            [
+                                lists:nth(rand:uniform(Name_Length), Name),
+                                ".",
+                                lists:nth(rand:uniform(Name_Length), Name),
+                                "%Type"
+                            ]);
+                        _ -> lists:append(
+                            [
+                                lists:nth(rand:uniform(Name_Length), Name),
+                                ".",
+                                lists:nth(rand:uniform(Name_Length), Name),
+                                ".",
+                                lists:nth(rand:uniform(Name_Length), Name),
+                                "%Type"
+                            ])
+                    end,
+                    ";"
                 ])
             || _ <- lists:seq(1, ?MAX_BASIC * 2)
         ],
