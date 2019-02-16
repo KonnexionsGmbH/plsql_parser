@@ -1012,6 +1012,31 @@ fold([], _FunState, Ctx, #{recordTypeName := PTree}, {recordTypeName, Step} =
     ?CUSTOM_RESULT(RT);
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% refCursorTypeDefinition
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+fold([], _FunState, Ctx, #{refCursorTypeDefinition := PTree},
+    {refCursorTypeDefinition, Step} = _FoldState) ->
+    ?CUSTOM_INIT(_FunState, Ctx, PTree, _FoldState),
+    RT = case Step of
+             start -> lists:append(
+                 [
+                     Ctx,
+                     "type ",
+                     maps:get(name@, PTree),
+                     " is ref cursor return ",
+                     maps:get(type@, PTree),
+                     case maps:is_key(attribute@, PTree) of
+                         true ->
+                             maps:get(attribute@, PTree);
+                         _ -> []
+                     end
+                 ]);
+             _ -> Ctx ++ ";"
+         end,
+    ?CUSTOM_RESULT(RT);
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % resultCacheClause
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

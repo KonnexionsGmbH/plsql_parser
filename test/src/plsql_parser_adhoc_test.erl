@@ -31,8 +31,8 @@
 
 %% Possible values:
 %%  - dbss,
-%%  - flat (= default value),
-%%  - full,
+%%  - flat,
+%%  - full (= default value)
 -define(TEST_VERSION, full).
 
 -include_lib("eunit/include/eunit.hrl").

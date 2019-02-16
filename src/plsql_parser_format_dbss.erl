@@ -1203,6 +1203,7 @@ fold(_LOpts, _FunState, Ctx, _PTree, {Rule, _Step}) when
     Rule == procedureHeading;
     Rule == recordTypeDefinition;
     Rule == recordTypeName;
+    Rule == refCursorTypeDefinition;
     Rule == resultCacheClause;
     Rule == scalarExpression;
     Rule == scalarSubExpression;
