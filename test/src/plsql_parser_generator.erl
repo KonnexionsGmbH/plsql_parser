@@ -130,8 +130,8 @@ create_code() ->
     create_code(dataType_2),
     create_code(dataTypeReturn),
     create_code(exceptionDeclaration),
-    create_code(fieldName),
     create_code(literal),
+    create_code(nameExtended),
     create_code(objectPrivilegeAnnotation),
     create_code(parameterRef),
     create_code(pipelinedClause),
@@ -1343,7 +1343,7 @@ create_code(expression = Rule) ->
     ?CREATE_CODE_END;
 
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% fieldDefinition ::= fieldName ( dataType_1 | dataType_2 ) ( ( 'NOT' 'NULL' )? default )?
+%% fieldDefinition ::= nameExtended ( dataType_1 | dataType_2 ) ( ( 'NOT' 'NULL' )? default )?
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 create_code(fieldDefinition = Rule) ->
@@ -1354,14 +1354,14 @@ create_code(fieldDefinition = Rule) ->
     DataType_2_Length = length(DataType_2),
     [{default, Default}] = ets:lookup(?CODE_TEMPLATES, default),
     Default_Length = length(Default),
-    [{fieldName, FieldName}] = ets:lookup(?CODE_TEMPLATES, fieldName),
-    FieldName_Length = length(FieldName),
+    [{nameExtended, NameExtended}] = ets:lookup(?CODE_TEMPLATES, nameExtended),
+    NameExtended_Length = length(NameExtended),
 
     Code =
         [
             lists:append(
                 [
-                    lists:nth(rand:uniform(FieldName_Length), FieldName),
+                    lists:nth(rand:uniform(NameExtended_Length), NameExtended),
                     " ",
                     case rand:uniform(5) rem 5 of
                         1 -> lists:nth(rand:uniform(DataType_2_Length),
@@ -1407,18 +1407,6 @@ create_code(fieldDefinitionCommaList = Rule) ->
             end
             || _ <- lists:seq(1, ?MAX_BASIC * 2)
         ],
-    store_code(Rule, Code, ?MAX_BASIC, false),
-    ?CREATE_CODE_END;
-
-%% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% fieldName ::= 'API_GROUP' | NAME
-%% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-create_code(fieldName = Rule) ->
-    ?CREATE_CODE_START,
-    [{name, Name}] = ets:lookup(?CODE_TEMPLATES, name),
-
-    Code = ["api_group" | Name],
     store_code(Rule, Code, ?MAX_BASIC, false),
     ?CREATE_CODE_END;
 
@@ -1507,7 +1495,7 @@ create_code(functionArgCommaList = Rule) ->
     ?CREATE_CODE_END;
 
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% functionHeading ::= 'FUNCTION' NAME ( '(' ( parameterDeclaration )* ')' )?
+%% functionHeading ::= 'FUNCTION' nameExtended ( '(' ( parameterDeclaration )* ')' )?
 %%                               'RETURN' dataType 'PIPELINED'?
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -1516,8 +1504,8 @@ create_code(functionHeading = Rule) ->
     [{dataTypeReturn, DataTypeReturn}] =
         ets:lookup(?CODE_TEMPLATES, dataTypeReturn),
     DataTypeReturn_Length = length(DataTypeReturn),
-    [{name, Name}] = ets:lookup(?CODE_TEMPLATES, name),
-    Name_Length = length(Name),
+    [{nameExtended, NameExtended}] = ets:lookup(?CODE_TEMPLATES, nameExtended),
+    NameExtended_Length = length(NameExtended),
     [{parameterDeclarationCommaList, ParameterDeclarationCommaList}] =
         ets:lookup(?CODE_TEMPLATES, parameterDeclarationCommaList),
     ParameterDeclarationCommaList_Length =
@@ -1528,7 +1516,7 @@ create_code(functionHeading = Rule) ->
             lists:append(
                 [
                     "Function ",
-                    lists:nth(rand:uniform(Name_Length), Name),
+                    lists:nth(rand:uniform(NameExtended_Length), NameExtended),
                     case rand:uniform(4) rem 4 of
                         1 -> " ";
                         _ -> lists:append(
@@ -1784,6 +1772,22 @@ create_code(name = Rule) ->
             "X1_ident",
             "X1YZ_ident"
         ],
+    store_code(Rule, Code, ?MAX_BASIC, false),
+    ?CREATE_CODE_END;
+
+%% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% nameExtended ::= 'API_GROUP' | 'FALSE' | NAME | 'TRUE'
+%% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+create_code(nameExtended = Rule) ->
+    ?CREATE_CODE_START,
+    [{name, Name}] = ets:lookup(?CODE_TEMPLATES, name),
+
+    Code = [
+        "api_group",
+        "false",
+        "true"
+    ] ++ Name,
     store_code(Rule, Code, ?MAX_BASIC, false),
     ?CREATE_CODE_END;
 

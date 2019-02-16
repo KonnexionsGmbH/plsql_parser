@@ -52,7 +52,6 @@ Nonterminals
  expression
  fieldDefinition
  fieldDefinitionCommaList
- fieldName
  functionAnnotation
  functionArg
  functionArgCommaList
@@ -61,6 +60,7 @@ Nonterminals
  invokerRightsClause
  itemDeclaration
  literal
+ nameExtended
  objectPrivilegeAnnotation
  objectPrivilegeType
  packageFunctionDeclaration
@@ -729,16 +729,16 @@ fieldDefinitionCommaList -> fieldDefinition ',' fieldDefinitionCommaList : ['$1'
 
 functionAnnotation -> privilegeAnnotationList : #{functionAnnotation => #{privilegeAnnotationList@ => '$1'}}.
 
-functionHeading -> FUNCTION NAME                                       RETURN dataType_1 : #{functionHeading => #{name@ => unwrap_2_list('$2'),
-                                                                                                                  return@ => '$4'}}.
-functionHeading -> FUNCTION NAME                                       RETURN dataType_2 : #{functionHeading => #{name@ => unwrap_2_list('$2'),
-                                                                                                                  return@ => '$4'}}.
-functionHeading -> FUNCTION NAME '(' parameterDeclarationCommaList ')' RETURN dataType_1 : #{functionHeading => #{name@ => unwrap_2_list('$2'),
-                                                                                                                  parameterDeclarationCommaList@ => '$4',
-                                                                                                                  return@ => '$7'}}.
-functionHeading -> FUNCTION NAME '(' parameterDeclarationCommaList ')' RETURN dataType_2 : #{functionHeading => #{name@ => unwrap_2_list('$2'),
-                                                                                                                  parameterDeclarationCommaList@ => '$4',
-                                                                                                                  return@ => '$7'}}.
+functionHeading -> FUNCTION nameExtended                                       RETURN dataType_1 : #{functionHeading => #{name@ => '$2',
+                                                                                                                          return@ => '$4'}}.
+functionHeading -> FUNCTION nameExtended                                       RETURN dataType_2 : #{functionHeading => #{name@ => '$2',
+                                                                                                                          return@ => '$4'}}.
+functionHeading -> FUNCTION nameExtended '(' parameterDeclarationCommaList ')' RETURN dataType_1 : #{functionHeading => #{name@ => '$2',
+                                                                                                                          parameterDeclarationCommaList@ => '$4',
+                                                                                                                          return@ => '$7'}}.
+functionHeading -> FUNCTION nameExtended '(' parameterDeclarationCommaList ')' RETURN dataType_2 : #{functionHeading => #{name@ => '$2',
+                                                                                                                          parameterDeclarationCommaList@ => '$4',
+                                                                                                                          return@ => '$7'}}.
 
 packageFunctionDeclarationAttributeList -> packageFunctionDeclarationAttribute                                         : ['$1'].
 packageFunctionDeclarationAttributeList -> packageFunctionDeclarationAttribute packageFunctionDeclarationAttributeList : ['$1' | '$2'].
@@ -1010,24 +1010,24 @@ dataType_2 -> VARCHAR2      '(' INTNUM            ')'                          :
 dataType_3 -> LONG                                                             : #{dataType => #{class@ => sql,
                                                                                                  type@ => "LONG"}}.
 
-fieldDefinition -> fieldName dataType_1                   : #{fieldDefinition => #{name@ => '$1',
-                                                                                   dataType@ => '$2'}}.
-fieldDefinition -> fieldName dataType_2                   : #{fieldDefinition => #{name@ => '$1',
-                                                                                   dataType@ => '$2'}}.
-fieldDefinition -> fieldName dataType_1           default : #{fieldDefinition => #{name@ => '$1',
-                                                                                   dataType@ => '$2',
-                                                                                   default@ => '$3'}}.
-fieldDefinition -> fieldName dataType_2           default : #{fieldDefinition => #{name@ => '$1',
-                                                                                   dataType@ => '$2',
-                                                                                   default@ => '$3'}}.
-fieldDefinition -> fieldName dataType_1 NOT NULLX default : #{fieldDefinition => #{name@ => '$1',
-                                                                                   dataType@ => '$2',
-                                                                                   notNull@ => #{notNull => "not null"},
-                                                                                   default@ => '$5'}}.
-fieldDefinition -> fieldName dataType_2 NOT NULLX default : #{fieldDefinition => #{name@ => '$1',
-                                                                                   dataType@ => '$2',
-                                                                                   notNull@ => #{notNull => "not null"},
-                                                                                   default@ => '$5'}}.
+fieldDefinition -> nameExtended dataType_1                   : #{fieldDefinition => #{name@ => '$1',
+                                                                                      dataType@ => '$2'}}.
+fieldDefinition -> nameExtended dataType_2                   : #{fieldDefinition => #{name@ => '$1',
+                                                                                      dataType@ => '$2'}}.
+fieldDefinition -> nameExtended dataType_1           default : #{fieldDefinition => #{name@ => '$1',
+                                                                                      dataType@ => '$2',
+                                                                                      default@ => '$3'}}.
+fieldDefinition -> nameExtended dataType_2           default : #{fieldDefinition => #{name@ => '$1',
+                                                                                      dataType@ => '$2',
+                                                                                      default@ => '$3'}}.
+fieldDefinition -> nameExtended dataType_1 NOT NULLX default : #{fieldDefinition => #{name@ => '$1',
+                                                                                      dataType@ => '$2',
+                                                                                      notNull@ => #{notNull => "not null"},
+                                                                                      default@ => '$5'}}.
+fieldDefinition -> nameExtended dataType_2 NOT NULLX default : #{fieldDefinition => #{name@ => '$1',
+                                                                                      dataType@ => '$2',
+                                                                                      notNull@ => #{notNull => "not null"},
+                                                                                      default@ => '$5'}}.
 
 packageFunctionDeclarationAttribute -> accessibleByClause    : #{packageFunctionDeclarationAttribute => '$1'}.
 packageFunctionDeclarationAttribute -> DETERMINISTIC         : #{packageFunctionDeclarationAttribute => unwrap_2_list('$1')}.
@@ -1083,8 +1083,10 @@ varrayTypeDef -> VARYING ARRAY '(' INTNUM ')' OF dataType_2 NOT NULLX : #{varray
 
 %% Level 10 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-fieldName -> API_GROUP : "api_group".
-fieldName -> NAME      : unwrap_2_list('$1').
+nameExtended -> API_GROUP : "api_group".
+nameExtended -> FALSE     : "false".
+nameExtended -> NAME      : unwrap_2_list('$1').
+nameExtended -> TRUE      : "true".
 
 parameterDeclaration -> NAME               dataType_1         : #{parameterDeclaration => #{name@ => unwrap_2_list('$1'),
                                                                                             dataType@ => '$2'}}.
