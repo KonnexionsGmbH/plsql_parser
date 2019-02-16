@@ -130,6 +130,7 @@ create_code() ->
     create_code(dataType_2),
     create_code(dataTypeReturn),
     create_code(exceptionDeclaration),
+    create_code(fieldName),
     create_code(literal),
     create_code(objectPrivilegeAnnotation),
     create_code(parameterRef),
@@ -370,6 +371,7 @@ create_code_layer(Version) ->
     create_code(constantDeclaration),
     create_code(fieldDefinition),
     create_code(functionArgCommaList),
+    create_code(variableDeclaration),
 
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Level 14
@@ -1341,7 +1343,7 @@ create_code(expression = Rule) ->
     ?CREATE_CODE_END;
 
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% fieldDefinition ::= NAME ( dataType_1 | dataType_2 ) ( ( 'NOT' 'NULL' )? default )?
+%% fieldDefinition ::= fieldName ( dataType_1 | dataType_2 ) ( ( 'NOT' 'NULL' )? default )?
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 create_code(fieldDefinition = Rule) ->
@@ -1352,14 +1354,14 @@ create_code(fieldDefinition = Rule) ->
     DataType_2_Length = length(DataType_2),
     [{default, Default}] = ets:lookup(?CODE_TEMPLATES, default),
     Default_Length = length(Default),
-    [{name, Name}] = ets:lookup(?CODE_TEMPLATES, name),
-    Name_Length = length(Name),
+    [{fieldName, FieldName}] = ets:lookup(?CODE_TEMPLATES, fieldName),
+    FieldName_Length = length(FieldName),
 
     Code =
         [
             lists:append(
                 [
-                    lists:nth(rand:uniform(Name_Length), Name),
+                    lists:nth(rand:uniform(FieldName_Length), FieldName),
                     " ",
                     case rand:uniform(5) rem 5 of
                         1 -> lists:nth(rand:uniform(DataType_2_Length),
@@ -1405,6 +1407,18 @@ create_code(fieldDefinitionCommaList = Rule) ->
             end
             || _ <- lists:seq(1, ?MAX_BASIC * 2)
         ],
+    store_code(Rule, Code, ?MAX_BASIC, false),
+    ?CREATE_CODE_END;
+
+%% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% fieldName ::= 'API_GROUP' | NAME
+%% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+create_code(fieldName = Rule) ->
+    ?CREATE_CODE_START,
+    [{name, Name}] = ets:lookup(?CODE_TEMPLATES, name),
+
+    Code = ["api_group" | Name],
     store_code(Rule, Code, ?MAX_BASIC, false),
     ?CREATE_CODE_END;
 
@@ -2027,11 +2041,14 @@ create_code(packageItem = Rule) ->
     [{subtypeDefinition, SubtypeDefinition}] =
         ets:lookup(?CODE_TEMPLATES, subtypeDefinition),
     SubtypeDefinition_Length = length(SubtypeDefinition),
+    [{variableDeclaration, VariableDeclaration}] = ets:lookup(
+        ?CODE_TEMPLATES, variableDeclaration),
+    VariableDeclaration_Length = length(VariableDeclaration),
 
     Code =
         [
             case rand:uniform(20) rem 20 of
-                1 -> case rand:uniform(5) rem 5 of
+                1 -> case rand:uniform(6) rem 6 of
                          1 -> lists:nth(
                              rand:uniform(ConstantDeclaration_Length),
                              ConstantDeclaration);
@@ -2044,7 +2061,7 @@ create_code(packageItem = Rule) ->
                          4 -> lists:nth(
                              rand:uniform(RefCursorTypeDefinition_Length),
                              RefCursorTypeDefinition);
-                         _ -> case rand:uniform(4) rem 4 of
+                         5 -> case rand:uniform(4) rem 4 of
                                   1 -> lists:nth(
                                       rand:uniform(SubtypeDefinition_Length),
                                       SubtypeDefinition);
@@ -2052,7 +2069,11 @@ create_code(packageItem = Rule) ->
                                       rand:uniform(
                                           CollectionTypeDefinition_Length),
                                       CollectionTypeDefinition)
-                              end end;
+                              end;
+                         _ -> lists:nth(
+                             rand:uniform(VariableDeclaration_Length),
+                             VariableDeclaration)
+                     end;
                 _ -> case rand:uniform(2) rem 2 of
                          1 -> lists:nth(
                              rand:uniform(PackageFunctionDeclaration_Length),
@@ -3115,6 +3136,48 @@ create_code(unitKind = Rule) ->
             "Procedure",
             "Trigger",
             "Type"
+        ],
+    store_code(Rule, Code, ?MAX_BASIC, false),
+    ?CREATE_CODE_END;
+
+%% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% variableDeclaration ::= NAME ( dataType_1 | dataType_2 ) ( 'NOT' 'NULL' )? default? ';'
+%% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+create_code(variableDeclaration = Rule) ->
+    ?CREATE_CODE_START,
+    [{dataType_1, DataType_1}] = ets:lookup(?CODE_TEMPLATES, dataType_1),
+    DataType_1_Length = length(DataType_1),
+    [{dataType_2, DataType_2}] = ets:lookup(?CODE_TEMPLATES, dataType_2),
+    DataType_2_Length = length(DataType_2),
+    [{default, Default}] = ets:lookup(?CODE_TEMPLATES, default),
+    Default_Length = length(Default),
+    [{name, Name}] = ets:lookup(?CODE_TEMPLATES, name),
+    Name_Length = length(Name),
+
+    Code =
+        [
+            lists:append(
+                [
+                    lists:nth(rand:uniform(Name_Length), Name),
+                    " ",
+                    case rand:uniform(5) rem 5 of
+                        1 -> lists:nth(rand:uniform(DataType_2_Length),
+                            DataType_2);
+                        _ -> lists:nth(rand:uniform(DataType_1_Length),
+                            DataType_1)
+                    end,
+                    case rand:uniform(2) rem 2 of
+                        1 -> " not null ";
+                        _ -> []
+                    end,
+                    case rand:uniform(2) rem 2 of
+                        1 -> lists:nth(rand:uniform(Default_Length), Default);
+                        _ -> []
+                    end,
+                    ";"
+                ])
+            || _ <- lists:seq(1, ?MAX_BASIC * 2)
         ],
     store_code(Rule, Code, ?MAX_BASIC, false),
     ?CREATE_CODE_END;

@@ -52,6 +52,7 @@ Nonterminals
  expression
  fieldDefinition
  fieldDefinitionCommaList
+ fieldName
  functionAnnotation
  functionArg
  functionArgCommaList
@@ -94,6 +95,7 @@ Nonterminals
  typeDefinition
  unaryAddOrSubtract
  unitKind
+ variableDeclaration
  varrayTypeDef
 .
 
@@ -529,6 +531,7 @@ invokerRightsClause -> AUTHID DEFINER      : #{invokerRightsClause => unwrap_2_l
 
 itemDeclaration -> constantDeclaration  : '$1'.
 itemDeclaration -> exceptionDeclaration : '$1'.
+itemDeclaration -> variableDeclaration  : '$1'.
 
 packageFunctionDeclaration ->                                        functionHeading                                                  ';' : #{type => "Function",
                                                                                                                                               packageFunctionDeclaration => #{functionHeading@ => '$1'}}.
@@ -789,6 +792,39 @@ subtypeDefinition -> SUBTYPE NAME IS dataType_2 NOT NULLX ';' : #{type => "Subty
                                                                                          dataType@ => '$4',
                                                                                          notNull@ => #{notNull => "not null"}}}.
 
+variableDeclaration -> NAME dataType_1                   ';' : #{type => "Constant",
+                                                                 variableDeclaration => #{name@ => unwrap_2_list('$1'),
+                                                                                          dataType@ => '$2'}}.
+variableDeclaration -> NAME dataType_1           default ';' : #{type => "Constant",
+                                                                 variableDeclaration => #{name@ => unwrap_2_list('$1'),
+                                                                                          dataType@ => '$2',
+                                                                                          default@ => '$3'}}.
+variableDeclaration -> NAME dataType_1 NOT NULLX         ';' : #{type => "Constant",
+                                                                 variableDeclaration => #{name@ => unwrap_2_list('$1'),
+                                                                                          dataType@ => '$2',
+                                                                                          notNull@ => #{notNull => "not null"}}}.
+variableDeclaration -> NAME dataType_1 NOT NULLX default ';' : #{type => "Constant",
+                                                                 variableDeclaration => #{name@ => unwrap_2_list('$1'),
+                                                                                          dataType@ => '$2',
+                                                                                          notNull@ => #{notNull => "not null"},
+                                                                                          default@ => '$5'}}.
+variableDeclaration -> NAME dataType_2                   ';' : #{type => "Constant",
+                                                                 variableDeclaration => #{name@ => unwrap_2_list('$1'),
+                                                                                          dataType@ => '$2'}}.
+variableDeclaration -> NAME dataType_2           default ';' : #{type => "Constant",
+                                                                 variableDeclaration => #{name@ => unwrap_2_list('$1'),
+                                                                                          dataType@ => '$2',
+                                                                                          default@ => '$3'}}.
+variableDeclaration -> NAME dataType_2 NOT NULLX         ';' : #{type => "Constant",
+                                                                 variableDeclaration => #{name@ => unwrap_2_list('$1'),
+                                                                                          dataType@ => '$2',
+                                                                                          notNull@ => #{notNull => "not null"}}}.
+variableDeclaration -> NAME dataType_2 NOT NULLX default ';' : #{type => "Constant",
+                                                                 variableDeclaration => #{name@ => unwrap_2_list('$1'),
+                                                                                          dataType@ => '$2',
+                                                                                          notNull@ => #{notNull => "not null"},
+                                                                                          default@ => '$5'}}.
+
 %% Level 09 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 accessor ->                   NAME : #{accessor => #{name@ => unwrap_2_list('$1')}}.
@@ -974,23 +1010,21 @@ dataType_2 -> VARCHAR2      '(' INTNUM            ')'                          :
 dataType_3 -> LONG                                                             : #{dataType => #{class@ => sql,
                                                                                                  type@ => "LONG"}}.
 
-fieldDefinition -> API_GROUP dataType_1                   : #{fieldDefinition => #{name@ => "API_GROUP",
+fieldDefinition -> fieldName dataType_1                   : #{fieldDefinition => #{name@ => '$1',
                                                                                    dataType@ => '$2'}}.
-fieldDefinition -> NAME      dataType_1                   : #{fieldDefinition => #{name@ => unwrap_2_list('$1'),
+fieldDefinition -> fieldName dataType_2                   : #{fieldDefinition => #{name@ => '$1',
                                                                                    dataType@ => '$2'}}.
-fieldDefinition -> NAME      dataType_2                   : #{fieldDefinition => #{name@ => unwrap_2_list('$1'),
-                                                                                   dataType@ => '$2'}}.
-fieldDefinition -> NAME      dataType_1           default : #{fieldDefinition => #{name@ => unwrap_2_list('$1'),
+fieldDefinition -> fieldName dataType_1           default : #{fieldDefinition => #{name@ => '$1',
                                                                                    dataType@ => '$2',
                                                                                    default@ => '$3'}}.
-fieldDefinition -> NAME      dataType_2           default : #{fieldDefinition => #{name@ => unwrap_2_list('$1'),
+fieldDefinition -> fieldName dataType_2           default : #{fieldDefinition => #{name@ => '$1',
                                                                                    dataType@ => '$2',
                                                                                    default@ => '$3'}}.
-fieldDefinition -> NAME      dataType_1 NOT NULLX default : #{fieldDefinition => #{name@ => unwrap_2_list('$1'),
+fieldDefinition -> fieldName dataType_1 NOT NULLX default : #{fieldDefinition => #{name@ => '$1',
                                                                                    dataType@ => '$2',
                                                                                    notNull@ => #{notNull => "not null"},
                                                                                    default@ => '$5'}}.
-fieldDefinition -> NAME      dataType_2 NOT NULLX default : #{fieldDefinition => #{name@ => unwrap_2_list('$1'),
+fieldDefinition -> fieldName dataType_2 NOT NULLX default : #{fieldDefinition => #{name@ => '$1',
                                                                                    dataType@ => '$2',
                                                                                    notNull@ => #{notNull => "not null"},
                                                                                    default@ => '$5'}}.
@@ -1048,6 +1082,9 @@ varrayTypeDef -> VARYING ARRAY '(' INTNUM ')' OF dataType_2 NOT NULLX : #{varray
                                                                                              notNull@ => #{notNull => "not null"}}}.
 
 %% Level 10 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+fieldName -> API_GROUP : "api_group".
+fieldName -> NAME      : unwrap_2_list('$1').
 
 parameterDeclaration -> NAME               dataType_1         : #{parameterDeclaration => #{name@ => unwrap_2_list('$1'),
                                                                                             dataType@ => '$2'}}.

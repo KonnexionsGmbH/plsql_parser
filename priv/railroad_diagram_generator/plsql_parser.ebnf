@@ -348,6 +348,8 @@ invokerRightsClause -> AUTHID DEFINER      : #{invokerRightsClause => unwrap_2_l
 
 itemDeclaration -> constantDeclaration  : '$1'.
 itemDeclaration -> exceptionDeclaration : '$1'.
+itemDeclaration -> variableDeclaration  : '$1'.
+
 
 packageFunctionDeclaration ->                                        functionHeading                                                  ';' : #{type => "Function",
                                                                                                                                               packageFunctionDeclaration  => #{functionHeading@ => '$1'}}.
@@ -503,6 +505,7 @@ packageProcedureDeclaration -> apiHiddenAnnotation procedureAnnotation procedure
                                                                                                                                                               accessibleByClause@ => '$4'}}.
 typeDefinition -> collectionTypeDefinition : '$1'.
 typeDefinition -> recordTypeDefinition     : '$1'.
+typeDefinition -> refCursorTypeDefinition  : '$1'.
 typeDefinition -> subtypeDefinition        : '$1'.
 
 ============================================================================= */
@@ -515,6 +518,7 @@ invokerRightsClause ::= 'AUTHID' ( 'CURRENT_USER' | 'DEFINER' )
 
 itemDeclaration ::= constantDeclaration
                   | exceptionDeclaration
+                  | variableDeclaration
 
 packageFunctionDeclaration ::= apiHiddenAnnotation? functionAnnotation? functionHeading packageFunctionDeclarationAttribute* 'MAN_PAGE'? ';'
 
@@ -531,6 +535,7 @@ packageProcedureDeclaration ::= apiHiddenAnnotation? procedureAnnotation? proced
 
 typeDefinition ::= collectionTypeDefinition
                  | recordTypeDefinition
+                 | refCursorTypeDefinition
                  | subtypeDefinition
 
 /* =============================================================================
@@ -596,26 +601,26 @@ recordTypeDefinition -> TYPE NAME IS RECORD '(' fieldDefinitionCommaList ')' ';'
                                                                                                                fieldDefinitionCommaList@ => '$6'}}.
 
 refCursorTypeDefinition -> TYPE NAME IS REF CURSOR RETURN NAME                              ';' : #{type => "RefCursorType",
-                                                                                                    refCursrTpeDefinition => #{refCursorTypeName@ => #{refCursorTypeName => unwrap_2_list('$2')},
+                                                                                                    refCursorTypeDefinition => #{name@ => unwrap_2_list('$2'),
                                                                                                     type@ => unwrap_2_list('$7')}}.
 refCursorTypeDefinition -> TYPE NAME IS REF CURSOR RETURN NAME                   '%ROWTYPE' ';' : #{type => "RefCursorType",
-                                                                                                    refCursrTpeDefinition => #{refCursorTypeName@ => #{refCursorTypeName => unwrap_2_list('$2')},
+                                                                                                    refCursorTypeDefinition => #{name@ => unwrap_2_list('$2'),
                                                                                                     type@ => unwrap_2_list('$7'),
                                                                                                     attribute@ => unwrap_2_list('$8')}}.
 refCursorTypeDefinition -> TYPE NAME IS REF CURSOR RETURN NAME                   '%TYPE'    ';' : #{type => "RefCursorType",
-                                                                                                    refCursrTpeDefinition => #{refCursorTypeName@ => #{refCursorTypeName => unwrap_2_list('$2')},
+                                                                                                    refCursorTypeDefinition => #{name@ => unwrap_2_list('$2'),
                                                                                                     type@ => unwrap_2_list('$7'),
                                                                                                     attribute@ => unwrap_2_list('$8')}}.
 refCursorTypeDefinition -> TYPE NAME IS REF CURSOR RETURN NAME '.' NAME          '%ROWTYPE' ';' : #{type => "RefCursorType",
-                                                                                                    refCursrTpeDefinition => #{refCursorTypeName@ => #{refCursorTypeName => unwrap_2_list('$2')},
+                                                                                                    refCursorTypeDefinition => #{name@ => unwrap_2_list('$2'),
                                                                                                     type@ => lists:append([unwrap_2_list('$7'), ".", unwrap_2_list('$9')]),
                                                                                                     attribute@ => unwrap_2_list('$10')}}.
 refCursorTypeDefinition -> TYPE NAME IS REF CURSOR RETURN NAME '.' NAME          '%TYPE'    ';' : #{type => "RefCursorType",
-                                                                                                    refCursrTpeDefinition => #{refCursorTypeName@ => #{refCursorTypeName => unwrap_2_list('$2')},
+                                                                                                    refCursorTypeDefinition => #{name@ => unwrap_2_list('$2'),
                                                                                                     type@ => lists:append([unwrap_2_list('$7'), ".", unwrap_2_list('$9')]),
                                                                                                     attribute@ => unwrap_2_list('$10')}}.
 refCursorTypeDefinition -> TYPE NAME IS REF CURSOR RETURN NAME '.' NAME '.' NAME '%TYPE'    ';' : #{type => "RefCursorType",
-                                                                                                    refCursrTpeDefinition => #{refCursorTypeName@ => #{refCursorTypeName => unwrap_2_list('$2')},
+                                                                                                    refCursorTypeDefinition => #{name@ => unwrap_2_list('$2'),
                                                                                                     type@ => lists:append([unwrap_2_list('$7'), ".", unwrap_2_list('$9'), ".", unwrap_2_list('$11')]),
                                                                                                     attribute@ => unwrap_2_list('$12')}}.
 
@@ -633,6 +638,40 @@ subtypeDefinition -> SUBTYPE NAME IS dataType_2 NOT NULLX ';' : #{type => "Subty
                                                                   subtypeDefinition => #{subtypeName@ => #{subtypeName => unwrap_2_list('$2')},
                                                                                          dataType@ => '$4',
                                                                                          notNull@ => #{notNull => "not null"}}}.
+
+variableDeclaration -> NAME dataType_1                   ';' : #{type => "Constant",
+                                                                 variableDeclaration => #{name@ => unwrap_2_list('$1'),
+                                                                                          dataType@ => '$3'}.
+variableDeclaration -> NAME dataType_1           default ';' : #{type => "Constant",
+                                                                 variableDeclaration => #{name@ => unwrap_2_list('$1'),
+                                                                                          dataType@ => '$3',
+                                                                                          default@ => '$4'}}.
+variableDeclaration -> NAME dataType_1 NOT NULLX         ';' : #{type => "Constant",
+                                                                 variableDeclaration => #{name@ => unwrap_2_list('$1'),
+                                                                                          dataType@ => '$3',
+                                                                                          notNull@ => #{notNull => "not null"}}.
+variableDeclaration -> NAME dataType_1 NOT NULLX default ';' : #{type => "Constant",
+                                                                 variableDeclaration => #{name@ => unwrap_2_list('$1'),
+                                                                                          dataType@ => '$3',
+                                                                                          notNull@ => #{notNull => "not null"},
+                                                                                          default@ => '$6'}}.
+variableDeclaration -> NAME dataType_2                   ';' : #{type => "Constant",
+                                                                 variableDeclaration => #{name@ => unwrap_2_list('$1'),
+                                                                                          dataType@ => '$3'}.
+variableDeclaration -> NAME dataType_2           default ';' : #{type => "Constant",
+                                                                 variableDeclaration => #{name@ => unwrap_2_list('$1'),
+                                                                                          dataType@ => '$3',
+                                                                                          default@ => '$4'}}.
+variableDeclaration -> NAME dataType_2 NOT NULLX         ';' : #{type => "Constant",
+                                                                 variableDeclaration => #{name@ => unwrap_2_list('$1'),
+                                                                                          dataType@ => '$3',
+                                                                                          notNull@ => #{notNull => "not null"}}.
+variableDeclaration -> NAME dataType_2 NOT NULLX default ';' : #{type => "Constant",
+                                                                 variableDeclaration => #{name@ => unwrap_2_list('$1'),
+                                                                                          dataType@ => '$3',
+                                                                                          notNull@ => #{notNull => "not null"},
+                                                                                          default@ => '$6'}}.
+
 ============================================================================= */
 
 collectionTypeDefinition ::= 'TYPE' NAME 'IS' ( assocArrayTypeDef | varrayTypeDef ) ';'
@@ -657,6 +696,8 @@ refCursorTypeDefinition ::= 'TYPE' NAME 'IS' 'REF' 'CURSOR' 'RETURN' ( NAME
                                                                  |   ( NAME '.' NAME '.' NAME '%TYPE'? ) )  ';'
 
 subtypeDefinition ::= 'SUBTYPE' NAME 'IS'  ( dataType_1 | dataType_2 )  ( 'NOT' 'NULL' )? ';'
+
+variableDeclaration ::= NAME ( dataType_1 | dataType_2 ) ( 'NOT' 'NULL' )? default? ';'
 
 /* =============================================================================
 accessor ->                   NAME : #{accessor => #{name@ => unwrap_2_list('$1')}}.
@@ -842,24 +883,24 @@ dataType_2 -> VARCHAR2      '(' INTNUM            ')'                          :
 dataType_3 -> LONG                                                             : #{dataType => #{class@ => sql,
                                                                                                  type@ => "LONG"}}.
 
-fieldDefinition -> NAME dataType_1                   : #{fieldDefinition => #{name@ => unwrap_2_list('$1'),
-                                                                              dataType@ => '$2'}}.
-fieldDefinition -> NAME dataType_2                   : #{fieldDefinition => #{name@ => unwrap_2_list('$1'),
-                                                                              dataType@ => '$2'}}.
-fieldDefinition -> NAME dataType_1           default : #{fieldDefinition => #{name@ => unwrap_2_list('$1'),
-                                                                              dataType@ => '$2',
-                                                                              default@ => '$3'}}.
-fieldDefinition -> NAME dataType_2           default : #{fieldDefinition => #{name@ => unwrap_2_list('$1'),
-                                                                              dataType@ => '$2',
-                                                                              default@ => '$3'}}.
-fieldDefinition -> NAME dataType_1 NOT NULLX default : #{fieldDefinition => #{name@ => unwrap_2_list('$1'),
-                                                                              dataType@ => '$2',
-                                                                              notNull@ => #{notNull => "not null"},
-                                                                              default@ => '$5'}}.
-fieldDefinition -> NAME dataType_2 NOT NULLX default : #{fieldDefinition => #{name@ => unwrap_2_list('$1'),
-                                                                              dataType@ => '$2',
-                                                                              notNull@ => #{notNull => "not null"},
-                                                                              default@ => '$5'}}.
+fieldDefinition -> fieldName dataType_1                   : #{fieldDefinition => #{name@ => '$1',
+                                                                                   dataType@ => '$2'}}.
+fieldDefinition -> fieldName dataType_2                   : #{fieldDefinition => #{name@ => '$1',
+                                                                                   dataType@ => '$2'}}.
+fieldDefinition -> fieldName dataType_1           default : #{fieldDefinition => #{name@ => '$1',
+                                                                                   dataType@ => '$2',
+                                                                                   default@ => '$3'}}.
+fieldDefinition -> fieldName dataType_2           default : #{fieldDefinition => #{name@ => '$1',
+                                                                                   dataType@ => '$2',
+                                                                                   default@ => '$3'}}.
+fieldDefinition -> fieldName dataType_1 NOT NULLX default : #{fieldDefinition => #{name@ => '$1',
+                                                                                   dataType@ => '$2',
+                                                                                   notNull@ => #{notNull => "not null"},
+                                                                                   default@ => '$5'}}.
+fieldDefinition -> fieldName dataType_2 NOT NULLX default : #{fieldDefinition => #{name@ => '$1',
+                                                                                   dataType@ => '$2',
+                                                                                   notNull@ => #{notNull => "not null"},
+                                                                                   default@ => '$5'}}.
 
 packageFunctionDeclarationAttribute -> accessibleByClause    : #{packageFunctionDeclarationAttribute => '$1'}.
 packageFunctionDeclarationAttribute -> DETERMINISTIC         : #{packageFunctionDeclarationAttribute => unwrap_2_list('$1')}.
@@ -950,7 +991,7 @@ dataType_2 ::= 'BINARY_INTEGER'
 
 dataType_3 ::= 'LONG'
 
-fieldDefinition ::= NAME ( dataType_1 | dataType_2 ) ( ( 'NOT' 'NULL' )? default )?
+fieldDefinition ::= fieldName ( dataType_1 | dataType_2 ) ( ( 'NOT' 'NULL' )? default )?
 
 packageFunctionDeclarationAttribute ::= accessibleByClause
                                       | 'DETERMINISTIC'
@@ -961,6 +1002,9 @@ packageFunctionDeclarationAttribute ::= accessibleByClause
 varrayTypeDef ::= ( ( 'VARYING'? 'ARRAY' ) | 'VARRAY' ) '(' INTNUM ')' 'OF' ( dataType_1 | dataType_2 ) ( 'NOT' 'NULL' )?
 
 /* =============================================================================
+fieldName -> API_GROUP : "api_group".
+fieldName -> NAME      : unwrap_2_list('$1').
+
 parameterDeclaration -> NAME               dataType_1         : #{parameterDeclaration => #{name@ => unwrap_2_list('$1'),
                                                                                             dataType@ => '$2'}}.
 parameterDeclaration -> NAME               dataType_1 default : #{parameterDeclaration => #{name@ => unwrap_2_list('$1'),
@@ -1020,6 +1064,8 @@ unitKind -> PROCEDURE : unwrap_2_list('$1').
 unitKind -> TRIGGER   : unwrap_2_list('$1').
 unitKind -> TYPE      : unwrap_2_list('$1').
 ============================================================================= */
+
+fieldName ::= 'API_GROUP' | NAME
 
 parameterDeclaration ::= NAME ( 'IN'? ( dataType_1 | dataType_2 ) default? )
                             | ( 'IN'? 'OUT' 'NOCOPY'? ( dataType_1 | dataType_2 ) )

@@ -1213,6 +1213,7 @@ fold(_LOpts, _FunState, Ctx, _PTree, {Rule, _Step}) when
     Rule == subtypeDefinition;
     Rule == subtypeName;
     Rule == typeName;
+    Rule == variableDeclaration;
     Rule == varraySize;
     Rule == varrayType;
     Rule == varrayTypeDef ->
