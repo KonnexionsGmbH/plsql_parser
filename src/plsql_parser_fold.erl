@@ -965,7 +965,8 @@ fold_i(Fun, LOpts, FunState, Ctx, #{recordTypeName := _Value} = PTree) ->
 % refCursorTypeDefinition
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-fold_i(Fun, LOpts, FunStateIn, Ctx, #{refCursorTypeDefinition := _Value} = PTree) ->
+fold_i(Fun, LOpts, FunStateIn, Ctx, #{refCursorTypeDefinition := _Value} =
+    PTree) ->
     Rule = refCursorTypeDefinition,
     FunState = ?FOLD_INIT_STMNT(FunStateIn, Ctx, PTree, Rule),
     NewCtxS = Fun(LOpts, FunState, Ctx, PTree, {Rule, start}),
@@ -1116,6 +1117,32 @@ fold_i(Fun, LOpts, FunState, Ctx, #{unaryAddOrSubtract := _Value} = PTree) ->
     ?FOLD_RESULT(NewCtxE);
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% variableDeclaration
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+fold_i(Fun, LOpts, FunStateIn, Ctx, #{variableDeclaration := Value} = PTree) ->
+    Rule = variableDeclaration,
+    FunState = ?FOLD_INIT_STMNT(FunStateIn, Ctx, PTree, Rule),
+    NewCtxS = Fun(LOpts, FunState, Ctx, PTree, {Rule, start}),
+    NewCtx1 = fold_i(Fun, LOpts, FunState, NewCtxS, maps:get(dataType@, Value)),
+    NewCtx2 = case maps:is_key(notNull@,
+        Value) of
+                  true ->
+                      fold_i(Fun, LOpts, FunState, NewCtx1,
+                          maps:get(notNull@, Value));
+                  _ -> NewCtx1
+              end,
+    NewCtx3 = case maps:is_key(default@,
+        Value) of
+                  true ->
+                      fold_i(Fun, LOpts, FunState, NewCtx2,
+                          maps:get(default@, Value));
+                  _ -> NewCtx2
+              end,
+    NewCtxE = Fun(LOpts, FunState, NewCtx3, PTree, {Rule, 'end'}),
+    ?FOLD_RESULT(NewCtxE);
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % varraySize
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -1228,6 +1255,7 @@ list_elem_ext_rule(Fun, LOpts, FunState, Ctx, Rule, [Head | Tail], Counter, Leng
 %     recordTypeDefinition
 %     refCursorTypeDefinition
 %     subtypeDefinition
+%     variableDeclaration
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 set_state_stmnt(FunState, Stmnt) ->
