@@ -24,6 +24,7 @@
 
 -export([
     fold/5,
+    get_stmnt_clause_curr/1,
     top_down/3
 ]).
 
@@ -141,6 +142,54 @@ fold_i(Fun, LOpts, FunState, Ctx, #{apiHiddenAnnotation := _Value} = PTree) ->
     ?FOLD_RESULT(NewCtxE);
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% assocArrayTypeDef
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+fold_i(Fun, LOpts, FunState, Ctx, #{assocArrayTypeDef := Value} = PTree) ->
+    ?FOLD_INIT(FunState, Ctx, PTree),
+    Rule = assocArrayTypeDef,
+    NewCtxS = Fun(LOpts, FunState, Ctx, PTree, {Rule, start}),
+    NewCtx1 =
+        fold_i(Fun, LOpts, FunState, NewCtxS, maps:get(dataTypeTable@, Value)),
+    NewCtx2 = case maps:is_key(notNull@,
+        Value) of
+                  true ->
+                      fold_i(Fun, LOpts, FunState, NewCtx1,
+                          maps:get(notNull@, Value));
+                  _ -> NewCtx1
+              end,
+    NewCtx3 = case maps:is_key(dataTypeIndex@,
+        Value) of
+                  true ->
+                      fold_i(Fun, LOpts, FunState, NewCtx2,
+                          maps:get(dataTypeIndex@, Value));
+                  _ -> NewCtx2
+              end,
+    NewCtxE = Fun(LOpts, FunState, NewCtx3, PTree, {Rule, 'end'}),
+    ?FOLD_RESULT(NewCtxE);
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% collectionTypeDefinitionA
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+fold_i(Fun, LOpts, FunStateIn, Ctx, #{collectionTypeDefinition := Value} =
+    PTree) ->
+    Rule = collectionTypeDefinition,
+    FunState = ?FOLD_INIT_STMNT(FunStateIn, Ctx, PTree, Rule),
+    NewCtxS = Fun(LOpts, FunState, Ctx, PTree, {Rule, start}),
+    NewCtx1 = fold_i(Fun, LOpts, FunState, NewCtxS, maps:get(typeName@, Value)),
+    NewCtx2 = case maps:is_key(assocArrayTypeDef@,
+        Value) of
+                  true ->
+                      fold_i(Fun, LOpts, FunState, NewCtx1,
+                          maps:get(assocArrayTypeDef@, Value));
+                  _ -> fold_i(Fun, LOpts, FunState, NewCtx1,
+                      maps:get(varrayTypeDef@, Value))
+              end,
+    NewCtxE = Fun(LOpts, FunState, NewCtx2, PTree, {Rule, 'end'}),
+    ?FOLD_RESULT(NewCtxE);
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % columnRef
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -170,9 +219,9 @@ fold_i(Fun, LOpts, FunState, Ctx, {columnRefCommaList@, PTree})
 % constantDeclaration
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-fold_i(Fun, LOpts, FunState, Ctx, #{constantDeclaration := Value} = PTree) ->
-    ?FOLD_INIT(FunState, Ctx, PTree),
+fold_i(Fun, LOpts, FunStateIn, Ctx, #{constantDeclaration := Value} = PTree) ->
     Rule = constantDeclaration,
+    FunState = ?FOLD_INIT_STMNT(FunStateIn, Ctx, PTree, Rule),
     NewCtxS = Fun(LOpts, FunState, Ctx, PTree, {Rule, start}),
     NewCtx1 =
         fold_i(Fun, LOpts, FunState, NewCtxS, maps:get(constantName@, Value)),
@@ -255,6 +304,32 @@ fold_i(Fun, LOpts, FunState, Ctx, #{dataType := _Value} = PTree) ->
     ?FOLD_RESULT(NewCtxE);
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% dataTypeIndex
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+fold_i(Fun, LOpts, FunState, Ctx, #{dataTypeIndex := _Value} = PTree) ->
+    ?FOLD_INIT(FunState, Ctx, PTree),
+    Rule = dataTypeIndex,
+    NewCtxS = Fun(LOpts, FunState, Ctx, PTree, {Rule, start}),
+    NewCtx1 = fold_i(Fun, LOpts, FunState, NewCtxS,
+        maps:get(dataType@, PTree)),
+    NewCtxE = Fun(LOpts, FunState, NewCtx1, PTree, {Rule, 'end'}),
+    ?FOLD_RESULT(NewCtxE);
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% dataTypeTable
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+fold_i(Fun, LOpts, FunState, Ctx, #{dataTypeTable := _Value} = PTree) ->
+    ?FOLD_INIT(FunState, Ctx, PTree),
+    Rule = dataTypeTable,
+    NewCtxS = Fun(LOpts, FunState, Ctx, PTree, {Rule, start}),
+    NewCtx1 = fold_i(Fun, LOpts, FunState, NewCtxS,
+        maps:get(dataType@, PTree)),
+    NewCtxE = Fun(LOpts, FunState, NewCtx1, PTree, {Rule, 'end'}),
+    ?FOLD_RESULT(NewCtxE);
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % default
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -296,9 +371,10 @@ fold_i(Fun, LOpts, FunState, Ctx, #{defaultValue@_@ := Value} = PTree) ->
 % exceptionDeclaration
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-fold_i(Fun, LOpts, FunState, Ctx, #{exceptionDeclaration := _Value} = PTree) ->
-    ?FOLD_INIT(FunState, Ctx, PTree),
+fold_i(Fun, LOpts, FunStateIn, Ctx, #{exceptionDeclaration := _Value} =
+    PTree) ->
     Rule = exceptionDeclaration,
+    FunState = ?FOLD_INIT_STMNT(FunStateIn, Ctx, PTree, Rule),
     NewCtxS = Fun(LOpts, FunState, Ctx, PTree, {Rule, start}),
     NewCtxE = Fun(LOpts, FunState, NewCtxS, PTree, {Rule, 'end'}),
     ?FOLD_RESULT(NewCtxE);
@@ -528,10 +604,10 @@ fold_i(Fun, LOpts, FunState, Ctx, #{objectPrivilegeAnnotation := _Value} =
 % packageFunctionDeclaration
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-fold_i(Fun, LOpts, FunState, Ctx, #{packageFunctionDeclaration := Value} =
+fold_i(Fun, LOpts, FunStateIn, Ctx, #{packageFunctionDeclaration := Value} =
     PTree) ->
-    ?FOLD_INIT(FunState, Ctx, PTree),
     Rule = packageFunctionDeclaration,
+    FunState = ?FOLD_INIT_STMNT(FunStateIn, Ctx, PTree, Rule),
     NewCtxS = Fun(LOpts, FunState, Ctx, PTree, {Rule, start}),
     NewCtx1 = case maps:is_key(apiHiddenAnnotation@,
         Value) of
@@ -646,10 +722,10 @@ fold_i(Fun, LOpts, FunState, Ctx, #{packageItemSimple := Value} = PTree) ->
 % packageProcedureDeclaration
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-fold_i(Fun, LOpts, FunState, Ctx, #{packageProcedureDeclaration := Value} =
+fold_i(Fun, LOpts, FunStateIn, Ctx, #{packageProcedureDeclaration := Value} =
     PTree) ->
-    ?FOLD_INIT(FunState, Ctx, PTree),
     Rule = packageProcedureDeclaration,
+    FunState = ?FOLD_INIT_STMNT(FunStateIn, Ctx, PTree, Rule),
     NewCtxS = Fun(LOpts, FunState, Ctx, PTree, {Rule, start}),
     NewCtx1 = case maps:is_key(apiHiddenAnnotation@,
         Value) of
@@ -863,14 +939,26 @@ fold_i(Fun, LOpts, FunState, Ctx, #{procedureHeading := Value} = PTree) ->
 % recordTypeDefinition
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-fold_i(Fun, LOpts, FunState, Ctx, #{recordTypeDefinition := Value} = PTree) ->
-    ?FOLD_INIT(FunState, Ctx, PTree),
+fold_i(Fun, LOpts, FunStateIn, Ctx, #{recordTypeDefinition := Value} = PTree) ->
     Rule = recordTypeDefinition,
+    FunState = ?FOLD_INIT_STMNT(FunStateIn, Ctx, PTree, Rule),
     NewCtxS = Fun(LOpts, FunState, Ctx, PTree, {Rule, start}),
-    NewCtx1 = fold_i(Fun, LOpts, FunState, NewCtxS, maps:get(typeName@, Value)),
+    NewCtx1 =
+        fold_i(Fun, LOpts, FunState, NewCtxS, maps:get(recordTypeName@, Value)),
     NewCtx2 = list_elem_ext_rule(Fun, LOpts, FunState, NewCtx1,
         fieldDefinitionCommaList, maps:get(fieldDefinitionCommaList@, Value)),
     NewCtxE = Fun(LOpts, FunState, NewCtx2, PTree, {Rule, 'end'}),
+    ?FOLD_RESULT(NewCtxE);
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% recordTypeName
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+fold_i(Fun, LOpts, FunState, Ctx, #{recordTypeName := _Value} = PTree) ->
+    ?FOLD_INIT(FunState, Ctx, PTree),
+    Rule = recordTypeName,
+    NewCtxS = Fun(LOpts, FunState, Ctx, PTree, {Rule, start}),
+    NewCtxE = Fun(LOpts, FunState, NewCtxS, PTree, {Rule, 'end'}),
     ?FOLD_RESULT(NewCtxE);
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -939,6 +1027,38 @@ fold_i(Fun, LOpts, FunState, Ctx, #{streamingClauseExpression@_@ := Value} =
     ?FOLD_RESULT(NewCtxE);
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% subtypeDefinition
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+fold_i(Fun, LOpts, FunStateIn, Ctx, #{subtypeDefinition := Value} = PTree) ->
+    Rule = subtypeDefinition,
+    FunState = ?FOLD_INIT_STMNT(FunStateIn, Ctx, PTree, Rule),
+    NewCtxS = Fun(LOpts, FunState, Ctx, PTree, {Rule, start}),
+    NewCtx1 =
+        fold_i(Fun, LOpts, FunState, NewCtxS, maps:get(subtypeName@, Value)),
+    NewCtx2 = fold_i(Fun, LOpts, FunState, NewCtx1, maps:get(dataType@, Value)),
+    NewCtx3 = case maps:is_key(notNull@,
+        Value) of
+                  true ->
+                      fold_i(Fun, LOpts, FunState, NewCtx2,
+                          maps:get(notNull@, Value));
+                  _ -> NewCtx2
+              end,
+    NewCtxE = Fun(LOpts, FunState, NewCtx3, PTree, {Rule, 'end'}),
+    ?FOLD_RESULT(NewCtxE);
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% subtypeName
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+fold_i(Fun, LOpts, FunState, Ctx, #{subtypeName := _Value} = PTree) ->
+    ?FOLD_INIT(FunState, Ctx, PTree),
+    Rule = subtypeName,
+    NewCtxS = Fun(LOpts, FunState, Ctx, PTree, {Rule, start}),
+    NewCtxE = Fun(LOpts, FunState, NewCtxS, PTree, {Rule, 'end'}),
+    ?FOLD_RESULT(NewCtxE);
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % systemPrivilegeAnnotation
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -985,6 +1105,52 @@ fold_i(Fun, LOpts, FunState, Ctx, #{unaryAddOrSubtract := _Value} = PTree) ->
     ?FOLD_RESULT(NewCtxE);
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% varraySize
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+fold_i(Fun, LOpts, FunState, Ctx, #{varraySize := _Value} = PTree) ->
+    ?FOLD_INIT(FunState, Ctx, PTree),
+    Rule = varraySize,
+    NewCtxS = Fun(LOpts, FunState, Ctx, PTree, {Rule, start}),
+    NewCtxE = Fun(LOpts, FunState, NewCtxS, PTree, {Rule, 'end'}),
+    ?FOLD_RESULT(NewCtxE);
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% varrayType
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+fold_i(Fun, LOpts, FunState, Ctx, #{varrayType := _Value} = PTree) ->
+    ?FOLD_INIT(FunState, Ctx, PTree),
+    Rule = varrayType,
+    NewCtxS = Fun(LOpts, FunState, Ctx, PTree, {Rule, start}),
+    NewCtxE = Fun(LOpts, FunState, NewCtxS, PTree, {Rule, 'end'}),
+    ?FOLD_RESULT(NewCtxE);
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% varrayTypeDef
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+fold_i(Fun, LOpts, FunState, Ctx, #{varrayTypeDef := Value} = PTree) ->
+    ?FOLD_INIT(FunState, Ctx, PTree),
+    Rule = varrayTypeDef,
+    NewCtxS = Fun(LOpts, FunState, Ctx, PTree, {Rule, start}),
+    NewCtx1 =
+        fold_i(Fun, LOpts, FunState, NewCtxS, maps:get(type@, Value)),
+    NewCtx2 =
+        fold_i(Fun, LOpts, FunState, NewCtx1, maps:get(size@, Value)),
+    NewCtx3 =
+        fold_i(Fun, LOpts, FunState, NewCtx2, maps:get(dataType@, Value)),
+    NewCtx4 = case maps:is_key(notNull@,
+        Value) of
+                  true ->
+                      fold_i(Fun, LOpts, FunState, NewCtx3,
+                          maps:get(notNull@, Value));
+                  _ -> NewCtx3
+              end,
+    NewCtxE = Fun(LOpts, FunState, NewCtx4, PTree, {Rule, 'end'}),
+    ?FOLD_RESULT(NewCtxE);
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % UNSUPPORTED
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -997,6 +1163,17 @@ fold_i(_Fun, _LOpts, _FunState, _Ctx, PTree) ->
         atom_to_list(?FUNCTION_NAME),
         "] parser subtree not supported"
     ]), PTree}).
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Get current statement, clause and rule.
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+-spec get_stmnt_clause_curr(FunState :: tuple()) -> {atom(), atom(), atom()}.
+get_stmnt_clause_curr(FunState) ->
+    case length(FunState#fstate.stmnts) of
+        0 -> {none, none, none};
+        _ -> lists:last(FunState#fstate.stmnts)
+    end.
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Helper functions.
@@ -1028,3 +1205,19 @@ list_elem_ext_rule(Fun, LOpts, FunState, Ctx, Rule, [Head | Tail], Counter, Leng
     NewCtxS = fold_i(Fun, LOpts, FunState, Ctx, {Rule, other, Head}),
     list_elem_ext_rule(Fun, LOpts, FunState, NewCtxS, Rule, Tail,
         Counter - 1, Length).
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Set the function state for a new statement:
+% -------------------------------------------
+%     collectionTypeDefinition
+%     constantDeclaration
+%     exceptionDeclaration
+%     packageFunctionDeclaration
+%     packageProcedureDeclaration
+%     recordTypeDefinition
+%     subtypeDefinition
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+set_state_stmnt(FunState, Stmnt) ->
+    FunState#fstate{indent_lvl = FunState#fstate.indent_lvl + 1,
+        stmnts = FunState#fstate.stmnts ++ [{Stmnt, none, none}]}.

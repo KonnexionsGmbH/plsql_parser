@@ -98,6 +98,7 @@ create_code() ->
     % based on lexer definitions ...............................................
     create_code(approxnum),
     create_code(comparison),
+    create_code(dataType_3),
     create_code(intnum),
     create_code(man_page),
     create_code(name),
@@ -125,7 +126,8 @@ create_code() ->
     create_code(apiGroupAnnotation),
     create_code(columnRef),
     create_code(dataSource),
-    create_code(dataType),
+    create_code(dataType_1),
+    create_code(dataType_2),
     create_code(dataTypeReturn),
     create_code(exceptionDeclaration),
     create_code(literal),
@@ -143,9 +145,12 @@ create_code() ->
         [])),
 
     create_code(accessorCommaList),
+    create_code(assocArrayTypeDef),
     create_code(columnRefCommaList),
     create_code(dataSourceCommaList),
     create_code(privilegeAnnotationList),
+    create_code(subtypeDefinition),
+    create_code(varrayTypeDef),
 
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Level 04
@@ -156,6 +161,7 @@ create_code() ->
         [])),
 
     create_code(accessibleByClause),
+    create_code(collectionTypeDefinition),
     create_code(functionAnnotation),
     create_code(procedureAnnotation),
     create_code(resultCacheClause),
@@ -551,6 +557,85 @@ create_code(approxnum = Rule) ->
     ?CREATE_CODE_END;
 
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% assocArrayTypeDef ::= 'TABLE' 'OF' ( dataType_1 | dataType_2 ) ( NOT NULL )? ( 'INDEX' 'BY' ( dataType_2 | dataType_3 ) )?
+%% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+create_code(assocArrayTypeDef = Rule) ->
+    ?CREATE_CODE_START,
+    [{dataType_1, DataType_1}] = ets:lookup(?CODE_TEMPLATES, dataType_1),
+    DataType_1_Length = length(DataType_1),
+    [{dataType_2, DataType_2}] = ets:lookup(?CODE_TEMPLATES, dataType_2),
+    DataType_2_Length = length(DataType_2),
+    [{dataType_3, DataType_3}] = ets:lookup(?CODE_TEMPLATES, dataType_3),
+    DataType_3_Length = length(DataType_3),
+
+    Code =
+        [
+            lists:append(
+                [
+                    "table of  ",
+                    case rand:uniform(5) rem 5 of
+                        1 -> lists:nth(rand:uniform(DataType_2_Length),
+                            DataType_2);
+                        _ -> lists:nth(rand:uniform(DataType_1_Length),
+                            DataType_1)
+                    end,
+                    case rand:uniform(5) rem 5 of
+                        1 -> " not null ";
+                        _ -> []
+                    end,
+                    case rand:uniform(2) rem 2 of
+                        1 -> " index by "
+                        ++ case rand:uniform(10) rem 10 of
+                               1 -> lists:nth(rand:uniform(DataType_3_Length),
+                                   DataType_3);
+                               _ -> lists:nth(rand:uniform(DataType_2_Length),
+                                   DataType_2)
+                           end;
+                        _ -> []
+                    end
+                ])
+            || _ <- lists:seq(1, ?MAX_BASIC * 2)
+        ],
+    store_code(Rule, Code, ?MAX_BASIC, false),
+    ?CREATE_CODE_END;
+
+%% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% collectionTypeDefinition ::= 'TYPE' NAME 'IS' ( assocArrayTypeDef | varrayTypeDef ) ';'
+%% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+create_code(collectionTypeDefinition = Rule) ->
+    ?CREATE_CODE_START,
+    [{assocArrayTypeDef, AssocArrayTypeDef}] =
+        ets:lookup(?CODE_TEMPLATES, assocArrayTypeDef),
+    AssocArrayTypeDef_Length = length(AssocArrayTypeDef),
+    [{name, Name}] = ets:lookup(?CODE_TEMPLATES, name),
+    Name_Length = length(Name),
+    [{varrayTypeDef, VarrayTypeDef}] =
+        ets:lookup(?CODE_TEMPLATES, varrayTypeDef),
+    VarrayTypeDef_Length = length(VarrayTypeDef),
+
+    Code =
+        [
+            lists:append(
+                [
+                    "type ",
+                    lists:nth(rand:uniform(Name_Length), Name),
+                    " is ",
+                    case rand:uniform(2) rem 2 of
+                        1 -> lists:nth(rand:uniform(AssocArrayTypeDef_Length),
+                            AssocArrayTypeDef);
+                        _ -> lists:nth(rand:uniform(VarrayTypeDef_Length),
+                            VarrayTypeDef)
+                    end,
+                    ";"
+                ])
+            || _ <- lists:seq(1, ?MAX_BASIC * 2)
+        ],
+    store_code(Rule, Code, ?MAX_BASIC, false),
+    ?CREATE_CODE_END;
+
+%% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% columnRef ::= ( ( ( NAME '.' )? NAME '.' )? NAME ( '(' '+' ')' )? )
 %%             | ( ( NAME '.' )? NAME '.' '*' )
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -634,13 +719,15 @@ create_code(comparison = Rule) ->
     ?CREATE_CODE_END;
 
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% constantDeclaration ::= NAME 'CONSTANT' dataType ( 'NOT' 'NULL' )? default ';'
+%% constantDeclaration ::= NAME 'CONSTANT' ( dataType_1 | dataType_2 ) ( 'NOT' 'NULL' )? default ';'
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 create_code(constantDeclaration = Rule) ->
     ?CREATE_CODE_START,
-    [{dataType, DataType}] = ets:lookup(?CODE_TEMPLATES, dataType),
-    DataType_Length = length(DataType),
+    [{dataType_1, DataType_1}] = ets:lookup(?CODE_TEMPLATES, dataType_1),
+    DataType_1_Length = length(DataType_1),
+    [{dataType_2, DataType_2}] = ets:lookup(?CODE_TEMPLATES, dataType_2),
+    DataType_2_Length = length(DataType_2),
     [{default, Default}] = ets:lookup(?CODE_TEMPLATES, default),
     Default_Length = length(Default),
     [{name, Name}] = ets:lookup(?CODE_TEMPLATES, name),
@@ -652,7 +739,12 @@ create_code(constantDeclaration = Rule) ->
                 [
                     lists:nth(rand:uniform(Name_Length), Name),
                     " constant ",
-                    lists:nth(rand:uniform(DataType_Length), DataType),
+                    case rand:uniform(5) rem 5 of
+                        1 -> lists:nth(rand:uniform(DataType_2_Length),
+                            DataType_2);
+                        _ -> lists:nth(rand:uniform(DataType_1_Length),
+                            DataType_1)
+                    end,
                     case rand:uniform(2) rem 2 of
                         1 -> " not null ";
                         _ -> []
@@ -754,32 +846,29 @@ create_code(dataSourceCommaList = Rule) ->
     ?CREATE_CODE_END;
 
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% dataType ::= 'BFILE'
-%%            | 'BINARY_DOUBLE'
-%%            | 'BINARY_FLOAT'
-%%            | 'BINARY_INTEGER'
-%%            | 'BLOB'
-%%            | 'BOOLEAN'
-%%            | ( ( 'CHAR' | 'VARCHAR2' ) ( '(' INTNUM ( 'BYTE' | 'CHAR' )? ')' )? )
-%%            | 'CLOB'
-%%            | 'DATE'
-%%            | ( ( 'FLOAT' | 'UROWID' ) ( '(' INTNUM ')' )? )
-%%            | ( 'INTERVAL' 'DAY' ( '(' INTNUM ')' )? 'TO' 'SECOND' ( '(' INTNUM ')' )? )
-%%            | ( 'INTERVAL' 'YEAR' ( '(' INTNUM ')' )? 'TO' 'MONTH' )
-%%            | ( 'LONG' 'RAW' )
-%%            | ( NAME ( '%ROWTYPE' | '%TYPE' )? )
-%%            | ( ( ( NAME '.' )? NAME '.' )? NAME '%TYPE'? )
-%%            | ( ( 'NCHAR' | 'NVARCHAR2' | 'RAW' ) '(' INTNUM ')' )
-%%            | 'NCLOB'
-%%            | ( 'NUMBER' ( '(' INTNUM ( ',' INTNUM )? ')' )? )
-%%            | 'PLS_INTEGER'
-%%            | ( 'REF' 'CURSOR' )
-%%            | 'ROWID'
-%%            | ( 'TIMESTAMP' ( '(' INTNUM ')' )? ( 'WITH' 'LOCAL'? 'TIME' 'ZONE' )? )
-%%            | 'XMLTYPE'
+%% dataType_1 ::= 'BFILE'
+%%              | 'BINARY_DOUBLE'
+%%              | 'BINARY_FLOAT'
+%%              | 'BLOB'
+%%              | 'BOOLEAN'
+%%              | ( 'CHAR' ( '(' INTNUM ( 'BYTE' | 'CHAR' )? ')' )? )
+%%              | 'CLOB'
+%%              | 'DATE'
+%%              | ( ( 'FLOAT' | 'UROWID' ) ( '(' INTNUM ')' )? )
+%%              | ( 'INTERVAL' 'DAY' ( '(' INTNUM ')' )? 'TO' 'SECOND' ( '(' INTNUM ')' )? )
+%%              | ( 'INTERVAL' 'YEAR' ( '(' INTNUM ')' )? 'TO' 'MONTH' )
+%%              | ( 'LONG' 'RAW' )
+%%              | ( ( 'NCHAR' | 'NVARCHAR2' | 'RAW' ) '(' INTNUM ')' )
+%%              | 'NCLOB'
+%%              | ( 'NUMBER' ( '(' INTNUM ( ',' INTNUM )? ')' )? )
+%%              | ( 'REF' 'CURSOR' )
+%%              | 'ROWID'
+%%              | ( 'TIMESTAMP' ( '(' INTNUM ')' )? ( 'WITH' 'LOCAL'? 'TIME' 'ZONE' )? )
+%%              | ( 'VARCHAR2' ( '(' INTNUM ( 'BYTE' | 'CHAR' ) ')' )? )
+%%              | 'XMLTYPE'
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-create_code(dataType = Rule) ->
+create_code(dataType_1 = Rule) ->
     ?CREATE_CODE_START,
     [{intnum, Intnum}] = ets:lookup(?CODE_TEMPLATES, intnum),
     Intnum_Length = length(Intnum),
@@ -791,7 +880,6 @@ create_code(dataType = Rule) ->
             "Bfile",
             "Binary_double",
             "Binary_float",
-            "Binary_integer",
             "Blob",
             "Boolean",
             "Char",
@@ -857,8 +945,6 @@ create_code(dataType = Rule) ->
                 ]),
             "Long Raw",
             lists:nth(rand:uniform(Name_Length), Name),
-                lists:nth(rand:uniform(Name_Length), Name) ++ "%Rowtype",
-                lists:nth(rand:uniform(Name_Length), Name) ++ "%Type",
             lists:append(
                 [
                     lists:nth(rand:uniform(Name_Length), Name),
@@ -870,24 +956,8 @@ create_code(dataType = Rule) ->
                     lists:nth(rand:uniform(Name_Length), Name),
                     ".",
                     lists:nth(rand:uniform(Name_Length), Name),
-                    "%Type"
-                ]),
-            lists:append(
-                [
-                    lists:nth(rand:uniform(Name_Length), Name),
-                    ".",
-                    lists:nth(rand:uniform(Name_Length), Name),
                     ".",
                     lists:nth(rand:uniform(Name_Length), Name)
-                ]),
-            lists:append(
-                [
-                    lists:nth(rand:uniform(Name_Length), Name),
-                    ".",
-                    lists:nth(rand:uniform(Name_Length), Name),
-                    ".",
-                    lists:nth(rand:uniform(Name_Length), Name),
-                    "%Type"
                 ]),
             lists:append(
                 [
@@ -917,7 +987,6 @@ create_code(dataType = Rule) ->
                     lists:nth(rand:uniform(Intnum_Length), Intnum),
                     ")"
                 ]),
-            "Pls_integer",
             lists:append(
                 [
                     "Raw(",
@@ -959,12 +1028,6 @@ create_code(dataType = Rule) ->
                 [
                     "Varchar2(",
                     lists:nth(rand:uniform(Intnum_Length), Intnum),
-                    ")"
-                ]),
-            lists:append(
-                [
-                    "Varchar2(",
-                    lists:nth(rand:uniform(Intnum_Length), Intnum),
                     "Byte)"
                 ]),
             lists:append(
@@ -974,6 +1037,67 @@ create_code(dataType = Rule) ->
                     "Char)"
                 ]),
             "Xmltype"
+        ],
+    store_code(Rule, Code, ?MAX_BASIC, false),
+    ?CREATE_CODE_END;
+
+%% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% dataType_2 ::= 'BINARY_INTEGER'
+%%              | ( NAME ( '%ROWTYPE' | '%TYPE' )? )
+%%              | ( ( ( NAME '.' )? NAME '.' )? NAME '%TYPE'? )
+%%              | 'PLS_INTEGER'
+%%              | ( 'VARCHAR2' '(' INTNUM ')' )
+%% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+create_code(dataType_2 = Rule) ->
+    ?CREATE_CODE_START,
+    [{intnum, Intnum}] = ets:lookup(?CODE_TEMPLATES, intnum),
+    Intnum_Length = length(Intnum),
+    [{name, Name}] = ets:lookup(?CODE_TEMPLATES, name),
+    Name_Length = length(Name),
+
+    Code =
+        [
+            "Binary_integer",
+                lists:nth(rand:uniform(Name_Length), Name) ++ "%Rowtype",
+                lists:nth(rand:uniform(Name_Length), Name) ++ "%Type",
+            lists:append(
+                [
+                    lists:nth(rand:uniform(Name_Length), Name),
+                    ".",
+                    lists:nth(rand:uniform(Name_Length), Name),
+                    "%Type"
+                ]),
+            lists:append(
+                [
+                    lists:nth(rand:uniform(Name_Length), Name),
+                    ".",
+                    lists:nth(rand:uniform(Name_Length), Name),
+                    ".",
+                    lists:nth(rand:uniform(Name_Length), Name),
+                    "%Type"
+                ]),
+            "Pls_integer",
+            lists:append(
+                [
+                    "Varchar2(",
+                    lists:nth(rand:uniform(Intnum_Length), Intnum),
+                    ")"
+                ])
+        ],
+    store_code(Rule, Code, ?MAX_BASIC, false),
+    ?CREATE_CODE_END;
+
+%% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% dataType_3 ::= 'LONG'
+%% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+create_code(dataType_3 = Rule) ->
+    ?CREATE_CODE_START,
+
+    Code =
+        [
+            "Long"
         ],
     store_code(Rule, Code, ?MAX_BASIC, false),
     ?CREATE_CODE_END;
@@ -1209,13 +1333,15 @@ create_code(expression = Rule) ->
     ?CREATE_CODE_END;
 
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% fieldDefinition ::= NAME 'CONSTANT' dataType ( 'NOT' 'NULL' )? default ';'
+%% fieldDefinition ::= NAME ( dataType_1 | dataType_2 ) ( ( 'NOT' 'NULL' )? default )?
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 create_code(fieldDefinition = Rule) ->
     ?CREATE_CODE_START,
-    [{dataType, DataType}] = ets:lookup(?CODE_TEMPLATES, dataType),
-    DataType_Length = length(DataType),
+    [{dataType_1, DataType_1}] = ets:lookup(?CODE_TEMPLATES, dataType_1),
+    DataType_1_Length = length(DataType_1),
+    [{dataType_2, DataType_2}] = ets:lookup(?CODE_TEMPLATES, dataType_2),
+    DataType_2_Length = length(DataType_2),
     [{default, Default}] = ets:lookup(?CODE_TEMPLATES, default),
     Default_Length = length(Default),
     [{name, Name}] = ets:lookup(?CODE_TEMPLATES, name),
@@ -1227,7 +1353,12 @@ create_code(fieldDefinition = Rule) ->
                 [
                     lists:nth(rand:uniform(Name_Length), Name),
                     " ",
-                    lists:nth(rand:uniform(DataType_Length), DataType),
+                    case rand:uniform(5) rem 5 of
+                        1 -> lists:nth(rand:uniform(DataType_2_Length),
+                            DataType_2);
+                        _ -> lists:nth(rand:uniform(DataType_1_Length),
+                            DataType_1)
+                    end,
                     case rand:uniform(4) rem 4 of
                         1 -> " not null " ++
                         lists:nth(rand:uniform(Default_Length), Default);
@@ -1849,14 +1980,24 @@ create_code(packageFunctionDeclarationAttributeList = Rule) ->
     ?CREATE_CODE_END;
 
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% packageItem ::= constantDeclaration
-%%               | exceptionDeclaration
+%% packageItem ::= itemDeclaration
 %%               | packageFunctionDeclaration
 %%               | packageProcedureDeclaration
+%%               | typeDefinition
+%% -----------------------------------------------------------------------------
+%% itemDeclaration ::= constantDeclaration
+%%                   | exceptionDeclaration
+%% -----------------------------------------------------------------------------
+%%  typeDefinition ::= collectionTypeDefinition
+%%                   | recordTypeDefinition
+%%                   | subtypeDefinition
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 create_code(packageItem = Rule) ->
     ?CREATE_CODE_START,
+    [{collectionTypeDefinition, CollectionTypeDefinition}] = ets:lookup(
+        ?CODE_TEMPLATES, collectionTypeDefinition),
+    CollectionTypeDefinition_Length = length(CollectionTypeDefinition),
     [{constantDeclaration, ConstantDeclaration}] = ets:lookup(
         ?CODE_TEMPLATES, constantDeclaration),
     ConstantDeclaration_Length = length(ConstantDeclaration),
@@ -1872,21 +2013,32 @@ create_code(packageItem = Rule) ->
     [{recordTypeDefinition, RecordTypeDefinition}] = ets:lookup(
         ?CODE_TEMPLATES, recordTypeDefinition),
     RecordTypeDefinition_Length = length(RecordTypeDefinition),
+    [{subtypeDefinition, SubtypeDefinition}] =
+        ets:lookup(?CODE_TEMPLATES, subtypeDefinition),
+    SubtypeDefinition_Length = length(SubtypeDefinition),
 
     Code =
         [
             case rand:uniform(20) rem 20 of
-                1 -> case rand:uniform(3) rem 3 of
+                1 -> case rand:uniform(4) rem 4 of
                          1 -> lists:nth(
                              rand:uniform(ConstantDeclaration_Length),
                              ConstantDeclaration);
                          2 -> lists:nth(
                              rand:uniform(ExceptionDeclaration_Length),
                              ExceptionDeclaration);
-                         _ -> lists:nth(
+                         3 -> lists:nth(
                              rand:uniform(RecordTypeDefinition_Length),
-                             RecordTypeDefinition)
-                     end;
+                             RecordTypeDefinition);
+                         _ -> case rand:uniform(4) rem 4 of
+                                  1 -> lists:nth(
+                                      rand:uniform(SubtypeDefinition_Length),
+                                      SubtypeDefinition);
+                                  _ -> lists:nth(
+                                      rand:uniform(
+                                          CollectionTypeDefinition_Length),
+                                      CollectionTypeDefinition)
+                              end end;
                 _ -> case rand:uniform(2) rem 2 of
                          1 -> lists:nth(
                              rand:uniform(PackageFunctionDeclaration_Length),
@@ -2179,14 +2331,16 @@ create_code(parameter = Rule) ->
     ?CREATE_CODE_END;
 
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% parameterDeclaration ::= NAME ( 'IN'? dataType default? )
-%%                             | ( 'IN'? 'OUT' 'NOCOPY'? dataType )
+%% parameterDeclaration ::= NAME ( 'IN'? ( dataType_1 | dataType_2 ) default? )
+%%                             | ( 'IN'? 'OUT' 'NOCOPY'? ( dataType_1 | dataType_2 ) )
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 create_code(parameterDeclaration = Rule) ->
     ?CREATE_CODE_START,
-    [{dataType, DataType}] = ets:lookup(?CODE_TEMPLATES, dataType),
-    DataType_Length = length(DataType),
+    [{dataType_1, DataType_1}] = ets:lookup(?CODE_TEMPLATES, dataType_1),
+    DataType_1_Length = length(DataType_1),
+    [{dataType_2, DataType_2}] = ets:lookup(?CODE_TEMPLATES, dataType_2),
+    DataType_2_Length = length(DataType_2),
     [{default, Default}] = ets:lookup(?CODE_TEMPLATES, default),
     Default_Length = length(Default),
     [{name, Name}] = ets:lookup(?CODE_TEMPLATES, name),
@@ -2210,8 +2364,14 @@ create_code(parameterDeclaration = Rule) ->
                                     _ -> []
                                 end,
                                 " ",
-                                lists:nth(rand:uniform(DataType_Length),
-                                    DataType)
+                                case rand:uniform(5) rem 5 of
+                                    1 -> lists:nth(
+                                        rand:uniform(DataType_2_Length),
+                                        DataType_2);
+                                    _ -> lists:nth(
+                                        rand:uniform(DataType_1_Length),
+                                        DataType_1)
+                                end
                             ]);
                         _ -> lists:append(
                             [
@@ -2220,8 +2380,14 @@ create_code(parameterDeclaration = Rule) ->
                                     _ -> []
                                 end,
                                 " ",
-                                lists:nth(rand:uniform(DataType_Length),
-                                    DataType),
+                                case rand:uniform(5) rem 5 of
+                                    1 -> lists:nth(
+                                        rand:uniform(DataType_2_Length),
+                                        DataType_2);
+                                    _ -> lists:nth(
+                                        rand:uniform(DataType_1_Length),
+                                        DataType_1)
+                                end,
                                 case rand:uniform(2) rem 2 of
                                     1 -> lists:nth(rand:uniform(Default_Length),
                                         Default);
@@ -2587,7 +2753,7 @@ create_code(procedureHeading = Rule) ->
     ?CREATE_CODE_END;
 
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% recordTypeDefinition ::= NAME 'CONSTANT' dataType ( 'NOT' 'NULL' )? default ';'
+%% recordTypeDefinition ::= 'TYPE' NAME 'IS' 'RECORD' '(' fieldDefinition ( ',' fieldDefinition )* ')' ';'
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 create_code(recordTypeDefinition = Rule) ->
@@ -2728,6 +2894,43 @@ create_code(string = Rule) ->
     ?CREATE_CODE_END;
 
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% subtypeDefinition ::= 'SUBTYPE' NAME 'IS'  ( dataType_1 | dataType_2 )  ( 'NOT' 'NULL' )? ';'
+%% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+create_code(subtypeDefinition = Rule) ->
+    ?CREATE_CODE_START,
+    [{dataType_1, DataType_1}] = ets:lookup(?CODE_TEMPLATES, dataType_1),
+    DataType_1_Length = length(DataType_1),
+    [{dataType_2, DataType_2}] = ets:lookup(?CODE_TEMPLATES, dataType_2),
+    DataType_2_Length = length(DataType_2),
+    [{name, Name}] = ets:lookup(?CODE_TEMPLATES, name),
+    Name_Length = length(Name),
+
+    Code =
+        [
+            lists:append(
+                [
+                    "subtype ",
+                    lists:nth(rand:uniform(Name_Length), Name),
+                    " is ",
+                    case rand:uniform(5) rem 5 of
+                        1 -> lists:nth(rand:uniform(DataType_2_Length),
+                            DataType_2);
+                        _ -> lists:nth(rand:uniform(DataType_1_Length),
+                            DataType_1)
+                    end,
+                    case rand:uniform(2) rem 2 of
+                        1 -> " not null ";
+                        _ -> []
+                    end,
+                    ";"
+                ])
+            || _ <- lists:seq(1, ?MAX_BASIC * 2)
+        ],
+    store_code(Rule, Code, ?MAX_BASIC, false),
+    ?CREATE_CODE_END;
+
+%% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% systemPrivilegeAnnotation ::= '--<>' 'SYSTEM_PRIVILEGE' '=' systemPrivilegeType
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -2845,8 +3048,48 @@ create_code(unitKind = Rule) ->
             "Type"
         ],
     store_code(Rule, Code, ?MAX_BASIC, false),
-    ?CREATE_CODE_END.
+    ?CREATE_CODE_END;
 
+%% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% varrayTypeDef ::= ( ( 'VARYING'? 'ARRAY' ) | 'VARRAY' ) '(' INTNUM ')' 'OF' ( dataType_1 | dataType_2 ) ( 'NOT' 'NULL' )?
+%% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+create_code(varrayTypeDef = Rule) ->
+    ?CREATE_CODE_START,
+    [{dataType_1, DataType_1}] = ets:lookup(?CODE_TEMPLATES, dataType_1),
+    DataType_1_Length = length(DataType_1),
+    [{dataType_2, DataType_2}] = ets:lookup(?CODE_TEMPLATES, dataType_2),
+    DataType_2_Length = length(DataType_2),
+    [{intnum, Intnum}] = ets:lookup(?CODE_TEMPLATES, intnum),
+    Intnum_Length = length(Intnum),
+
+    Code =
+        [
+            lists:append(
+                [
+                    case rand:uniform(5) rem 3 of
+                        1 -> "array ";
+                        2 -> "varying array ";
+                        _ -> "varray "
+                    end,
+                    "(",
+                    lists:nth(rand:uniform(Intnum_Length), Intnum),
+                    ") of ",
+                    case rand:uniform(5) rem 5 of
+                        1 -> lists:nth(rand:uniform(DataType_2_Length),
+                            DataType_2);
+                        _ -> lists:nth(rand:uniform(DataType_1_Length),
+                            DataType_1)
+                    end,
+                    case rand:uniform(5) rem 5 of
+                        1 -> " not null ";
+                        _ -> []
+                    end
+                ])
+            || _ <- lists:seq(1, ?MAX_BASIC * 2)
+        ],
+    store_code(Rule, Code, ?MAX_BASIC, false),
+    ?CREATE_CODE_END.
 
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Creating Common Test data files.

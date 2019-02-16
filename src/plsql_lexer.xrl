@@ -25,9 +25,6 @@ Definitions.
 
 Rules.
 
-% ignore SUBTYPEs
-([Ss][Uu][Bb][Tt][Yy][Pp][Ee](\s.*[\r\n]*|[\r\n]*);) : skip_token.
-
 % $ELSE / $ELSIF / $END / $IF / $THEN
 (\$[Ee][Ll][Ss][Ee])                                 : {token, {list_to_atom(string:uppercase(TokenChars)), TokenLine}}.
 (\$[Ee][Ll][Ss][Ii][Ff])                             : {token, {list_to_atom(string:uppercase(TokenChars)), TokenLine}}.

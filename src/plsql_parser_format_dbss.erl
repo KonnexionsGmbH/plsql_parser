@@ -196,128 +196,136 @@ fold(_LOpts, _FunState, Ctx, _PTree, {dataSourceCommaList@, Step} =
 % dataType
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-fold(LOpts, _FunState, Ctx, #{dataType := PTree}, {dataType, Step} = _FoldState)
+fold(LOpts, FunState, Ctx, #{dataType := PTree}, {dataType, Step} = _FoldState)
     when is_map(PTree) ->
-    ?CUSTOM_INIT(_FunState, Ctx, PTree, _FoldState),
+    ?CUSTOM_INIT(FunState, Ctx, PTree, _FoldState),
+    {Stmnt, _, _} = plsql_parser_fold:get_stmnt_clause_curr(FunState),
     Type = maps:get(type@, PTree),
-    RT = case Step of
-             start -> lists:append(
-                 [
-                     Ctx,
-                     ?TABULATOR,
-                     ?TABULATOR,
-                     ?TABULATOR,
-                     ?TABULATOR,
-                     "<DataType>",
-                     Type,
-                     case Type of
-                         "INTERVAL DAY" -> lists:append(
-                             [
-                                 case maps:is_key(dayPrecision@, PTree) of
-                                     true -> lists:append(
-                                         [
-                                             "(",
-                                             maps:get(dayPrecision@, PTree),
-                                             ")"
-                                         ]);
-                                     _ -> []
-                                 end,
-                                 " to second",
-                                 case maps:is_key(secondPrecision@, PTree) of
-                                     true -> lists:append(
-                                         [
-                                             "(",
-                                             maps:get(secondPrecision@, PTree),
-                                             ")"
-                                         ]);
-                                     _ -> []
-                                 end
-                             ]);
-                         "INTERVAL YEAR" -> lists:append(
-                             [
-                                 case maps:is_key(precision@, PTree) of
-                                     true -> lists:append(
-                                         [
-                                             "(",
-                                             maps:get(precision@, PTree),
-                                             ")"
-                                         ]);
-                                     _ -> []
-                                 end,
-                                 " to month"
-                             ]);
-                         "TIMESTAMP" -> lists:append(
-                             [
-                                 case maps:is_key(precision@, PTree) of
-                                     true -> lists:append(
-                                         [
-                                             "(",
-                                             maps:get(precision@, PTree),
-                                             ")"
-                                         ]);
-                                     _ -> []
-                                 end,
-                                 case maps:is_key(timeZone@, PTree) of
-                                     true -> lists:append(
-                                         [
-                                             " with",
-                                             case maps:is_key(local@, PTree) of
-                                                 true -> " local";
-                                                 _ -> []
-                                             end,
-                                             " time zone"
-                                         ]);
-                                     _ -> []
-                                 end
-                             ]);
-                         _ -> lists:append(
-                             [
-                                 case maps:is_key(precision@, PTree) of
-                                     true -> lists:append(
-                                         [
-                                             "(",
-                                             maps:get(precision@, PTree),
-                                             case maps:is_key(scale@, PTree) of
-                                                 true -> lists:append(
-                                                     [
-                                                         ",",
-                                                         maps:get(scale@,
-                                                             PTree),
-                                                         ")"
-                                                     ]);
-                                                 _ -> ")"
-                                             end
-                                         ]);
-                                     _ -> []
-                                 end,
-                                 case maps:is_key(size@, PTree) of
-                                     true -> lists:append(
-                                         [
-                                             "(",
-                                             maps:get(size@, PTree),
-                                             case maps:is_key(sizeType@,
-                                                 PTree) of
-                                                 true -> lists:append(
-                                                     [
-                                                         " ",
-                                                         maps:get(sizeType@,
-                                                             PTree),
-                                                         ")"
-                                                     ]);
-                                                 _ -> ")"
-                                             end
-                                         ]);
-                                     _ -> []
-                                 end,
-                                 case maps:is_key(attribute@, PTree) of
-                                     true -> maps:get(attribute@, PTree);
-                                     _ -> []
-                                 end
-                             ])
-                     end,
-                     "</DataType>",
-                     ?CHAR_NEWLINE
-                 ]);
+    RT = case {Step, Stmnt} of
+             {start, StmntX} when StmntX == none;
+                                  StmntX == packageFunctionDeclaration;
+                                  StmntX == packageProcedureDeclaration ->
+                 lists:append(
+                     [
+                         Ctx,
+                         ?TABULATOR,
+                         ?TABULATOR,
+                         ?TABULATOR,
+                         ?TABULATOR,
+                         "<DataType>",
+                         Type,
+                         case Type of
+                             "INTERVAL DAY" -> lists:append(
+                                 [
+                                     case maps:is_key(dayPrecision@, PTree) of
+                                         true -> lists:append(
+                                             [
+                                                 "(",
+                                                 maps:get(dayPrecision@, PTree),
+                                                 ")"
+                                             ]);
+                                         _ -> []
+                                     end,
+                                     " to second",
+                                     case maps:is_key(secondPrecision@,
+                                         PTree) of
+                                         true -> lists:append(
+                                             [
+                                                 "(",
+                                                 maps:get(secondPrecision@,
+                                                     PTree),
+                                                 ")"
+                                             ]);
+                                         _ -> []
+                                     end
+                                 ]);
+                             "INTERVAL YEAR" -> lists:append(
+                                 [
+                                     case maps:is_key(precision@, PTree) of
+                                         true -> lists:append(
+                                             [
+                                                 "(",
+                                                 maps:get(precision@, PTree),
+                                                 ")"
+                                             ]);
+                                         _ -> []
+                                     end,
+                                     " to month"
+                                 ]);
+                             "TIMESTAMP" -> lists:append(
+                                 [
+                                     case maps:is_key(precision@, PTree) of
+                                         true -> lists:append(
+                                             [
+                                                 "(",
+                                                 maps:get(precision@, PTree),
+                                                 ")"
+                                             ]);
+                                         _ -> []
+                                     end,
+                                     case maps:is_key(timeZone@, PTree) of
+                                         true -> lists:append(
+                                             [
+                                                 " with",
+                                                 case maps:is_key(local@,
+                                                     PTree) of
+                                                     true -> " local";
+                                                     _ -> []
+                                                 end,
+                                                 " time zone"
+                                             ]);
+                                         _ -> []
+                                     end
+                                 ]);
+                             _ -> lists:append(
+                                 [
+                                     case maps:is_key(precision@, PTree) of
+                                         true -> lists:append(
+                                             [
+                                                 "(",
+                                                 maps:get(precision@, PTree),
+                                                 case maps:is_key(scale@,
+                                                     PTree) of
+                                                     true -> lists:append(
+                                                         [
+                                                             ",",
+                                                             maps:get(scale@,
+                                                                 PTree),
+                                                             ")"
+                                                         ]);
+                                                     _ -> ")"
+                                                 end
+                                             ]);
+                                         _ -> []
+                                     end,
+                                     case maps:is_key(size@, PTree) of
+                                         true -> lists:append(
+                                             [
+                                                 "(",
+                                                 maps:get(size@, PTree),
+                                                 case maps:is_key(sizeType@,
+                                                     PTree) of
+                                                     true -> lists:append(
+                                                         [
+                                                             " ",
+                                                             maps:get(sizeType@,
+                                                                 PTree),
+                                                             ")"
+                                                         ]);
+                                                     _ -> ")"
+                                                 end
+                                             ]);
+                                         _ -> []
+                                     end,
+                                     case maps:is_key(attribute@, PTree) of
+                                         true -> maps:get(attribute@, PTree);
+                                         _ -> []
+                                     end
+                                 ])
+                         end,
+                         "</DataType>",
+                         ?CHAR_NEWLINE
+                     ]);
              _ -> Ctx
          end,
     ?CUSTOM_RESULT(RT);
@@ -326,30 +334,38 @@ fold(LOpts, _FunState, Ctx, #{dataType := PTree}, {dataType, Step} = _FoldState)
 % default
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-fold(LOpts, _FunState, Ctx, #{default := PTree}, {default, Step} = _FoldState)
+fold(LOpts, FunState, Ctx, #{default := PTree}, {default, Step} = _FoldState)
     when is_map(PTree) ->
-    ?CUSTOM_INIT(_FunState, Ctx, PTree, _FoldState),
-    RT = case Step of
-             start -> lists:append(
-                 [
-                     Ctx,
-                     ?TABULATOR,
-                     ?TABULATOR,
-                     ?TABULATOR,
-                     ?TABULATOR,
-                     "<DefaultValue>",
-                     ?CHAR_NEWLINE
-                 ]);
-             _ -> lists:append(
-                 [
-                     Ctx,
-                     ?TABULATOR,
-                     ?TABULATOR,
-                     ?TABULATOR,
-                     ?TABULATOR,
-                     "</DefaultValue>",
-                     ?CHAR_NEWLINE
-                 ])
+    ?CUSTOM_INIT(FunState, Ctx, PTree, _FoldState),
+    {Stmnt, _, _} = plsql_parser_fold:get_stmnt_clause_curr(FunState),
+    RT = case {Step, Stmnt} of
+             {start, StmntX} when StmntX == none;
+                                  StmntX == packageFunctionDeclaration;
+                                  StmntX == packageProcedureDeclaration ->
+                 lists:append(
+                     [
+                         Ctx,
+                         ?TABULATOR,
+                         ?TABULATOR,
+                         ?TABULATOR,
+                         ?TABULATOR,
+                         "<DefaultValue>",
+                         ?CHAR_NEWLINE
+                     ]);
+             {_, StmntX} when StmntX == none;
+                              StmntX == packageFunctionDeclaration;
+                              StmntX == packageProcedureDeclaration ->
+                 lists:append(
+                     [
+                         Ctx,
+                         ?TABULATOR,
+                         ?TABULATOR,
+                         ?TABULATOR,
+                         ?TABULATOR,
+                         "</DefaultValue>",
+                         ?CHAR_NEWLINE
+                     ]);
+             _ -> Ctx
          end,
     ?CUSTOM_RESULT(RT);
 
@@ -357,35 +373,43 @@ fold(LOpts, _FunState, Ctx, #{default := PTree}, {default, Step} = _FoldState)
 % defaultValue@_@
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-fold(LOpts, _FunState, Ctx, #{defaultValue@_@ := PTree},
+fold(LOpts, FunState, Ctx, #{defaultValue@_@ := PTree},
     {defaultValue@_@, Step} = _FoldState) ->
-    ?CUSTOM_INIT(_FunState, Ctx, PTree, _FoldState),
+    ?CUSTOM_INIT(FunState, Ctx, PTree, _FoldState),
+    {Stmnt, _, _} = plsql_parser_fold:get_stmnt_clause_curr(FunState),
     Expression = maps:get(expression, PTree),
     Type = case is_map(Expression) andalso maps:is_key(string, Expression) of
                true -> "String";
                _ -> "Expression"
            end,
-    RT = case Step of
-             start -> lists:append(
-                 [
-                     Ctx,
-                     ?TABULATOR,
-                     ?TABULATOR,
-                     ?TABULATOR,
-                     ?TABULATOR,
-                     ?TABULATOR,
-                     "<",
-                     Type,
-                     ">"
-                 ]);
-             _ -> lists:append(
-                 [
-                     Ctx,
-                     "</",
-                     Type,
-                     ">",
-                     ?CHAR_NEWLINE
-                 ])
+    RT = case {Step, Stmnt} of
+             {start, StmntX} when StmntX == none;
+                                  StmntX == packageFunctionDeclaration;
+                                  StmntX == packageProcedureDeclaration ->
+                 lists:append(
+                     [
+                         Ctx,
+                         ?TABULATOR,
+                         ?TABULATOR,
+                         ?TABULATOR,
+                         ?TABULATOR,
+                         ?TABULATOR,
+                         "<",
+                         Type,
+                         ">"
+                     ]);
+             {_, StmntX} when StmntX == none;
+                              StmntX == packageFunctionDeclaration;
+                              StmntX == packageProcedureDeclaration ->
+                 lists:append(
+                     [
+                         Ctx,
+                         "</",
+                         Type,
+                         ">",
+                         ?CHAR_NEWLINE
+                     ]);
+             _ -> Ctx
          end,
     ?CUSTOM_RESULT(RT);
 
@@ -393,37 +417,49 @@ fold(LOpts, _FunState, Ctx, #{defaultValue@_@ := PTree},
 % expression
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-fold(_LOpts, _FunState, Ctx, #{expression := PTree}, {expression, Step} =
+fold(_LOpts, FunState, Ctx, #{expression := PTree}, {expression, Step} =
     _FoldState)
     when is_atom(PTree) ->
-    ?CUSTOM_INIT(_FunState, Ctx, PTree, _FoldState),
-    RT = case Step of
-             start -> lists:append(
-                 [
-                     Ctx,
-                     atom_to_list(PTree)
-                 ]);
+    ?CUSTOM_INIT(FunState, Ctx, PTree, _FoldState),
+    {Stmnt, _, _} = plsql_parser_fold:get_stmnt_clause_curr(FunState),
+    RT = case {Step, Stmnt} of
+             {start, StmntX} when StmntX == none;
+                                  StmntX == packageFunctionDeclaration;
+                                  StmntX == packageProcedureDeclaration ->
+                 lists:append(
+                     [
+                         Ctx,
+                         atom_to_list(PTree)
+                     ]);
              _ -> Ctx
          end,
     ?CUSTOM_RESULT(RT);
-fold(_LOpts, _FunState, Ctx, #{expression := PTree}, {expression, Step} =
+fold(_LOpts, FunState, Ctx, #{expression := PTree}, {expression, Step} =
     _FoldState)
     when is_map(PTree) ->
-    ?CUSTOM_INIT(_FunState, Ctx, PTree, _FoldState),
+    ?CUSTOM_INIT(FunState, Ctx, PTree, _FoldState),
+    {Stmnt, _, _} = plsql_parser_fold:get_stmnt_clause_curr(FunState),
     Operator = case maps:is_key(operator@, PTree) of
                    true -> maps:get(operator@, PTree);
                    _ -> []
                end,
-    RT = case Step of
-             start -> Ctx ++ case Operator of
-                                 'NOT' -> "not ";
-                                 '(' -> "(";
-                                 _ -> []
-                             end;
-             _ -> Ctx ++ case Operator of
-                             '(' -> ")";
-                             _ -> []
-                         end
+    RT = case {Step, Stmnt} of
+             {start, StmntX} when StmntX == none;
+                                  StmntX == packageFunctionDeclaration;
+                                  StmntX == packageProcedureDeclaration ->
+                 Ctx ++ case Operator of
+                            'NOT' -> "not ";
+                            '(' -> "(";
+                            _ -> []
+                        end;
+             {_, StmntX} when StmntX == none;
+                              StmntX == packageFunctionDeclaration;
+                              StmntX == packageProcedureDeclaration ->
+                 Ctx ++ case Operator of
+                            '(' -> ")";
+                            _ -> []
+                        end;
+             _ -> Ctx
          end,
     ?CUSTOM_RESULT(RT);
 
@@ -477,15 +513,15 @@ fold(_LOpts, _FunState, Ctx, #{functionRef := PTree}, {functionRef, Step} =
 % literal
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-fold(_LOpts, _FunState, Ctx, #{literal := PTree}, {literal, Step} = _FoldState)
+fold(_LOpts, FunState, Ctx, #{literal := PTree}, {literal, Step} = _FoldState)
     when is_list(PTree) ->
-    ?CUSTOM_INIT(_FunState, Ctx, PTree, _FoldState),
-    RT = case Step of
-             start -> lists:append(
-                 [
-                     Ctx,
-                     PTree
-                 ]);
+    ?CUSTOM_INIT(FunState, Ctx, PTree, _FoldState),
+    {Stmnt, _, _} = plsql_parser_fold:get_stmnt_clause_curr(FunState),
+    RT = case {Step, Stmnt} of
+             {start, StmntX} when StmntX == none;
+                                  StmntX == packageFunctionDeclaration;
+                                  StmntX == packageProcedureDeclaration ->
+                 Ctx ++ PTree;
              _ -> Ctx
          end,
     ?CUSTOM_RESULT(RT);
@@ -1132,12 +1168,16 @@ fold(_LOpts, _FunState, Ctx, _PTree, {Rule, _Step, _Pos}) when
 fold(_LOpts, _FunState, Ctx, _PTree, {Rule, _Step}) when
     Rule == accessibleByClause;
     Rule == accessor;
+    Rule == assocArrayTypeDef;
+    Rule == collectionTypeDefinition;
     Rule == columnRefCommaList;
     Rule == constantDeclaration;
     Rule == constantName;
     Rule == createPackage;
     Rule == dataSource;
     Rule == dataSourceCommaList;
+    Rule == dataTypeIndex;
+    Rule == dataTypeTable;
     Rule == defaultCollationClause;
     Rule == exceptionDeclaration;
     Rule == expression;
@@ -1150,7 +1190,6 @@ fold(_LOpts, _FunState, Ctx, _PTree, {Rule, _Step}) when
     Rule == notNull;
     Rule == packageFunctionDeclaration@_@;
     Rule == packageFunctionDeclarationAttribute;
-    Rule == packageItem;
     Rule == packageItemList@_@;
     Rule == packageProcedureDeclaration@_@;
     Rule == parallelEnabledClause;
@@ -1163,13 +1202,19 @@ fold(_LOpts, _FunState, Ctx, _PTree, {Rule, _Step}) when
     Rule == procedureAnnotation;
     Rule == procedureHeading;
     Rule == recordTypeDefinition;
+    Rule == recordTypeName;
     Rule == resultCacheClause;
     Rule == scalarExpression;
     Rule == scalarSubExpression;
     Rule == sharingClause;
     Rule == streamingClause;
     Rule == streamingClauseExpression@_@;
-    Rule == typeName ->
+    Rule == subtypeDefinition;
+    Rule == subtypeName;
+    Rule == typeName;
+    Rule == varraySize;
+    Rule == varrayType;
+    Rule == varrayTypeDef ->
     Ctx;
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
