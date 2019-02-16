@@ -583,6 +583,36 @@ AS
         field_5 NUMBER (1, 2) NOT NULL := 5
     );
 
+    TYPE my_assoc_table_1 IS TABLE OF VARCHAR2 NOT NULL
+        INDEX BY PLS_INTEGER;
+
+    TYPE my_assoc_table_2 IS TABLE OF table_1%ROWTYPE
+        INDEX BY VARCHAR2 (100);
+
+    TYPE my_assoc_table_3 IS TABLE OF table_1.column_1%TYPE
+        INDEX BY table_1%ROWTYPE;
+
+    TYPE my_assoc_table_4 IS TABLE OF table_1.column_1%TYPE NOT NULL
+        INDEX BY table_1.column_1%TYPE;
+
+    TYPE my_nested_table_1 IS TABLE OF VARCHAR2 NOT NULL;
+
+    TYPE my_nested_table_2 IS TABLE OF table_1%ROWTYPE;
+
+    TYPE my_nested_table_3 IS TABLE OF table_1.column_1%TYPE NOT NULL;
+
+    TYPE my_varry_table_1 IS ARRAY (100) OF table_1%ROWTYPE;
+
+    TYPE my_varry_table_2 IS ARRAY (100) OF table_1.column_1%TYPE NOT NULL;
+
+    TYPE my_varry_table_3 IS VARYING ARRAY (100) OF table_1%ROWTYPE;
+
+    TYPE my_varry_table_4 IS VARYING ARRAY (100) OF table_1.column_1%TYPE NOT NULL;
+
+    TYPE my_varry_table_5 IS VARRAY (100) OF PLS_INTEGER;
+
+    TYPE my_varry_table_6 IS VARRAY (100) OF VARCHAR2 (200) NOT NULL;
+
     FUNCTION function_name_1
         RETURN CLOB;
 

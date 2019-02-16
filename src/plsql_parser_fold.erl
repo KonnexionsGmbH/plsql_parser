@@ -142,6 +142,54 @@ fold_i(Fun, LOpts, FunState, Ctx, #{apiHiddenAnnotation := _Value} = PTree) ->
     ?FOLD_RESULT(NewCtxE);
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% assocArrayTypeDef
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+fold_i(Fun, LOpts, FunState, Ctx, #{assocArrayTypeDef := Value} = PTree) ->
+    ?FOLD_INIT(FunState, Ctx, PTree),
+    Rule = assocArrayTypeDef,
+    NewCtxS = Fun(LOpts, FunState, Ctx, PTree, {Rule, start}),
+    NewCtx1 =
+        fold_i(Fun, LOpts, FunState, NewCtxS, maps:get(dataTypeTable@, Value)),
+    NewCtx2 = case maps:is_key(notNull@,
+        Value) of
+                  true ->
+                      fold_i(Fun, LOpts, FunState, NewCtx1,
+                          maps:get(notNull@, Value));
+                  _ -> NewCtx1
+              end,
+    NewCtx3 = case maps:is_key(dataTypeIndex@,
+        Value) of
+                  true ->
+                      fold_i(Fun, LOpts, FunState, NewCtx2,
+                          maps:get(dataTypeIndex@, Value));
+                  _ -> NewCtx2
+              end,
+    NewCtxE = Fun(LOpts, FunState, NewCtx3, PTree, {Rule, 'end'}),
+    ?FOLD_RESULT(NewCtxE);
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% collectionTypeDefinitionA
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+fold_i(Fun, LOpts, FunStateIn, Ctx, #{collectionTypeDefinition := Value} =
+    PTree) ->
+    Rule = collectionTypeDefinition,
+    FunState = ?FOLD_INIT_STMNT(FunStateIn, Ctx, PTree, Rule),
+    NewCtxS = Fun(LOpts, FunState, Ctx, PTree, {Rule, start}),
+    NewCtx1 = fold_i(Fun, LOpts, FunState, NewCtxS, maps:get(typeName@, Value)),
+    NewCtx2 = case maps:is_key(assocArrayTypeDef@,
+        Value) of
+                  true ->
+                      fold_i(Fun, LOpts, FunState, NewCtx1,
+                          maps:get(assocArrayTypeDef@, Value));
+                  _ -> fold_i(Fun, LOpts, FunState, NewCtx1,
+                      maps:get(varrayTypeDef@, Value))
+              end,
+    NewCtxE = Fun(LOpts, FunState, NewCtx2, PTree, {Rule, 'end'}),
+    ?FOLD_RESULT(NewCtxE);
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % columnRef
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -253,6 +301,32 @@ fold_i(Fun, LOpts, FunState, Ctx, #{dataType := _Value} = PTree) ->
     Rule = dataType,
     NewCtxS = Fun(LOpts, FunState, Ctx, PTree, {Rule, start}),
     NewCtxE = Fun(LOpts, FunState, NewCtxS, PTree, {Rule, 'end'}),
+    ?FOLD_RESULT(NewCtxE);
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% dataTypeIndex
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+fold_i(Fun, LOpts, FunState, Ctx, #{dataTypeIndex := _Value} = PTree) ->
+    ?FOLD_INIT(FunState, Ctx, PTree),
+    Rule = dataTypeIndex,
+    NewCtxS = Fun(LOpts, FunState, Ctx, PTree, {Rule, start}),
+    NewCtx1 = fold_i(Fun, LOpts, FunState, NewCtxS,
+        maps:get(dataType@, PTree)),
+    NewCtxE = Fun(LOpts, FunState, NewCtx1, PTree, {Rule, 'end'}),
+    ?FOLD_RESULT(NewCtxE);
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% dataTypeTable
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+fold_i(Fun, LOpts, FunState, Ctx, #{dataTypeTable := _Value} = PTree) ->
+    ?FOLD_INIT(FunState, Ctx, PTree),
+    Rule = dataTypeTable,
+    NewCtxS = Fun(LOpts, FunState, Ctx, PTree, {Rule, start}),
+    NewCtx1 = fold_i(Fun, LOpts, FunState, NewCtxS,
+        maps:get(dataType@, PTree)),
+    NewCtxE = Fun(LOpts, FunState, NewCtx1, PTree, {Rule, 'end'}),
     ?FOLD_RESULT(NewCtxE);
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -869,10 +943,22 @@ fold_i(Fun, LOpts, FunStateIn, Ctx, #{recordTypeDefinition := Value} = PTree) ->
     Rule = recordTypeDefinition,
     FunState = ?FOLD_INIT_STMNT(FunStateIn, Ctx, PTree, Rule),
     NewCtxS = Fun(LOpts, FunState, Ctx, PTree, {Rule, start}),
-    NewCtx1 = fold_i(Fun, LOpts, FunState, NewCtxS, maps:get(typeName@, Value)),
+    NewCtx1 =
+        fold_i(Fun, LOpts, FunState, NewCtxS, maps:get(recordTypeName@, Value)),
     NewCtx2 = list_elem_ext_rule(Fun, LOpts, FunState, NewCtx1,
         fieldDefinitionCommaList, maps:get(fieldDefinitionCommaList@, Value)),
     NewCtxE = Fun(LOpts, FunState, NewCtx2, PTree, {Rule, 'end'}),
+    ?FOLD_RESULT(NewCtxE);
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% recordTypeName
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+fold_i(Fun, LOpts, FunState, Ctx, #{recordTypeName := _Value} = PTree) ->
+    ?FOLD_INIT(FunState, Ctx, PTree),
+    Rule = recordTypeName,
+    NewCtxS = Fun(LOpts, FunState, Ctx, PTree, {Rule, start}),
+    NewCtxE = Fun(LOpts, FunState, NewCtxS, PTree, {Rule, 'end'}),
     ?FOLD_RESULT(NewCtxE);
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1019,6 +1105,52 @@ fold_i(Fun, LOpts, FunState, Ctx, #{unaryAddOrSubtract := _Value} = PTree) ->
     ?FOLD_RESULT(NewCtxE);
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% varraySize
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+fold_i(Fun, LOpts, FunState, Ctx, #{varraySize := _Value} = PTree) ->
+    ?FOLD_INIT(FunState, Ctx, PTree),
+    Rule = varraySize,
+    NewCtxS = Fun(LOpts, FunState, Ctx, PTree, {Rule, start}),
+    NewCtxE = Fun(LOpts, FunState, NewCtxS, PTree, {Rule, 'end'}),
+    ?FOLD_RESULT(NewCtxE);
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% varrayType
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+fold_i(Fun, LOpts, FunState, Ctx, #{varrayType := _Value} = PTree) ->
+    ?FOLD_INIT(FunState, Ctx, PTree),
+    Rule = varrayType,
+    NewCtxS = Fun(LOpts, FunState, Ctx, PTree, {Rule, start}),
+    NewCtxE = Fun(LOpts, FunState, NewCtxS, PTree, {Rule, 'end'}),
+    ?FOLD_RESULT(NewCtxE);
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% varrayTypeDef
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+fold_i(Fun, LOpts, FunState, Ctx, #{varrayTypeDef := Value} = PTree) ->
+    ?FOLD_INIT(FunState, Ctx, PTree),
+    Rule = varrayTypeDef,
+    NewCtxS = Fun(LOpts, FunState, Ctx, PTree, {Rule, start}),
+    NewCtx1 =
+        fold_i(Fun, LOpts, FunState, NewCtxS, maps:get(type@, Value)),
+    NewCtx2 =
+        fold_i(Fun, LOpts, FunState, NewCtx1, maps:get(size@, Value)),
+    NewCtx3 =
+        fold_i(Fun, LOpts, FunState, NewCtx2, maps:get(dataType@, Value)),
+    NewCtx4 = case maps:is_key(notNull@,
+        Value) of
+                  true ->
+                      fold_i(Fun, LOpts, FunState, NewCtx3,
+                          maps:get(notNull@, Value));
+                  _ -> NewCtx3
+              end,
+    NewCtxE = Fun(LOpts, FunState, NewCtx4, PTree, {Rule, 'end'}),
+    ?FOLD_RESULT(NewCtxE);
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % UNSUPPORTED
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -1077,6 +1209,7 @@ list_elem_ext_rule(Fun, LOpts, FunState, Ctx, Rule, [Head | Tail], Counter, Leng
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Set the function state for a new statement:
 % -------------------------------------------
+%     collectionTypeDefinition
 %     constantDeclaration
 %     exceptionDeclaration
 %     packageFunctionDeclaration

@@ -1168,12 +1168,16 @@ fold(_LOpts, _FunState, Ctx, _PTree, {Rule, _Step, _Pos}) when
 fold(_LOpts, _FunState, Ctx, _PTree, {Rule, _Step}) when
     Rule == accessibleByClause;
     Rule == accessor;
+    Rule == assocArrayTypeDef;
+    Rule == collectionTypeDefinition;
     Rule == columnRefCommaList;
     Rule == constantDeclaration;
     Rule == constantName;
     Rule == createPackage;
     Rule == dataSource;
     Rule == dataSourceCommaList;
+    Rule == dataTypeIndex;
+    Rule == dataTypeTable;
     Rule == defaultCollationClause;
     Rule == exceptionDeclaration;
     Rule == expression;
@@ -1198,6 +1202,7 @@ fold(_LOpts, _FunState, Ctx, _PTree, {Rule, _Step}) when
     Rule == procedureAnnotation;
     Rule == procedureHeading;
     Rule == recordTypeDefinition;
+    Rule == recordTypeName;
     Rule == resultCacheClause;
     Rule == scalarExpression;
     Rule == scalarSubExpression;
@@ -1206,7 +1211,10 @@ fold(_LOpts, _FunState, Ctx, _PTree, {Rule, _Step}) when
     Rule == streamingClauseExpression@_@;
     Rule == subtypeDefinition;
     Rule == subtypeName;
-    Rule == typeName ->
+    Rule == typeName;
+    Rule == varraySize;
+    Rule == varrayType;
+    Rule == varrayTypeDef ->
     Ctx;
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

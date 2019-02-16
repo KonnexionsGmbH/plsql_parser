@@ -33,7 +33,7 @@
 %%  - dbss,
 %%  - flat (= default value),
 %%  - full,
--define(TEST_VERSION, flat).
+-define(TEST_VERSION, full).
 
 -include_lib("eunit/include/eunit.hrl").
 -include("plsql_parser.hrl").
