@@ -65,9 +65,7 @@ Rules.
 (/\*([^*]|[\r\n]|(\*+([^*/]|[\r\n])))*\*+/)          : skip_token.
 
 % line comments
-(--(\s.*[\r\n]+|[\r\n]+))                            : skip_token.
-%(--\n)                                              : skip_token.
-%(--\r\n)                                            : skip_token.
+(--([\sa-zA-Z0-9].*[\r\n]+|[\r\n]+))                 : skip_token.
 
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 Erlang code.
