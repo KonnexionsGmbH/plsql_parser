@@ -1139,12 +1139,16 @@ fold(LOpts, _FunState, Ctx, PTree, {thenExpression@_@, Step} = _FoldState)
 % unaryAddOrSubtract
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-fold(_LOpts, _FunState, Ctx, #{unaryAddOrSubtract := PTree},
+fold(_LOpts, FunState, Ctx, #{unaryAddOrSubtract := PTree},
     {unaryAddOrSubtract, Step} = _FoldState)
     when is_list(PTree) ->
     ?CUSTOM_INIT(_FunState, Ctx, PTree, _FoldState),
-    RT = case Step of
-             start -> Ctx ++ PTree;
+    {Stmnt, _, _} = plsql_parser_fold:get_stmnt_clause_curr(FunState),
+    RT = case {Step, Stmnt} of
+             {start, StmntX} when StmntX == none;
+                                  StmntX == packageFunctionDeclaration;
+                                  StmntX == packageProcedureDeclaration ->
+                 Ctx ++ PTree;
              _ -> Ctx
          end,
     ?CUSTOM_RESULT(RT);
