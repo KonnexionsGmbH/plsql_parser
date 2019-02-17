@@ -792,34 +792,34 @@ subtypeDefinition -> SUBTYPE NAME IS dataType_2 NOT NULLX ';' : #{type => "Subty
                                                                                          dataType@ => '$4',
                                                                                          notNull@ => #{notNull => "not null"}}}.
 
-variableDeclaration -> NAME dataType_1                   ';' : #{type => "Constant",
+variableDeclaration -> NAME dataType_1                   ';' : #{type => "Variable",
                                                                  variableDeclaration => #{name@ => unwrap_2_list('$1'),
                                                                                           dataType@ => '$2'}}.
-variableDeclaration -> NAME dataType_1           default ';' : #{type => "Constant",
+variableDeclaration -> NAME dataType_1           default ';' : #{type => "Variable",
                                                                  variableDeclaration => #{name@ => unwrap_2_list('$1'),
                                                                                           dataType@ => '$2',
                                                                                           default@ => '$3'}}.
-variableDeclaration -> NAME dataType_1 NOT NULLX         ';' : #{type => "Constant",
+variableDeclaration -> NAME dataType_1 NOT NULLX         ';' : #{type => "Variable",
                                                                  variableDeclaration => #{name@ => unwrap_2_list('$1'),
                                                                                           dataType@ => '$2',
                                                                                           notNull@ => #{notNull => "not null"}}}.
-variableDeclaration -> NAME dataType_1 NOT NULLX default ';' : #{type => "Constant",
+variableDeclaration -> NAME dataType_1 NOT NULLX default ';' : #{type => "Variable",
                                                                  variableDeclaration => #{name@ => unwrap_2_list('$1'),
                                                                                           dataType@ => '$2',
                                                                                           notNull@ => #{notNull => "not null"},
                                                                                           default@ => '$5'}}.
-variableDeclaration -> NAME dataType_2                   ';' : #{type => "Constant",
+variableDeclaration -> NAME dataType_2                   ';' : #{type => "Variable",
                                                                  variableDeclaration => #{name@ => unwrap_2_list('$1'),
                                                                                           dataType@ => '$2'}}.
-variableDeclaration -> NAME dataType_2           default ';' : #{type => "Constant",
+variableDeclaration -> NAME dataType_2           default ';' : #{type => "Variable",
                                                                  variableDeclaration => #{name@ => unwrap_2_list('$1'),
                                                                                           dataType@ => '$2',
                                                                                           default@ => '$3'}}.
-variableDeclaration -> NAME dataType_2 NOT NULLX         ';' : #{type => "Constant",
+variableDeclaration -> NAME dataType_2 NOT NULLX         ';' : #{type => "Variable",
                                                                  variableDeclaration => #{name@ => unwrap_2_list('$1'),
                                                                                           dataType@ => '$2',
                                                                                           notNull@ => #{notNull => "not null"}}}.
-variableDeclaration -> NAME dataType_2 NOT NULLX default ';' : #{type => "Constant",
+variableDeclaration -> NAME dataType_2 NOT NULLX default ';' : #{type => "Variable",
                                                                  variableDeclaration => #{name@ => unwrap_2_list('$1'),
                                                                                           dataType@ => '$2',
                                                                                           notNull@ => #{notNull => "not null"},
