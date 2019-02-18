@@ -1086,6 +1086,7 @@ varrayTypeDef -> VARYING ARRAY '(' INTNUM ')' OF dataType_2 NOT NULLX : #{varray
 nameExtended -> API_GROUP : "api_group".
 nameExtended -> FALSE     : "false".
 nameExtended -> NAME      : unwrap_2_list('$1').
+nameExtended -> NONE      : "none".
 nameExtended -> TRUE      : "true".
 
 parameterDeclaration -> NAME               dataType_1         : #{parameterDeclaration => #{name@ => unwrap_2_list('$1'),

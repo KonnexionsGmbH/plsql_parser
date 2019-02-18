@@ -1005,6 +1005,7 @@ varrayTypeDef ::= ( ( 'VARYING'? 'ARRAY' ) | 'VARRAY' ) '(' INTNUM ')' 'OF' ( da
 nameExtended -> API_GROUP : "api_group".
 nameExtended -> FALSE     : "false".
 nameExtended -> NAME      : unwrap_2_list('$1').
+nameExtended -> NONE      : "none".
 nameExtended -> TRUE      : "true".
 
 parameterDeclaration -> NAME               dataType_1         : #{parameterDeclaration => #{name@ => unwrap_2_list('$1'),
@@ -1067,7 +1068,7 @@ unitKind -> TRIGGER   : unwrap_2_list('$1').
 unitKind -> TYPE      : unwrap_2_list('$1').
 ============================================================================= */
 
-nameExtended ::= 'API_GROUP' | 'FALSE' | NAME | 'TRUE'
+nameExtended ::= 'API_GROUP' | 'FALSE' | NAME | 'NONE' | 'TRUE'
 
 parameterDeclaration ::= NAME ( 'IN'? ( dataType_1 | dataType_2 ) default? )
                             | ( 'IN'? 'OUT' 'NOCOPY'? ( dataType_1 | dataType_2 ) )
