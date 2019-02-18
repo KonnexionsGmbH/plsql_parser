@@ -938,6 +938,8 @@ dataType_1 -> NUMBER        '(' INTNUM ',' INTNUM ')'                          :
 dataType_1 -> NVARCHAR2     '(' INTNUM            ')'                          : #{dataType => #{class@ => sql,
                                                                                                  type@ => unwrap_2_list('$1'),
                                                                                                  size@ => unwrap_2_list('$3')}}.
+dataType_1 -> RAW                                                              : #{dataType => #{class@ => sql,
+                                                                                                 type@ => unwrap_2_list('$1')}}.
 dataType_1 -> RAW           '(' INTNUM            ')'                          : #{dataType => #{class@ => sql,
                                                                                                  type@ => unwrap_2_list('$1'),
                                                                                                  size@ => unwrap_2_list('$3')}}.

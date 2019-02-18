@@ -864,6 +864,7 @@ create_code(dataSourceCommaList = Rule) ->
 %%              | ( ( 'NCHAR' | 'NVARCHAR2' | 'RAW' ) '(' INTNUM ')' )
 %%              | 'NCLOB'
 %%              | ( 'NUMBER' ( '(' INTNUM ( ',' INTNUM )? ')' )? )
+%%              | 'RAW'
 %%              | ( 'REF' 'CURSOR' )
 %%              | 'ROWID'
 %%              | ( 'TIMESTAMP' ( '(' INTNUM ')' )? ( 'WITH' 'LOCAL'? 'TIME' 'ZONE' )? )
@@ -996,6 +997,7 @@ create_code(dataType_1 = Rule) ->
                     lists:nth(rand:uniform(Intnum_Length), Intnum),
                     ")"
                 ]),
+            "Raw",
             "Ref Cursor",
             "Rowid",
             "Timestamp",
