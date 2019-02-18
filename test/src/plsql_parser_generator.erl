@@ -1776,7 +1776,7 @@ create_code(name = Rule) ->
     ?CREATE_CODE_END;
 
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% nameExtended ::= 'API_GROUP' | 'FALSE' | NAME | 'TRUE'
+%% nameExtended ::= 'API_GROUP' | 'FALSE' | NAME | 'NONE' | 'TRUE'
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 create_code(nameExtended = Rule) ->
@@ -1786,6 +1786,7 @@ create_code(nameExtended = Rule) ->
     Code = [
         "api_group",
         "false",
+        "none"
         "true"
     ] ++ Name,
     store_code(Rule, Code, ?MAX_BASIC, false),
