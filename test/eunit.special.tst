@@ -544,14 +544,14 @@ IS
     FUNCTION function_1
         RETURN DATE;
 
---    FUNCTION function_2 (param_1 DATE)
---        RETURN BOOLEAN;
+---   FUNCTION function_2 (param_1 DATE)
+--a       RETURN BOOLEAN;
 --
---    FUNCTION function_3 (
+--b   FUNCTION function_3 (
 --        param_1                               DATE,
---        param_2                        IN     DATE,
+--C       param_2                        IN     DATE,
 --        param_3                        IN OUT DATE,
---        param_4                           OUT DATE)
+--3       param_4                           OUT DATE)
 --        RETURN BOOLEAN;
 END package_1;
 /
@@ -638,6 +638,20 @@ AS
         parameter_1                             IN OUT DATE,
         parameter_2                             IN OUT DATE);
 END package_name;
+".
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Empty Package Specification.
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+"
+CREATE OR REPLACE PACKAGE package_1
+IS
+    /*
+       comment
+    */
+END package_1;
+/
 ".
 
 %% -----------------------------------------------------------------------------

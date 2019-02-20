@@ -700,8 +700,13 @@ fold_i(Fun, LOpts, FunState, Ctx, #{packageItemList@_@ := Value} = PTree) ->
     ?FOLD_INIT(FunState, Ctx, PTree),
     Rule = packageItemList@_@,
     NewCtxS = Fun(LOpts, FunState, Ctx, PTree, {Rule, start}),
-    NewCtx1 = list_elem_ext_rule(Fun, LOpts, FunState, NewCtxS,
-        packageItemList, maps:get(packageItemList@, Value)),
+    NewCtx1 = case maps:is_key(packageItemList@,
+        Value) of
+                  true ->
+                      list_elem_ext_rule(Fun, LOpts, FunState, NewCtxS,
+                          packageItemList, maps:get(packageItemList@, Value));
+                  _ -> NewCtxS
+              end,
     NewCtxE = Fun(LOpts, FunState, NewCtx1, PTree, {Rule, 'end'}),
     ?FOLD_RESULT(NewCtxE);
 
@@ -854,12 +859,23 @@ fold_i(Fun, LOpts, FunState, Ctx, #{plsqlPackageSource := Value} = PTree) ->
                   _ -> NewCtx1
               end,
     NewCtx3 = fold_i(Fun, LOpts, FunState, NewCtx2,
-        case maps:is_key(man_page@, Value) of
-            true -> #{packageItemList@_@ => #{asIs@=>maps:get(asIs@,
-                Value), packageItemList@=>maps:get(packageItemList@,
-                Value), man_page@=>maps:get(man_page@, Value)}};
-            _ -> #{packageItemList@_@ => #{asIs@=>maps:get(asIs@,
-                Value), packageItemList@=>maps:get(packageItemList@, Value)}}
+        case {maps:is_key(man_page@, Value), maps:is_key(packageItemList@,
+            Value)} of
+            {true, true} ->
+                #{packageItemList@_@ => #{
+                    asIs@=>maps:get(asIs@, Value),
+                    packageItemList@=>maps:get(packageItemList@, Value),
+                    man_page@=>maps:get(man_page@, Value)}};
+            {true, false} ->
+                #{packageItemList@_@ => #{
+                    asIs@=>maps:get(asIs@, Value),
+                    man_page@=>maps:get(man_page@, Value)}};
+            {false, true} ->
+                #{packageItemList@_@ => #{
+                    asIs@=>maps:get(asIs@, Value),
+                    packageItemList@=>maps:get(packageItemList@, Value)}};
+            {false, false} ->
+                #{packageItemList@_@ => #{asIs@=>maps:get(asIs@, Value)}}
         end),
     NewCtxE = Fun(LOpts, FunState, NewCtx3, PTree, {Rule, 'end'}),
     ?FOLD_RESULT(NewCtxE);

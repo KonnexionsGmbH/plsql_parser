@@ -2533,7 +2533,7 @@ create_code(pipelinedClause = Rule) ->
 
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% plsqlPackageSource ::= ( NAME '.' )? NAME sharingClause? plsqlPackageSourceAttribute*
-%%                                      ( 'IS' | 'AS' ) ( packageItem | packageItemConditional )+ 'END' ( NAME )?
+%%                                      ( 'IS' | 'AS' ) ( packageItem | packageItemConditional )* 'END' ( NAME )?
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 create_code(plsqlPackageSource = Rule) ->
@@ -2584,8 +2584,11 @@ create_code(plsqlPackageSource = Rule) ->
                         1 -> lists:nth(rand:uniform(Man_Page_Length), Man_Page);
                         _ -> []
                     end,
-                    lists:nth(rand:uniform(PackageItemList_Length),
-                        PackageItemList),
+                    case rand:uniform(5) rem 5 of
+                        1 -> lists:nth(rand:uniform(PackageItemList_Length),
+                            PackageItemList);
+                        _ -> []
+                    end,
                     "End",
                     case rand:uniform(2) rem 2 of
                         1 -> " " ++ lists:nth(rand:uniform(Name_Length), Name);
