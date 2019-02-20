@@ -1212,6 +1212,7 @@ fold(_LOpts, _FunState, Ctx, _PTree, {Rule, _Step}) when
     Rule == scalarExpression;
     Rule == scalarSubExpression;
     Rule == sharingClause;
+    Rule == sqlplusCommand;
     Rule == streamingClause;
     Rule == streamingClauseExpression@_@;
     Rule == subtypeDefinition;

@@ -88,6 +88,7 @@ Nonterminals
  refCursorTypeDefinition
  resultCacheClause
  sharingClause
+ sqlplusCommand
  streamingClause
  subtypeDefinition
  systemPrivilegeAnnotation
@@ -147,14 +148,17 @@ Terminals
  CLOB
  CLUSTER
  COLLATION
+ COMMIT
  COMPARISON
  CONSTANT
+ CONTAINER
  CREATE
  CURRENT_USER
  CURSOR
  DATE
  DAY
  DEFAULT
+ DEFINE
  DEFINER
  DETERMINISTIC
  EDITIONABLE
@@ -187,6 +191,8 @@ Terminals
  NVARCHAR2
  OBJECT_PRIVILEGE
  OF
+ OFF
+ ON
  OR
  ORDER
  OUT
@@ -202,6 +208,7 @@ Terminals
  RAW
  RECORD
  REF
+ REFRESH
  RELIES_ON
  REPLACE
  RESULT_CACHE
@@ -209,6 +216,7 @@ Terminals
  ROW
  ROWID
  SECOND
+ SET
  SHARING
  STRING
  SUBTYPE
@@ -254,7 +262,8 @@ plsqlScript -> plsqlUnit plsqlScript : [['$1'] | '$2'].
 
 %% Level 02 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-plsqlUnit -> createPackage : #{plsqlUnit => #{createPackage@ => '$1'}}.
+plsqlUnit ->                createPackage : #{plsqlUnit => #{                         createPackage@ => '$1'}}.
+plsqlUnit -> sqlplusCommand createPackage : #{plsqlUnit => #{sqlplusCommand@ => '$1', createPackage@ => '$2'}}.
 
 %% Level 03 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -290,6 +299,9 @@ createPackage -> CREATE OR REPLACE NONEDITIONABLE PACKAGE plsqlPackageSource ';'
                                                                                                             editionable@ => unwrap_2_list('$4'),
                                                                                                             plsqlPackageSource@ => '$6',
                                                                                                             slash@ => true}}.
+
+sqlplusCommand -> SET DEFINE OFF ';' : #{sqlplusCommand => lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2'), " ", unwrap_2_list('$3')])}.
+sqlplusCommand -> SET DEFINE ON  ';' : #{sqlplusCommand => lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2'), " ", unwrap_2_list('$3')])}.
 
 %% Level 04 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -609,10 +621,11 @@ systemPrivilegeAnnotation -> '--<>' SYSTEM_PRIVILEGE '=' systemPrivilegeType : #
 
 %% Level 06 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-objectPrivilegeType -> INDEX          : unwrap_2_list('$1').
-objectPrivilegeType -> NAME           : unwrap_2_list('$1').
-objectPrivilegeType -> NAME NAME      : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2')]).
-objectPrivilegeType -> NAME NAME NAME : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2'), " ", unwrap_2_list('$3')]).
+objectPrivilegeType -> INDEX               : unwrap_2_list('$1').
+objectPrivilegeType -> NAME                : unwrap_2_list('$1').
+objectPrivilegeType -> NAME NAME           : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2')]).
+objectPrivilegeType -> NAME NAME   NAME    : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2'), " ", unwrap_2_list('$3')]).
+objectPrivilegeType -> ON   COMMIT REFRESH : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2'), " ", unwrap_2_list('$3')]).
 
 packageItem -> itemDeclaration             : '$1'.
 packageItem -> packageFunctionDeclaration  : '$1'.
@@ -647,6 +660,7 @@ systemPrivilegeType -> NAME   ANY       TYPE      : lists:append([unwrap_2_list(
 systemPrivilegeType -> NAME   NAME                : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2')]).
 systemPrivilegeType -> NAME   NAME      NAME      : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2'), " ", unwrap_2_list('$3')]).
 systemPrivilegeType -> NAME   NAME      NAME NAME : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2'), " ", unwrap_2_list('$3'), " ", unwrap_2_list('$4')]).
+systemPrivilegeType -> SET    CONTAINER           : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2')]).
 
 %% Level 07 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

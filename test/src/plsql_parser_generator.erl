@@ -110,6 +110,7 @@ create_code() ->
     create_code(invokerRightsClause),
     create_code(objectPrivilegeType),
     create_code(sharingClause),
+    create_code(sqlplusCommand),
     create_code(systemPrivilegeType),
     create_code(unaryAddOrSubtract),
     create_code(unitKind),
@@ -770,11 +771,19 @@ create_code(createPackage = Rule) ->
     [{plsqlPackageSource, PlsqlPackageSource}] = ets:lookup(?CODE_TEMPLATES,
         plsqlPackageSource),
     PlsqlPackageSource_Length = length(PlsqlPackageSource),
+    [{sqlplusCommand, SqlplusCommand}] = ets:lookup(?CODE_TEMPLATES,
+        sqlplusCommand),
+    SqlplusCommand_Length = length(SqlplusCommand),
 
     Code =
         [
             lists:append(
                 [
+                    case rand:uniform(5) rem 5 of
+                        1 -> lists:nth(rand:uniform(SqlplusCommand_Length),
+                            SqlplusCommand);
+                        _ -> []
+                    end,
                     "Create",
                     case rand:uniform(2) rem 2 of
                         1 -> " Or Replace";
@@ -2919,6 +2928,21 @@ create_code(sharingClause = Rule) ->
         [
             "Sharing = Metadata",
             "Sharing = None"
+        ],
+    store_code(Rule, Code, ?MAX_BASIC, false),
+    ?CREATE_CODE_END;
+
+%% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% osqlplusCommand ::= 'SET' 'DEFINE' ( 'OFF' | 'ON' )
+%% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+create_code(sqlplusCommand = Rule) ->
+    ?CREATE_CODE_START,
+
+    Code =
+        [
+            "Set Define Off;",
+            "Set Define On;"
         ],
     store_code(Rule, Code, ?MAX_BASIC, false),
     ?CREATE_CODE_END;
