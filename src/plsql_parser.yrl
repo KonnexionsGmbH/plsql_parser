@@ -293,11 +293,23 @@ createPackage -> CREATE OR REPLACE NONEDITIONABLE PACKAGE plsqlPackageSource ';'
 
 %% Level 04 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+plsqlPackageSource ->          NAME                                               as_is                          END      : #{plsqlPackageSource => #{asIs@ => '$2',
+                                                                                                                                                      packageNameStart@ => unwrap_2_list('$1')}}.
+plsqlPackageSource ->          NAME                                               as_is                          END NAME : #{plsqlPackageSource => #{asIs@ => '$2',
+                                                                                                                                                      packageNameEnd@ => unwrap_2_list('$4'),
+                                                                                                                                                      packageNameStart@ => unwrap_2_list('$1')}}.
 plsqlPackageSource ->          NAME                                               as_is          packageItemList END      : #{plsqlPackageSource => #{asIs@ => '$2',
                                                                                                                                                       packageItemList@ => '$3',
                                                                                                                                                       packageNameStart@ => unwrap_2_list('$1')}}.
 plsqlPackageSource ->          NAME                                               as_is          packageItemList END NAME : #{plsqlPackageSource => #{asIs@ => '$2',
                                                                                                                                                       packageItemList@ => '$3',
+                                                                                                                                                      packageNameEnd@ => unwrap_2_list('$5'),
+                                                                                                                                                      packageNameStart@ => unwrap_2_list('$1')}}.
+plsqlPackageSource ->          NAME                                               as_is MAN_PAGE                 END      : #{plsqlPackageSource => #{asIs@ => '$2',
+                                                                                                                                                      man_page@ => unwrap_2_list('$3'),
+                                                                                                                                                      packageNameStart@ => unwrap_2_list('$1')}}.
+plsqlPackageSource ->          NAME                                               as_is MAN_PAGE                 END NAME : #{plsqlPackageSource => #{asIs@ => '$2',
+                                                                                                                                                      man_page@ => unwrap_2_list('$3'),
                                                                                                                                                       packageNameEnd@ => unwrap_2_list('$5'),
                                                                                                                                                       packageNameStart@ => unwrap_2_list('$1')}}.
 plsqlPackageSource ->          NAME                                               as_is MAN_PAGE packageItemList END      : #{plsqlPackageSource => #{asIs@ => '$2',
@@ -309,12 +321,28 @@ plsqlPackageSource ->          NAME                                             
                                                                                                                                                       packageItemList@ => '$4',
                                                                                                                                                       packageNameEnd@ => unwrap_2_list('$6'),
                                                                                                                                                       packageNameStart@ => unwrap_2_list('$1')}}.
+plsqlPackageSource ->          NAME               plsqlPackageSourceAttributeList as_is                          END      : #{plsqlPackageSource => #{asIs@ => '$3',
+                                                                                                                                                      packageNameStart@ => unwrap_2_list('$1'),
+                                                                                                                                                      plsqlPackageSourceAttributeList@ => '$2'}}.
+plsqlPackageSource ->          NAME               plsqlPackageSourceAttributeList as_is                          END NAME : #{plsqlPackageSource => #{asIs@ => '$3',
+                                                                                                                                                      packageNameEnd@ => unwrap_2_list('$5'),
+                                                                                                                                                      packageNameStart@ => unwrap_2_list('$1'),
+                                                                                                                                                      plsqlPackageSourceAttributeList@ => '$2'}}.
 plsqlPackageSource ->          NAME               plsqlPackageSourceAttributeList as_is          packageItemList END      : #{plsqlPackageSource => #{asIs@ => '$3',
                                                                                                                                                       packageItemList@ => '$4',
                                                                                                                                                       packageNameStart@ => unwrap_2_list('$1'),
                                                                                                                                                       plsqlPackageSourceAttributeList@ => '$2'}}.
 plsqlPackageSource ->          NAME               plsqlPackageSourceAttributeList as_is          packageItemList END NAME : #{plsqlPackageSource => #{asIs@ => '$3',
                                                                                                                                                       packageItemList@ => '$4',
+                                                                                                                                                      packageNameEnd@ => unwrap_2_list('$6'),
+                                                                                                                                                      packageNameStart@ => unwrap_2_list('$1'),
+                                                                                                                                                      plsqlPackageSourceAttributeList@ => '$2'}}.
+plsqlPackageSource ->          NAME               plsqlPackageSourceAttributeList as_is MAN_PAGE                 END      : #{plsqlPackageSource => #{asIs@ => '$3',
+                                                                                                                                                      man_page@ => unwrap_2_list('$4'),
+                                                                                                                                                      packageNameStart@ => unwrap_2_list('$1'),
+                                                                                                                                                      plsqlPackageSourceAttributeList@ => '$2'}}.
+plsqlPackageSource ->          NAME               plsqlPackageSourceAttributeList as_is MAN_PAGE                 END NAME : #{plsqlPackageSource => #{asIs@ => '$3',
+                                                                                                                                                      man_page@ => unwrap_2_list('$4'),
                                                                                                                                                       packageNameEnd@ => unwrap_2_list('$6'),
                                                                                                                                                       packageNameStart@ => unwrap_2_list('$1'),
                                                                                                                                                       plsqlPackageSourceAttributeList@ => '$2'}}.
@@ -329,12 +357,28 @@ plsqlPackageSource ->          NAME               plsqlPackageSourceAttributeLis
                                                                                                                                                       packageNameEnd@ => unwrap_2_list('$7'),
                                                                                                                                                       packageNameStart@ => unwrap_2_list('$1'),
                                                                                                                                                       plsqlPackageSourceAttributeList@ => '$2'}}.
+plsqlPackageSource ->          NAME sharingClause                                 as_is                          END      : #{plsqlPackageSource => #{asIs@ => '$3',
+                                                                                                                                                      packageNameStart@ => unwrap_2_list('$1'),
+                                                                                                                                                      sharingClause@ => '$2'}}.
+plsqlPackageSource ->          NAME sharingClause                                 as_is                          END NAME : #{plsqlPackageSource => #{asIs@ => '$3',
+                                                                                                                                                      packageNameEnd@ => unwrap_2_list('$5'),
+                                                                                                                                                      packageNameStart@ => unwrap_2_list('$1'),
+                                                                                                                                                      sharingClause@ => '$2'}}.
 plsqlPackageSource ->          NAME sharingClause                                 as_is          packageItemList END      : #{plsqlPackageSource => #{asIs@ => '$3',
                                                                                                                                                       packageItemList@ => '$4',
                                                                                                                                                       packageNameStart@ => unwrap_2_list('$1'),
                                                                                                                                                       sharingClause@ => '$2'}}.
 plsqlPackageSource ->          NAME sharingClause                                 as_is          packageItemList END NAME : #{plsqlPackageSource => #{asIs@ => '$3',
                                                                                                                                                       packageItemList@ => '$4',
+                                                                                                                                                      packageNameEnd@ => unwrap_2_list('$6'),
+                                                                                                                                                      packageNameStart@ => unwrap_2_list('$1'),
+                                                                                                                                                      sharingClause@ => '$2'}}.
+plsqlPackageSource ->          NAME sharingClause                                 as_is MAN_PAGE                 END      : #{plsqlPackageSource => #{asIs@ => '$3',
+                                                                                                                                                      man_page@ => unwrap_2_list('$4'),
+                                                                                                                                                      packageNameStart@ => unwrap_2_list('$1'),
+                                                                                                                                                      sharingClause@ => '$2'}}.
+plsqlPackageSource ->          NAME sharingClause                                 as_is MAN_PAGE                 END NAME : #{plsqlPackageSource => #{asIs@ => '$3',
+                                                                                                                                                      man_page@ => unwrap_2_list('$4'),
                                                                                                                                                       packageNameEnd@ => unwrap_2_list('$6'),
                                                                                                                                                       packageNameStart@ => unwrap_2_list('$1'),
                                                                                                                                                       sharingClause@ => '$2'}}.
@@ -349,6 +393,15 @@ plsqlPackageSource ->          NAME sharingClause                               
                                                                                                                                                       packageNameEnd@ => unwrap_2_list('$7'),
                                                                                                                                                       packageNameStart@ => unwrap_2_list('$1'),
                                                                                                                                                       sharingClause@ => '$2'}}.
+plsqlPackageSource ->          NAME sharingClause plsqlPackageSourceAttributeList as_is                          END      : #{plsqlPackageSource => #{asIs@ => '$4',
+                                                                                                                                                      packageNameStart@ => unwrap_2_list('$1'),
+                                                                                                                                                      plsqlPackageSourceAttributeList@ => '$3',
+                                                                                                                                                      sharingClause@ => '$2'}}.
+plsqlPackageSource ->          NAME sharingClause plsqlPackageSourceAttributeList as_is                          END NAME : #{plsqlPackageSource => #{asIs@ => '$4',
+                                                                                                                                                      packageNameEnd@ => unwrap_2_list('$6'),
+                                                                                                                                                      packageNameStart@ => unwrap_2_list('$1'),
+                                                                                                                                                      plsqlPackageSourceAttributeList@ => '$3',
+                                                                                                                                                      sharingClause@ => '$2'}}.
 plsqlPackageSource ->          NAME sharingClause plsqlPackageSourceAttributeList as_is          packageItemList END      : #{plsqlPackageSource => #{asIs@ => '$4',
                                                                                                                                                       packageItemList@ => '$5',
                                                                                                                                                       packageNameStart@ => unwrap_2_list('$1'),
@@ -356,6 +409,17 @@ plsqlPackageSource ->          NAME sharingClause plsqlPackageSourceAttributeLis
                                                                                                                                                       sharingClause@ => '$2'}}.
 plsqlPackageSource ->          NAME sharingClause plsqlPackageSourceAttributeList as_is          packageItemList END NAME : #{plsqlPackageSource => #{asIs@ => '$4',
                                                                                                                                                       packageItemList@ => '$5',
+                                                                                                                                                      packageNameEnd@ => unwrap_2_list('$7'),
+                                                                                                                                                      packageNameStart@ => unwrap_2_list('$1'),
+                                                                                                                                                      plsqlPackageSourceAttributeList@ => '$3',
+                                                                                                                                                      sharingClause@ => '$2'}}.
+plsqlPackageSource ->          NAME sharingClause plsqlPackageSourceAttributeList as_is MAN_PAGE                 END      : #{plsqlPackageSource => #{asIs@ => '$4',
+                                                                                                                                                      man_page@ => unwrap_2_list('$5'),
+                                                                                                                                                      packageNameStart@ => unwrap_2_list('$1'),
+                                                                                                                                                      plsqlPackageSourceAttributeList@ => '$3',
+                                                                                                                                                      sharingClause@ => '$2'}}.
+plsqlPackageSource ->          NAME sharingClause plsqlPackageSourceAttributeList as_is MAN_PAGE                 END NAME : #{plsqlPackageSource => #{asIs@ => '$4',
+                                                                                                                                                      man_page@ => unwrap_2_list('$5'),
                                                                                                                                                       packageNameEnd@ => unwrap_2_list('$7'),
                                                                                                                                                       packageNameStart@ => unwrap_2_list('$1'),
                                                                                                                                                       plsqlPackageSourceAttributeList@ => '$3',
@@ -373,11 +437,23 @@ plsqlPackageSource ->          NAME sharingClause plsqlPackageSourceAttributeLis
                                                                                                                                                       packageNameStart@ => unwrap_2_list('$1'),
                                                                                                                                                       plsqlPackageSourceAttributeList@ => '$3',
                                                                                                                                                       sharingClause@ => '$2'}}.
+plsqlPackageSource -> NAME '.' NAME                                               as_is                          END      : #{plsqlPackageSource => #{asIs@ => '$4',
+                                                                                                                                                      packageNameStart@ => lists:append([unwrap_2_list('$1'), ".", unwrap_2_list('$3')])}}.
+plsqlPackageSource -> NAME '.' NAME                                               as_is                          END NAME : #{plsqlPackageSource => #{asIs@ => '$4',
+                                                                                                                                                      packageNameEnd@ => unwrap_2_list('$6'),
+                                                                                                                                                      packageNameStart@ => lists:append([unwrap_2_list('$1'), ".", unwrap_2_list('$3')])}}.
 plsqlPackageSource -> NAME '.' NAME                                               as_is          packageItemList END      : #{plsqlPackageSource => #{asIs@ => '$4',
                                                                                                                                                       packageItemList@ => '$5',
                                                                                                                                                       packageNameStart@ => lists:append([unwrap_2_list('$1'), ".", unwrap_2_list('$3')])}}.
 plsqlPackageSource -> NAME '.' NAME                                               as_is          packageItemList END NAME : #{plsqlPackageSource => #{asIs@ => '$4',
                                                                                                                                                       packageItemList@ => '$5',
+                                                                                                                                                      packageNameEnd@ => unwrap_2_list('$7'),
+                                                                                                                                                      packageNameStart@ => lists:append([unwrap_2_list('$1'), ".", unwrap_2_list('$3')])}}.
+plsqlPackageSource -> NAME '.' NAME                                               as_is MAN_PAGE                 END      : #{plsqlPackageSource => #{asIs@ => '$4',
+                                                                                                                                                      man_page@ => unwrap_2_list('$5'),
+                                                                                                                                                      packageNameStart@ => lists:append([unwrap_2_list('$1'), ".", unwrap_2_list('$3')])}}.
+plsqlPackageSource -> NAME '.' NAME                                               as_is MAN_PAGE                 END NAME : #{plsqlPackageSource => #{asIs@ => '$4',
+                                                                                                                                                      man_page@ => unwrap_2_list('$5'),
                                                                                                                                                       packageNameEnd@ => unwrap_2_list('$7'),
                                                                                                                                                       packageNameStart@ => lists:append([unwrap_2_list('$1'), ".", unwrap_2_list('$3')])}}.
 plsqlPackageSource -> NAME '.' NAME                                               as_is MAN_PAGE packageItemList END      : #{plsqlPackageSource => #{asIs@ => '$4',
@@ -389,12 +465,28 @@ plsqlPackageSource -> NAME '.' NAME                                             
                                                                                                                                                       packageItemList@ => '$6',
                                                                                                                                                       packageNameEnd@ => unwrap_2_list('$8'),
                                                                                                                                                       packageNameStart@ => lists:append([unwrap_2_list('$1'), ".", unwrap_2_list('$3')])}}.
+plsqlPackageSource -> NAME '.' NAME               plsqlPackageSourceAttributeList as_is                          END      : #{plsqlPackageSource => #{asIs@ => '$5',
+                                                                                                                                                      packageNameStart@ => lists:append([unwrap_2_list('$1'), ".", unwrap_2_list('$3')]),
+                                                                                                                                                      plsqlPackageSourceAttributeList@ => '$4'}}.
+plsqlPackageSource -> NAME '.' NAME               plsqlPackageSourceAttributeList as_is                          END NAME : #{plsqlPackageSource => #{asIs@ => '$5',
+                                                                                                                                                      packageNameEnd@ => unwrap_2_list('$7'),
+                                                                                                                                                      packageNameStart@ => lists:append([unwrap_2_list('$1'), ".", unwrap_2_list('$3')]),
+                                                                                                                                                      plsqlPackageSourceAttributeList@ => '$4'}}.
 plsqlPackageSource -> NAME '.' NAME               plsqlPackageSourceAttributeList as_is          packageItemList END      : #{plsqlPackageSource => #{asIs@ => '$5',
                                                                                                                                                       packageItemList@ => '$6',
                                                                                                                                                       packageNameStart@ => lists:append([unwrap_2_list('$1'), ".", unwrap_2_list('$3')]),
                                                                                                                                                       plsqlPackageSourceAttributeList@ => '$4'}}.
 plsqlPackageSource -> NAME '.' NAME               plsqlPackageSourceAttributeList as_is          packageItemList END NAME : #{plsqlPackageSource => #{asIs@ => '$5',
                                                                                                                                                       packageItemList@ => '$6',
+                                                                                                                                                      packageNameEnd@ => unwrap_2_list('$8'),
+                                                                                                                                                      packageNameStart@ => lists:append([unwrap_2_list('$1'), ".", unwrap_2_list('$3')]),
+                                                                                                                                                      plsqlPackageSourceAttributeList@ => '$4'}}.
+plsqlPackageSource -> NAME '.' NAME               plsqlPackageSourceAttributeList as_is MAN_PAGE                 END      : #{plsqlPackageSource => #{asIs@ => '$5',
+                                                                                                                                                      man_page@ => unwrap_2_list('$6'),
+                                                                                                                                                      packageNameStart@ => lists:append([unwrap_2_list('$1'), ".", unwrap_2_list('$3')]),
+                                                                                                                                                      plsqlPackageSourceAttributeList@ => '$4'}}.
+plsqlPackageSource -> NAME '.' NAME               plsqlPackageSourceAttributeList as_is MAN_PAGE                 END NAME : #{plsqlPackageSource => #{asIs@ => '$5',
+                                                                                                                                                      man_page@ => unwrap_2_list('$6'),
                                                                                                                                                       packageNameEnd@ => unwrap_2_list('$8'),
                                                                                                                                                       packageNameStart@ => lists:append([unwrap_2_list('$1'), ".", unwrap_2_list('$3')]),
                                                                                                                                                       plsqlPackageSourceAttributeList@ => '$4'}}.
@@ -409,12 +501,28 @@ plsqlPackageSource -> NAME '.' NAME               plsqlPackageSourceAttributeLis
                                                                                                                                                       packageNameEnd@ => unwrap_2_list('$9'),
                                                                                                                                                       packageNameStart@ => lists:append([unwrap_2_list('$1'), ".", unwrap_2_list('$3')]),
                                                                                                                                                       plsqlPackageSourceAttributeList@ => '$4'}}.
+plsqlPackageSource -> NAME '.' NAME sharingClause                                 as_is                          END      : #{plsqlPackageSource => #{asIs@ => '$5',
+                                                                                                                                                      packageNameStart@ => lists:append([unwrap_2_list('$1'), ".", unwrap_2_list('$3')]),
+                                                                                                                                                      sharingClause@ => '$4'}}.
+plsqlPackageSource -> NAME '.' NAME sharingClause                                 as_is                          END NAME : #{plsqlPackageSource => #{asIs@ => '$5',
+                                                                                                                                                      packageNameEnd@ => unwrap_2_list('$7'),
+                                                                                                                                                      packageNameStart@ => lists:append([unwrap_2_list('$1'), ".", unwrap_2_list('$3')]),
+                                                                                                                                                      sharingClause@ => '$4'}}.
 plsqlPackageSource -> NAME '.' NAME sharingClause                                 as_is          packageItemList END      : #{plsqlPackageSource => #{asIs@ => '$5',
                                                                                                                                                       packageItemList@ => '$6',
                                                                                                                                                       packageNameStart@ => lists:append([unwrap_2_list('$1'), ".", unwrap_2_list('$3')]),
                                                                                                                                                       sharingClause@ => '$4'}}.
 plsqlPackageSource -> NAME '.' NAME sharingClause                                 as_is          packageItemList END NAME : #{plsqlPackageSource => #{asIs@ => '$5',
                                                                                                                                                       packageItemList@ => '$6',
+                                                                                                                                                      packageNameEnd@ => unwrap_2_list('$8'),
+                                                                                                                                                      packageNameStart@ => lists:append([unwrap_2_list('$1'), ".", unwrap_2_list('$3')]),
+                                                                                                                                                      sharingClause@ => '$4'}}.
+plsqlPackageSource -> NAME '.' NAME sharingClause                                 as_is MAN_PAGE                 END      : #{plsqlPackageSource => #{asIs@ => '$5',
+                                                                                                                                                      man_page@ => unwrap_2_list('$6'),
+                                                                                                                                                      packageNameStart@ => lists:append([unwrap_2_list('$1'), ".", unwrap_2_list('$3')]),
+                                                                                                                                                      sharingClause@ => '$4'}}.
+plsqlPackageSource -> NAME '.' NAME sharingClause                                 as_is MAN_PAGE                 END NAME : #{plsqlPackageSource => #{asIs@ => '$5',
+                                                                                                                                                      man_page@ => unwrap_2_list('$6'),
                                                                                                                                                       packageNameEnd@ => unwrap_2_list('$8'),
                                                                                                                                                       packageNameStart@ => lists:append([unwrap_2_list('$1'), ".", unwrap_2_list('$3')]),
                                                                                                                                                       sharingClause@ => '$4'}}.
@@ -429,6 +537,15 @@ plsqlPackageSource -> NAME '.' NAME sharingClause                               
                                                                                                                                                       packageNameEnd@ => unwrap_2_list('$9'),
                                                                                                                                                       packageNameStart@ => lists:append([unwrap_2_list('$1'), ".", unwrap_2_list('$3')]),
                                                                                                                                                       sharingClause@ => '$4'}}.
+plsqlPackageSource -> NAME '.' NAME sharingClause plsqlPackageSourceAttributeList as_is                          END      : #{plsqlPackageSource => #{asIs@ => '$6',
+                                                                                                                                                      packageNameStart@ => lists:append([unwrap_2_list('$1'), ".", unwrap_2_list('$3')]),
+                                                                                                                                                      plsqlPackageSourceAttributeList@ => '$5',
+                                                                                                                                                      sharingClause@ => '$4'}}.
+plsqlPackageSource -> NAME '.' NAME sharingClause plsqlPackageSourceAttributeList as_is                          END NAME : #{plsqlPackageSource => #{asIs@ => '$6',
+                                                                                                                                                      packageNameEnd@ => unwrap_2_list('$8'),
+                                                                                                                                                      packageNameStart@ => lists:append([unwrap_2_list('$1'), ".", unwrap_2_list('$3')]),
+                                                                                                                                                      plsqlPackageSourceAttributeList@ => '$5',
+                                                                                                                                                      sharingClause@ => '$4'}}.
 plsqlPackageSource -> NAME '.' NAME sharingClause plsqlPackageSourceAttributeList as_is          packageItemList END      : #{plsqlPackageSource => #{asIs@ => '$6',
                                                                                                                                                       packageItemList@ => '$7',
                                                                                                                                                       packageNameStart@ => lists:append([unwrap_2_list('$1'), ".", unwrap_2_list('$3')]),
@@ -436,6 +553,17 @@ plsqlPackageSource -> NAME '.' NAME sharingClause plsqlPackageSourceAttributeLis
                                                                                                                                                       sharingClause@ => '$4'}}.
 plsqlPackageSource -> NAME '.' NAME sharingClause plsqlPackageSourceAttributeList as_is          packageItemList END NAME : #{plsqlPackageSource => #{asIs@ => '$6',
                                                                                                                                                       packageItemList@ => '$7',
+                                                                                                                                                      packageNameEnd@ => unwrap_2_list('$9'),
+                                                                                                                                                      packageNameStart@ => lists:append([unwrap_2_list('$1'), ".", unwrap_2_list('$3')]),
+                                                                                                                                                      plsqlPackageSourceAttributeList@ => '$5',
+                                                                                                                                                      sharingClause@ => '$4'}}.
+plsqlPackageSource -> NAME '.' NAME sharingClause plsqlPackageSourceAttributeList as_is MAN_PAGE                 END      : #{plsqlPackageSource => #{asIs@ => '$6',
+                                                                                                                                                      man_page@ => unwrap_2_list('$7'),
+                                                                                                                                                      packageNameStart@ => lists:append([unwrap_2_list('$1'), ".", unwrap_2_list('$3')]),
+                                                                                                                                                      plsqlPackageSourceAttributeList@ => '$5',
+                                                                                                                                                      sharingClause@ => '$4'}}.
+plsqlPackageSource -> NAME '.' NAME sharingClause plsqlPackageSourceAttributeList as_is MAN_PAGE                 END NAME : #{plsqlPackageSource => #{asIs@ => '$6',
+                                                                                                                                                      man_page@ => unwrap_2_list('$7'),
                                                                                                                                                       packageNameEnd@ => unwrap_2_list('$9'),
                                                                                                                                                       packageNameStart@ => lists:append([unwrap_2_list('$1'), ".", unwrap_2_list('$3')]),
                                                                                                                                                       plsqlPackageSourceAttributeList@ => '$5',
