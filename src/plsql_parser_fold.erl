@@ -901,9 +901,15 @@ fold_i(Fun, LOpts, FunState, Ctx, [#{plsqlUnit := Value} = PTree]) ->
     ?FOLD_INIT(FunState, Ctx, PTree),
     Rule = plsqlUnit,
     NewCtxS = Fun(LOpts, FunState, Ctx, PTree, {Rule, start}),
-    NewCtx1 = fold_i(Fun, LOpts, FunState, NewCtxS,
+    NewCtx1 = case maps:is_key(sqlplusCommand@, Value) of
+                  true ->
+                      fold_i(Fun, LOpts, FunState, NewCtxS,
+                          maps:get(sqlplusCommand@, Value));
+                  _ -> NewCtxS
+              end,
+    NewCtx2 = fold_i(Fun, LOpts, FunState, NewCtx1,
         maps:get(createPackage@, Value)),
-    NewCtxE = Fun(LOpts, FunState, NewCtx1, PTree, {Rule, 'end'}),
+    NewCtxE = Fun(LOpts, FunState, NewCtx2, PTree, {Rule, 'end'}),
     ?FOLD_RESULT(NewCtxE);
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1022,6 +1028,17 @@ fold_i(Fun, LOpts, FunState, Ctx, {return, Value} = PTree)
 fold_i(Fun, LOpts, FunState, Ctx, #{sharingClause := _Value} = PTree) ->
     ?FOLD_INIT(FunState, Ctx, PTree),
     Rule = sharingClause,
+    NewCtxS = Fun(LOpts, FunState, Ctx, PTree, {Rule, start}),
+    NewCtxE = Fun(LOpts, FunState, NewCtxS, PTree, {Rule, 'end'}),
+    ?FOLD_RESULT(NewCtxE);
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% sqlplusCommand
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+fold_i(Fun, LOpts, FunState, Ctx, #{sqlplusCommand := _Value} = PTree) ->
+    ?FOLD_INIT(FunState, Ctx, PTree),
+    Rule = sqlplusCommand,
     NewCtxS = Fun(LOpts, FunState, Ctx, PTree, {Rule, start}),
     NewCtxE = Fun(LOpts, FunState, NewCtxS, PTree, {Rule, 'end'}),
     ?FOLD_RESULT(NewCtxE);

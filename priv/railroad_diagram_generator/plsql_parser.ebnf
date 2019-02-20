@@ -30,10 +30,11 @@ plsqlScript -> plsqlUnit plsqlScript : [['$1'] | '$2'].
 plsqlScript ::= plsqlUnit+
 
 /* =============================================================================
-plsqlUnit -> createPackage : #{plsqlUnit => #{createPackage@ => '$1'}}.
+plsqlUnit ->                createPackage : #{plsqlUnit => #{                         createPackage@ => '$1'}}.
+plsqlUnit -> sqlplusCommand createPackage : #{plsqlUnit => #{sqlplusCommand@ => '$1', createPackage@ => '$2'}}.
 ============================================================================= */
 
-plsqlUnit ::= createPackage
+plsqlUnit ::= sqlplusCommand? createPackage
 
 /* =============================================================================
 createPackage -> CREATE                           PACKAGE plsqlPackageSource ';'     : #{createPackage => #{plsqlPackageSource@ => '$3'}}.
@@ -68,10 +69,15 @@ createPackage -> CREATE OR REPLACE NONEDITIONABLE PACKAGE plsqlPackageSource ';'
                                                                                                             editionable@ => unwrap_2_list('$4'),
                                                                                                             plsqlPackageSource@ => '$6',
                                                                                                             slash@ => true}}.
+
+sqlplusCommand -> SET DEFINE OFF ';' : #{sqlplusCommand => lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2'), " ", unwrap_2_list('$3')])}.
+sqlplusCommand -> SET DEFINE ON  ';' : #{sqlplusCommand => lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2'), " ", unwrap_2_list('$3')])}.
 ============================================================================= */
 
 createPackage ::= 'CREATE' ( 'OR' 'REPLACE' )? ( 'EDITIONABLE' | 'NONEDITIONABLE' )?
                              'PACKAGE' plsqlPackageSource ';' '/'?
+
+sqlplusCommand ::= 'SET' 'DEFINE' ( 'OFF' | 'ON' )
                              
 /* =============================================================================
 plsqlPackageSource ->          NAME                                               as_is                          END      : #{plsqlPackageSource => #{asIs@ => '$2',
@@ -404,9 +410,12 @@ objectPrivilegeAnnotation ::= '--<>' 'OBJECT_PRIVILEGE' objectPrivilegeType '=' 
 systemPrivilegeAnnotation ::= '--<>' 'SYSTEM_PRIVILEGE' '=' systemPrivilegeType
 
 /* =============================================================================
-objectPrivilegeType -> NAME           : unwrap_2_list('$1').
-objectPrivilegeType -> NAME NAME      : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2')]).
-objectPrivilegeType -> NAME NAME NAME : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2'), " ", unwrap_2_list('$3')]).
+objectPrivilegeType -> INDEX               : unwrap_2_list('$1').
+objectPrivilegeType -> NAME                : unwrap_2_list('$1').
+objectPrivilegeType -> NAME NAME           : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2')]).
+objectPrivilegeType -> NAME NAME   NAME    : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2'), " ", unwrap_2_list('$3')]).
+objectPrivilegeType -> ON   COMMIT REFRESH : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2'), " ", unwrap_2_list('$3')]).
+
 
 packageItem -> itemDeclaration             : '$1'.
 packageItem -> packageFunctionDeclaration  : '$1'.
@@ -441,11 +450,14 @@ systemPrivilegeType -> NAME   ANY       TYPE      : lists:append([unwrap_2_list(
 systemPrivilegeType -> NAME   NAME                : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2')]).
 systemPrivilegeType -> NAME   NAME      NAME      : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2'), " ", unwrap_2_list('$3')]).
 systemPrivilegeType -> NAME   NAME      NAME NAME : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2'), " ", unwrap_2_list('$3'), " ", unwrap_2_list('$4')]).
+systemPrivilegeType -> SET    CONTAINER           : lists:append([unwrap_2_list('$1'), " ", unwrap_2_list('$2')]).
 ============================================================================= */
 
-objectPrivilegeType ::= NAME
+objectPrivilegeType ::= 'INDEX'
+                      | NAME
                       | ( NAME NAME )
                       | ( NAME NAME NAME )
+                      | ( 'ON' 'COMMIT' 'REFRESH' )
 
 packageItem ::= itemDeclaration
               | packageFunctionDeclaration
@@ -461,6 +473,7 @@ systemPrivilegeType ::= NAME
                       | ( NAME ( 'ANY' | NAME ) NAME )
                       | ( NAME 'ANY' 'TABLE' )
                       | ( NAME ( 'ANY' | NAME ) NAME NAME )
+                      | ( 'SET' 'CONTAINER' )
 
 /* =============================================================================
 accessibleByClause -> ACCESSIBLE BY '(' accessorCommaList ')' : #{accessibleByClause => #{accessorCommaList@ => '$4'}}.
