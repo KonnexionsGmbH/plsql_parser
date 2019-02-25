@@ -377,8 +377,8 @@ privilegeAnnotationList -> systemPrivilegeAnnotation                         : [
 privilegeAnnotationList -> systemPrivilegeAnnotation privilegeAnnotationList : ['$1' | '$2'].
 ============================================================================= */
 
-plsqlPackageSource ::= ( NAME '.' )? NAME ( sharingClause? plsqlPackageSourceAttribute*
-                                     ( 'IS' | 'AS' ) MAN_PAGE? ( packageItemSimple | packageItemConditional )* 'END' ( NAME )?
+plsqlPackageSource ::= ( NAME '.' )? NAME sharingClause? plsqlPackageSourceAttribute*
+                                     ( 'IS' | 'AS' ) MAN_PAGE? ( packageItemSimple | packageItemConditional )* 'END' NAME?
 
 privilegeRoleAnnotationList ::= ( apiGroupAnnotation | objectPrivilegeAnnotation | systemPrivilegeAnnotation )+
 
