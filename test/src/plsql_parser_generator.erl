@@ -1671,6 +1671,7 @@ create_code(invokerRightsClause = Rule) ->
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% literal ::= APPROXNUM
 %%           | 'FALSE'
+%%           | INTNEG
 %%           | INTNUM
 %%           | STRING
 %%           | 'TRUE'
@@ -1680,6 +1681,8 @@ create_code(literal = Rule) ->
     ?CREATE_CODE_START,
     [{approxnum, Approxnum}] = ets:lookup(?CODE_TEMPLATES, approxnum),
     Approxnum_Length = length(Approxnum),
+    [{intneg, Intneg}] = ets:lookup(?CODE_TEMPLATES, intneg),
+    Intneg_Length = length(Intneg),
     [{intnum, Intnum}] = ets:lookup(?CODE_TEMPLATES, intnum),
     Intnum_Length = length(Intnum),
     [{string, String}] = ets:lookup(?CODE_TEMPLATES, string),
@@ -1691,9 +1694,10 @@ create_code(literal = Rule) ->
             "True"
         ] ++
         [
-            case rand:uniform(3) rem 3 of
+            case rand:uniform(4) rem 4 of
                 1 -> lists:nth(rand:uniform(Approxnum_Length), Approxnum);
-                2 -> lists:nth(rand:uniform(Intnum_Length), Intnum);
+                2 -> lists:nth(rand:uniform(Intneg_Length), Intneg);
+                3 -> lists:nth(rand:uniform(Intnum_Length), Intnum);
                 _ -> lists:nth(rand:uniform(String_Length), String)
 
             end
@@ -2761,10 +2765,8 @@ create_code(pragmaParameterExceptionInit = Rule) ->
                     lists:nth(rand:uniform(Name_Length), Name),
                     ",",
                     case rand:uniform(5) rem 5 of
-                        1 -> lists:nth(rand:uniform(Intnum_Length),
-                            Intnum);
-                        _ -> lists:nth(rand:uniform(Intneg_Length),
-                            Intneg)
+                        1 -> lists:nth(rand:uniform(Intnum_Length),                            Intnum);
+                        _ -> lists:nth(rand:uniform(Intneg_Length),                            Intneg)
                     end,
                     ")"
                 ])

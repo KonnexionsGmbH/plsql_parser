@@ -1477,6 +1477,7 @@ functionRef -> NAME '.' NAME '.' NAME '(' functionArgCommaList ')' : #{functionR
 
 literal -> APPROXNUM : #{literal => unwrap_2_list('$1')}.
 literal -> FALSE     : #{literal => unwrap_2_list('$1')}.
+literal -> INTNEG    : #{literal => unwrap_2_list('$1')}.
 literal -> INTNUM    : #{literal => unwrap_2_list('$1')}.
 literal -> STRING    : #{literal => unwrap_2_list('$1')}.
 literal -> TRUE      : #{literal => unwrap_2_list('$1')}.
