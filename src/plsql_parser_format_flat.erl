@@ -993,6 +993,13 @@ fold([], _FunState, Ctx, #{pragmaParameter := PTree}, {pragmaParameter, Step} =
                      "(",
                      maps:get(name@, PTree),
                      ",",
+                     case maps:is_key(sign@, PTree) of
+                         true -> lists:append(
+                             [
+                                 maps:get(sign@, PTree)
+                             ]);
+                         _ -> []
+                     end,
                      case maps:is_key(value@, PTree) of
                          true -> lists:append(
                              [

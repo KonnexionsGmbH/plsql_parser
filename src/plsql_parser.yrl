@@ -177,7 +177,6 @@ Terminals
  INDEX
  INDICATOR
  INTERVAL
- INTNEG
  INTNUM
  IS
  LOCAL
@@ -961,10 +960,11 @@ pragmaDeclaration -> PRAGMA SERIALLY_REUSABLE                                   
 pragmaDeclaration -> PRAGMA UDF                                                   ';' : #{type => "Pragma",
                                                                                           pragmaDeclaration => #{pragmaType@ => "UDF"}}.
 
-pragmaParameterExceptionInit -> '(' NAME ',' INTNEG ')' : #{pragmaParameter => #{name@ => unwrap_2_list('$2'),
-                                                                                 value@ => unwrap_2_list('$4')}}.
-pragmaParameterExceptionInit -> '(' NAME ',' INTNUM ')' : #{pragmaParameter => #{name@ => unwrap_2_list('$2'),
-                                                                                 value@ => unwrap_2_list('$4')}}.
+pragmaParameterExceptionInit -> '(' NAME ','     INTNUM ')' : #{pragmaParameter => #{name@ => unwrap_2_list('$2'),
+                                                                                     value@ => unwrap_2_list('$4')}}.
+pragmaParameterExceptionInit -> '(' NAME ',' '-' INTNUM ')' : #{pragmaParameter => #{name@ => unwrap_2_list('$2'),
+                                                                                     sign@ => unwrap_2_list('$4'),
+                                                                                     value@ => unwrap_2_list('$5')}}.
 
 pragmaParameterRestrictReferences -> '(' DEFAULT ',' restrictReferencesList ')' : #{pragmaParameter => #{name@ => "DEFAULT",
                                                                                                          restrictReferencesList@ => '$4'}}.
@@ -1477,7 +1477,6 @@ functionRef -> NAME '.' NAME '.' NAME '(' functionArgCommaList ')' : #{functionR
 
 literal -> APPROXNUM : #{literal => unwrap_2_list('$1')}.
 literal -> FALSE     : #{literal => unwrap_2_list('$1')}.
-literal -> INTNEG    : #{literal => unwrap_2_list('$1')}.
 literal -> INTNUM    : #{literal => unwrap_2_list('$1')}.
 literal -> STRING    : #{literal => unwrap_2_list('$1')}.
 literal -> TRUE      : #{literal => unwrap_2_list('$1')}.

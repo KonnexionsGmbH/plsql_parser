@@ -1071,10 +1071,10 @@ packageFunctionDeclarationAttribute -> resultCacheClause     : #{packageFunction
 parameterDeclarationCommaList -> parameterDeclaration                                   : ['$1'].
 parameterDeclarationCommaList -> parameterDeclaration ',' parameterDeclarationCommaList : ['$1' | '$3'].
 
-pragmaParameterExceptionInit -> '(' NAME ',' INTNEG ')' : #{pragmaParameter => #{name@ => unwrap_2_list('$2'),
-                                                                                 value@ => unwrap_2_list('$4')}}.
-pragmaParameterExceptionInit -> '(' NAME ',' INTNUM ')' : #{pragmaParameter => #{name@ => unwrap_2_list('$2'),
-                                                                                 value@ => unwrap_2_list('$4')}}.
+pragmaParameterExceptionInit -> '(' NAME ','     INTNUM ')' : #{pragmaParameter => #{name@ => unwrap_2_list('$2'),
+                                                                                     value@ => unwrap_2_list('$4')}}.
+pragmaParameterExceptionInit -> '(' NAME ',' '-' INTNUM ')' : #{pragmaParameter => #{name@ => unwrap_2_list('$2'),
+                                                                                     value@ => unwrap_2_list('$4')}}.
 
 pragmaParameterRestrictReferences -> '(' DEFAULT ',' restrictReferencesList ')' : #{pragmaParameter => #{name@ => "DEFAULT",
                                                                                                          restrictReferencesList@ => '$4'}}.
@@ -1170,7 +1170,7 @@ packageFunctionDeclarationAttribute ::= accessibleByClause
                                       | pipelinedClause
                                       | resultCacheClause
 
-pragmaParameterExceptionInit ::= '(' NAME ',' ( INTNEG | INTNUM ) ')'
+pragmaParameterExceptionInit ::= '(' NAME ',' '-'? INTNUM ')'
 
 pragmaParameterRestrictReferences ::= '(' ( 'DEFAULT' | NAME ) ',' restrictReferencesList ')'
 
