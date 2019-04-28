@@ -52,6 +52,7 @@ Rules.
 
 % numbers
 ([0-9]+)                                             : {token, {'INTNUM', TokenLine, TokenChars}}.
+(\-[1-9][0-9]*)                                      : {token, {'INTNEG', TokenLine, TokenChars}}.
 ((([\.][0-9]+)|([0-9]+[\.]?[0-9]*))([eE][+-]?[0-9]+)?[fFdD]?)
                                                      : {token, {'APPROXNUM', TokenLine, TokenChars}}.
 

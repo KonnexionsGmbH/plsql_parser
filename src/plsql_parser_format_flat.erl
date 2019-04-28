@@ -961,6 +961,51 @@ fold([], _FunState, Ctx, #{plsqlPackageSource := PTree},
     ?CUSTOM_RESULT(RT);
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% pragmaDeclaration
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+fold([], _FunState, Ctx, #{pragmaDeclaration := PTree},
+    {pragmaDeclaration, Step} = _FoldState) ->
+    ?CUSTOM_INIT(_FunState, Ctx, PTree, _FoldState),
+    RT = case Step of
+             start -> lists:append(
+                 [
+                     Ctx,
+                     "pragma ",
+                     maps:get(pragmaType@, PTree)
+                 ]);
+             _ -> Ctx ++ ";"
+         end,
+    ?CUSTOM_RESULT(RT);
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% pragmaParameter
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+fold([], _FunState, Ctx, #{pragmaParameter := PTree}, {pragmaParameter, Step} =
+    _FoldState)
+    when is_map(PTree) ->
+    ?CUSTOM_INIT(_FunState, Ctx, PTree, _FoldState),
+    RT = case Step of
+             start -> lists:append(
+                 [
+                     Ctx,
+                     "(",
+                     maps:get(name@, PTree),
+                     ",",
+                     case maps:is_key(value@, PTree) of
+                         true -> lists:append(
+                             [
+                                 maps:get(value@, PTree)
+                             ]);
+                         _ -> []
+                     end
+                 ]);
+             _ -> Ctx ++ ")"
+         end,
+    ?CUSTOM_RESULT(RT);
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % procedureHeading
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -1033,6 +1078,20 @@ fold([], _FunState, Ctx, #{refCursorTypeDefinition := PTree},
                      end
                  ]);
              _ -> Ctx ++ ";"
+         end,
+    ?CUSTOM_RESULT(RT);
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% restrictReferences
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+fold([], _FunState, Ctx, #{restrictReferences := PTree},
+    {restrictReferences, Step} = _FoldState)
+    when is_list(PTree) ->
+    ?CUSTOM_INIT(_FunState, Ctx, PTree, _FoldState),
+    RT = case Step of
+             start -> Ctx ++ PTree;
+             _ -> Ctx
          end,
     ?CUSTOM_RESULT(RT);
 
@@ -1290,7 +1349,8 @@ fold([], _FunState, Ctx, _PTree, {Rule, _Step, _Pos}) when
     Rule == packageItemList;
     Rule == plsqlPackageSourceAttributeList;
     Rule == plsqlUnit;
-    Rule == privilegeAnnotationList ->
+    Rule == privilegeAnnotationList;
+    Rule == restrictReferencesList ->
     Ctx;
 
 fold([], _FunState, Ctx, _PTree, {Rule, _Step}) when
@@ -1311,6 +1371,7 @@ fold([], _FunState, Ctx, _PTree, {Rule, _Step}) when
     Rule == plsqlUnit;
     Rule == plsqlUnitList;
     Rule == privilegeAnnotationList@_@;
+    Rule == restrictReferencesList@_@;
     Rule == procedureAnnotation;
     Rule == scalarExpression;
     Rule == scalarSubExpression;

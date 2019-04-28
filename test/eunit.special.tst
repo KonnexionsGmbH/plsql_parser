@@ -672,6 +672,35 @@ END package_1;
 /
 ".
 
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% pragmaDeclaration.
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+"
+SET DEFINE OFF;
+
+CREATE OR REPLACE PACKAGE package_1
+IS
+    /*
+       comment
+    */
+    excp_100                                EXCEPTION;
+    PRAGMA EXCEPTION_INIT (excp_100, 100);
+    excp_1008                               EXCEPTION;
+    PRAGMA EXCEPTION_INIT (excp_1008, -1008);
+    PRAGMA RESTRICT_REFERENCES (module_1, rnds trust wnps);
+    PRAGMA RESTRICT_REFERENCES (module_1, rnds wnds);
+    PRAGMA RESTRICT_REFERENCES (module_1, rnds);
+    PRAGMA RESTRICT_REFERENCES (module_1, rnds, trust wnps,);
+    PRAGMA RESTRICT_REFERENCES (module_1, rnds, wnds);
+    PRAGMA RESTRICT_REFERENCES (module_1, rnds,);
+    PRAGMA SERIALLY_REUSABLE;
+    PRAGMA UDF;
+END package_1;
+/
+".
+
 %% -----------------------------------------------------------------------------
 %% TESTS: End  special tests.
 %% =============================================================================

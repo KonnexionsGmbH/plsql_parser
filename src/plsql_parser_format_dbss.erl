@@ -1166,7 +1166,8 @@ fold(_LOpts, _FunState, Ctx, _PTree, {Rule, _Step, _Pos}) when
     Rule == packageFunctionDeclarationAttributeList;
     Rule == packageItemList;
     Rule == plsqlPackageSourceAttributeList;
-    Rule == privilegeAnnotationList ->
+    Rule == privilegeAnnotationList;
+    Rule == restrictReferencesList ->
     Ctx;
 
 fold(_LOpts, _FunState, Ctx, _PTree, {Rule, _Step}) when
@@ -1199,6 +1200,8 @@ fold(_LOpts, _FunState, Ctx, _PTree, {Rule, _Step}) when
     Rule == parallelEnabledClause;
     Rule == parameterDeclarationCommaList;
     Rule == parameterDeclarationCommaList@;
+    Rule == pragmaDeclaration;
+    Rule == pragmaParameter;
     Rule == plsqlPackageSourceAttribute;
     Rule == plsqlUnit;
     Rule == plsqlUnitList;
@@ -1208,6 +1211,8 @@ fold(_LOpts, _FunState, Ctx, _PTree, {Rule, _Step}) when
     Rule == recordTypeDefinition;
     Rule == recordTypeName;
     Rule == refCursorTypeDefinition;
+    Rule == restrictReferences;
+    Rule == restrictReferencesList@_@;
     Rule == resultCacheClause;
     Rule == scalarExpression;
     Rule == scalarSubExpression;
