@@ -81,11 +81,15 @@ Nonterminals
  plsqlPackageSourceAttributeList
  plsqlScript
  plsqlUnit
+ pragmaDeclaration
+ pragmaParameterExceptionInit
+ pragmaParameterRestrictReferences
  privilegeAnnotationList
  procedureAnnotation
  procedureHeading
  recordTypeDefinition
  refCursorTypeDefinition
+ restrictReferencesList
  resultCacheClause
  sharingClause
  sqlplusCommand
@@ -164,6 +168,7 @@ Terminals
  EDITIONABLE
  END
  EXCEPTION
+ EXCEPTION_INIT
  FALSE
  FLOAT
  FUNCTION
@@ -203,6 +208,7 @@ Terminals
  PIPELINED
  PLS_INTEGER
  POLYMORPHIC
+ PRAGMA
  PROCEDURE
  RANGE
  RAW
@@ -211,11 +217,15 @@ Terminals
  REFRESH
  RELIES_ON
  REPLACE
+ RESTRICT_REFERENCES
  RESULT_CACHE
  RETURN
+ RNDS
+ RNPS
  ROW
  ROWID
  SECOND
+ SERIALLY_REUSABLE
  SET
  SHARING
  STRING
@@ -227,15 +237,19 @@ Terminals
  TO
  TRIGGER
  TRUE
+ TRUST
  TYPE
+ UDF
  UROWID
  USING
  USING_NLS_COMP
  VALUE
  VARCHAR2
- VARYING
  VARRAY
+ VARYING
  WITH
+ WNDS
+ WNPS
  XMLTYPE
  YEAR
  ZONE
@@ -673,6 +687,7 @@ invokerRightsClause -> AUTHID DEFINER      : #{invokerRightsClause => unwrap_2_l
 
 itemDeclaration -> constantDeclaration  : '$1'.
 itemDeclaration -> exceptionDeclaration : '$1'.
+itemDeclaration -> pragmaDeclaration    : '$1'.
 itemDeclaration -> variableDeclaration  : '$1'.
 
 packageFunctionDeclaration ->                                        functionHeading                                                  ';' : #{type => "Function",
@@ -934,6 +949,49 @@ subtypeDefinition -> SUBTYPE NAME IS dataType_2 NOT NULLX ';' : #{type => "Subty
                                                                                          dataType@ => '$4',
                                                                                          notNull@ => #{notNull => "not null"}}}.
 
+pragmaDeclaration -> PRAGMA EXCEPTION_INIT pragmaParameterExceptionInit           ';' : #{type => "Pragma",
+                                                                                          pragmaDeclaration => #{pragmaParameter@ => '$3',
+                                                                                                                 pragmaType@ => "EXCEPTION_INIT"}}.
+pragmaDeclaration -> PRAGMA RESTRICT_REFERENCES pragmaParameterRestrictReferences ';' : #{type => "Pragma",
+                                                                                          pragmaDeclaration => #{pragmaParameter@ => '$3',
+                                                                                                                 pragmaType@ => "RESTRICT_REFERENCES"}}.
+pragmaDeclaration -> PRAGMA SERIALLY_REUSABLE                                     ';' : #{type => "Pragma",
+                                                                                          pragmaDeclaration => #{pragmaType@ => "SERIALLY_REUSABLE"}}.
+pragmaDeclaration -> PRAGMA UDF                                                   ';' : #{type => "Pragma",
+                                                                                          pragmaDeclaration => #{pragmaType@ => "UDF"}}.
+
+pragmaParameterExceptionInit -> '(' NAME ','     INTNUM ')' : #{pragmaParameter => #{name@ => unwrap_2_list('$2'),
+                                                                                     value@ => unwrap_2_list('$4')}}.
+pragmaParameterExceptionInit -> '(' NAME ',' '-' INTNUM ')' : #{pragmaParameter => #{name@ => unwrap_2_list('$2'),
+                                                                                     sign@ => unwrap_2_list('$4'),
+                                                                                     value@ => unwrap_2_list('$5')}}.
+
+pragmaParameterRestrictReferences -> '(' DEFAULT ',' restrictReferencesList ')' : #{pragmaParameter => #{name@ => "DEFAULT",
+                                                                                                         restrictReferencesList@ => '$4'}}.
+pragmaParameterRestrictReferences -> '(' NAME    ',' restrictReferencesList ')' : #{pragmaParameter => #{name@ => unwrap_2_list('$2'),
+                                                                                                         restrictReferencesList@ => '$4'}}.
+
+restrictReferencesList -> RNDS                             : [#{restrictReferences => unwrap_2_list('$1') ++ " "}].
+restrictReferencesList -> RNDS      restrictReferencesList : [#{restrictReferences => unwrap_2_list('$1') ++ " "} | '$2'].
+restrictReferencesList -> RNDS  ','                        : [#{restrictReferences => unwrap_2_list('$1') ++ ","}].
+restrictReferencesList -> RNDS  ',' restrictReferencesList : [#{restrictReferences => unwrap_2_list('$1') ++ ","} | '$3'].
+restrictReferencesList -> RNPS                             : [#{restrictReferences => unwrap_2_list('$1') ++ " "}].
+restrictReferencesList -> RNPS      restrictReferencesList : [#{restrictReferences => unwrap_2_list('$1') ++ " "} | '$2'].
+restrictReferencesList -> RNPS  ','                        : [#{restrictReferences => unwrap_2_list('$1') ++ ","}].
+restrictReferencesList -> RNPS  ',' restrictReferencesList : [#{restrictReferences => unwrap_2_list('$1') ++ ","} | '$3'].
+restrictReferencesList -> TRUST                            : [#{restrictReferences => unwrap_2_list('$1') ++ " "}].
+restrictReferencesList -> TRUST     restrictReferencesList : [#{restrictReferences => unwrap_2_list('$1') ++ " "} | '$2'].
+restrictReferencesList -> TRUST ','                        : [#{restrictReferences => unwrap_2_list('$1') ++ ","}].
+restrictReferencesList -> TRUST ',' restrictReferencesList : [#{restrictReferences => unwrap_2_list('$1') ++ ","} | '$3'].
+restrictReferencesList -> WNDS                             : [#{restrictReferences => unwrap_2_list('$1') ++ " "}].
+restrictReferencesList -> WNDS      restrictReferencesList : [#{restrictReferences => unwrap_2_list('$1') ++ " "} | '$2'].
+restrictReferencesList -> WNDS  ','                        : [#{restrictReferences => unwrap_2_list('$1') ++ ","}].
+restrictReferencesList -> WNDS  ',' restrictReferencesList : [#{restrictReferences => unwrap_2_list('$1') ++ ","} | '$3'].
+restrictReferencesList -> WNPS                             : [#{restrictReferences => unwrap_2_list('$1') ++ " "}].
+restrictReferencesList -> WNPS      restrictReferencesList : [#{restrictReferences => unwrap_2_list('$1') ++ " "} | '$2'].
+restrictReferencesList -> WNPS  ','                        : [#{restrictReferences => unwrap_2_list('$1') ++ ","}].
+restrictReferencesList -> WNPS  ',' restrictReferencesList : [#{restrictReferences => unwrap_2_list('$1') ++ ","} | '$3'].
+
 variableDeclaration -> NAME dataType_1                   ';' : #{type => "Variable",
                                                                  variableDeclaration => #{name@ => unwrap_2_list('$1'),
                                                                                           dataType@ => '$2'}}.
@@ -1127,7 +1185,7 @@ dataType_1 -> VARCHAR2      '(' INTNUM CHAR       ')'                          :
                                                                                                  sizeType@ => unwrap_2_list('$4')}}.
 dataType_1 -> XMLTYPE                                                          : #{dataType => #{class@ => sql,
                                                                                                  type@ => unwrap_2_list('$1')}}.
-  
+
 dataType_2 -> BINARY_INTEGER                                                   : #{dataType => #{class@ => plsql,
                                                                                                  type@ => unwrap_2_list('$1')}}.
 dataType_2 -> NAME                   '%ROWTYPE'                                : #{dataType => #{class@ => user_defined,

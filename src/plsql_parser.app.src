@@ -23,7 +23,7 @@
 {application, plsql_parser,
     [
         {description, "A LALR PL/SQL parser and compiler"},
-        {vsn, "1.2.1"},
+        {vsn, "1.3.0"},
         {applications, [
             kernel,
             stdlib

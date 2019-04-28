@@ -78,7 +78,7 @@ createPackage ::= 'CREATE' ( 'OR' 'REPLACE' )? ( 'EDITIONABLE' | 'NONEDITIONABLE
                              'PACKAGE' plsqlPackageSource ';' '/'?
 
 sqlplusCommand ::= 'SET' 'DEFINE' ( 'OFF' | 'ON' )
-                             
+
 /* =============================================================================
 plsqlPackageSource ->          NAME                                               as_is                          END      : #{plsqlPackageSource => #{asIs@ => '$2',
                                                                                                                                                       packageNameStart@ => unwrap_2_list('$1')}}.
@@ -489,8 +489,8 @@ invokerRightsClause -> AUTHID DEFINER      : #{invokerRightsClause => unwrap_2_l
 
 itemDeclaration -> constantDeclaration  : '$1'.
 itemDeclaration -> exceptionDeclaration : '$1'.
+itemDeclaration -> pragmaDeclaration    : '$1'.
 itemDeclaration -> variableDeclaration  : '$1'.
-
 
 packageFunctionDeclaration ->                                        functionHeading                                                  ';' : #{type => "Function",
                                                                                                                                               packageFunctionDeclaration  => #{functionHeading@ => '$1'}}.
@@ -659,6 +659,7 @@ invokerRightsClause ::= 'AUTHID' ( 'CURRENT_USER' | 'DEFINER' )
 
 itemDeclaration ::= constantDeclaration
                   | exceptionDeclaration
+                  | pragmaDeclaration
                   | variableDeclaration
 
 packageFunctionDeclaration ::= apiHiddenAnnotation? functionAnnotation? functionHeading packageFunctionDeclarationAttribute* 'MAN_PAGE'? ';'
@@ -780,6 +781,17 @@ subtypeDefinition -> SUBTYPE NAME IS dataType_2 NOT NULLX ';' : #{type => "Subty
                                                                                          dataType@ => '$4',
                                                                                          notNull@ => #{notNull => "not null"}}}.
 
+pragmaDeclaration -> PRAGMA EXCEPTION_INIT pragmaParameterExceptionInit           ';' : #{type => "Pragma",
+                                                                                          pragmaDeclaration => #{pragmaParameter@ => '$3',
+                                                                                                                 pragmaType@ => "EXCEPTION_INIT"}}.
+pragmaDeclaration -> PRAGMA RESTRICT_REFERENCES pragmaParameterRestrictReferences ';' : #{type => "Pragma",
+                                                                                          pragmaDeclaration => #{pragmaParameter@ => '$3',
+                                                                                                                 pragmaType@ => "RESTRICT_REFERENCES"}}.
+pragmaDeclaration -> PRAGMA SERIALLY_REUSABLE                                     ';' : #{type => "Pragma",
+                                                                                          pragmaDeclaration => #{pragmaType@ => "SERIALLY_REUSABLE"}}.
+pragmaDeclaration -> PRAGMA UDF                                                   ';' : #{type => "Pragma",
+                                                                                          pragmaDeclaration => #{pragmaType@ => "UDF"}}.
+
 variableDeclaration -> NAME dataType_1                   ';' : #{type => "Constant",
                                                                  variableDeclaration => #{name@ => unwrap_2_list('$1'),
                                                                                           dataType@ => '$3'}.
@@ -825,6 +837,11 @@ functionAnnotation ::= privilegeRoleAnnotationList
 
 functionHeading ::= 'FUNCTION' nameExtended ( '(' ( parameterAnnotation? parameterDeclaration )+ ')' )?
                                'RETURN' ( dataType_1 | dataType_2 )
+
+pragmaDeclaration ::= 'PRAGMA' ( 'EXCEPTION_INIT' pragmaParameterExceptionInit
+                               | 'RESTRICT_REFERENCES' pragmaParameterRestrictReferences
+                               | 'SERIALLY_REUSABLE'
+                               | 'UDF' )
 
 procedureAnnotation ::= privilegeRoleAnnotationList
 
@@ -1054,6 +1071,16 @@ packageFunctionDeclarationAttribute -> resultCacheClause     : #{packageFunction
 parameterDeclarationCommaList -> parameterDeclaration                                   : ['$1'].
 parameterDeclarationCommaList -> parameterDeclaration ',' parameterDeclarationCommaList : ['$1' | '$3'].
 
+pragmaParameterExceptionInit -> '(' NAME ','     INTNUM ')' : #{pragmaParameter => #{name@ => unwrap_2_list('$2'),
+                                                                                     value@ => unwrap_2_list('$4')}}.
+pragmaParameterExceptionInit -> '(' NAME ',' '-' INTNUM ')' : #{pragmaParameter => #{name@ => unwrap_2_list('$2'),
+                                                                                     value@ => unwrap_2_list('$4')}}.
+
+pragmaParameterRestrictReferences -> '(' DEFAULT ',' restrictReferencesList ')' : #{pragmaParameter => #{name@ => "DEFAULT",
+                                                                                                         restrictReferencesList@ => '$4'}}.
+pragmaParameterRestrictReferences -> '(' NAME    ',' restrictReferencesList ')' : #{pragmaParameter => #{name@ => unwrap_2_list('$2'),
+                                                                                                         restrictReferencesList@ => '$4'}}.
+
 varrayTypeDef -> ARRAY         '(' INTNUM ')' OF dataType_1           : #{varrayTypeDef => #{type@ => #{varrayType => "array"},
                                                                                              size@ => #{varraySize => unwrap_2_list('$3')},
                                                                                              dataType@ => '$6'}}.
@@ -1126,7 +1153,7 @@ dataType_1 ::= 'BFILE'
              | ( 'TIMESTAMP' ( '(' INTNUM ')' )? ( 'WITH' 'LOCAL'? 'TIME' 'ZONE' )? )
              | ( 'VARCHAR2' ( '(' INTNUM ( 'BYTE' | 'CHAR' ) ')' )? )
              | 'XMLTYPE'
-  
+
 dataType_2 ::= 'BINARY_INTEGER'
              | ( ( NAME '.' )?  NAME ( '%ROWTYPE' | '%TYPE' )? )
              | ( NAME '.' NAME '.' NAME '%TYPE'? )
@@ -1142,6 +1169,10 @@ packageFunctionDeclarationAttribute ::= accessibleByClause
                                       | parallelEnabledClause
                                       | pipelinedClause
                                       | resultCacheClause
+
+pragmaParameterExceptionInit ::= '(' NAME ',' '-'? INTNUM ')'
+
+pragmaParameterRestrictReferences ::= '(' ( 'DEFAULT' | NAME ) ',' restrictReferencesList ')'
 
 varrayTypeDef ::= ( ( 'VARYING'? 'ARRAY' ) | 'VARRAY' ) '(' INTNUM ')' 'OF' ( dataType_1 | dataType_2 ) ( 'NOT' 'NULL' )?
 
@@ -1205,6 +1236,27 @@ parameterDeclaration -> NAME IN OUT NOCOPY dataType_2         : #{parameterDecla
                                                                                             nocopy@ => unwrap_2_list('$4'),
                                                                                             dataType@ => '$5'}}.
 
+restrictReferencesList -> RNDS                             : [#{restrictReferences => unwrap_2_list('$1') ++ " "}].
+restrictReferencesList -> RNDS      restrictReferencesList : [#{restrictReferences => unwrap_2_list('$1') ++ " "} | '$2'].
+restrictReferencesList -> RNDS  ','                        : [#{restrictReferences => unwrap_2_list('$1') ++ ","}].
+restrictReferencesList -> RNDS  ',' restrictReferencesList : [#{restrictReferences => unwrap_2_list('$1') ++ ","} | '$3'].
+restrictReferencesList -> RNPS                             : [#{restrictReferences => unwrap_2_list('$1') ++ " "}].
+restrictReferencesList -> RNPS      restrictReferencesList : [#{restrictReferences => unwrap_2_list('$1') ++ " "} | '$2'].
+restrictReferencesList -> RNPS  ','                        : [#{restrictReferences => unwrap_2_list('$1') ++ ","}].
+restrictReferencesList -> RNPS  ',' restrictReferencesList : [#{restrictReferences => unwrap_2_list('$1') ++ ","} | '$3'].
+restrictReferencesList -> TRUST                            : [#{restrictReferences => unwrap_2_list('$1') ++ " "}].
+restrictReferencesList -> TRUST     restrictReferencesList : [#{restrictReferences => unwrap_2_list('$1') ++ " "} | '$2'].
+restrictReferencesList -> TRUST ','                        : [#{restrictReferences => unwrap_2_list('$1') ++ ","}].
+restrictReferencesList -> TRUST ',' restrictReferencesList : [#{restrictReferences => unwrap_2_list('$1') ++ ","} | '$3'].
+restrictReferencesList -> WNDS                             : [#{restrictReferences => unwrap_2_list('$1') ++ " "}].
+restrictReferencesList -> WNDS      restrictReferencesList : [#{restrictReferences => unwrap_2_list('$1') ++ " "} | '$2'].
+restrictReferencesList -> WNDS  ','                        : [#{restrictReferences => unwrap_2_list('$1') ++ ","}].
+restrictReferencesList -> WNDS  ',' restrictReferencesList : [#{restrictReferences => unwrap_2_list('$1') ++ ","} | '$3'].
+restrictReferencesList -> WNPS                             : [#{restrictReferences => unwrap_2_list('$1') ++ " "}].
+restrictReferencesList -> WNPS      restrictReferencesList : [#{restrictReferences => unwrap_2_list('$1') ++ " "} | '$2'].
+restrictReferencesList -> WNPS  ','                        : [#{restrictReferences => unwrap_2_list('$1') ++ ","}].
+restrictReferencesList -> WNPS  ',' restrictReferencesList : [#{restrictReferences => unwrap_2_list('$1') ++ ","} | '$3'].
+
 unitKind -> FUNCTION  : unwrap_2_list('$1').
 unitKind -> PACKAGE   : unwrap_2_list('$1').
 unitKind -> PROCEDURE : unwrap_2_list('$1').
@@ -1216,6 +1268,8 @@ nameExtended ::= 'API_GROUP' | 'FALSE' | NAME | 'NONE' | 'TRUE'
 
 parameterDeclaration ::= NAME ( 'IN'? ( dataType_1 | dataType_2 ) default? )
                             | ( 'IN'? 'OUT' 'NOCOPY'? ( dataType_1 | dataType_2 ) )
+
+restrictReferencesList ::= ( ( 'RNDS' | 'RNPS' | 'TRUST' | 'WNDS' | 'WNPS' ) ','? )+
 
 unitKind ::= 'FUNCTION'
            | 'PROCEDURE'
@@ -1318,7 +1372,7 @@ expression ::= columnRef
 parallelEnabledClause ::=  'PARALLEL_ENABLED' '(' 'PARTITION' NAME 'BY'
                                                 'ANY'
                                               | ( ( 'HASH' | 'RANGE' ) '(' columnRef ( ',' columnRef )* ')' streamingClause? )
-                                              | ( 'VALUE' '(' columnRef ')' ) 
+                                              | ( 'VALUE' '(' columnRef ')' )
                                               ')'
 
 pipelinedClause ::= 'PIPELINED' ( ( 'ROW' | 'TABLE' ) 'POLYMORPHIC' )? 'USING' ( NAME '.' )? NAME

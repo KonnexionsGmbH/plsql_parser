@@ -103,6 +103,7 @@ create_code() ->
     create_code(man_page),
     create_code(name),
     create_code(parameter),
+    create_code(restrictReferencesList),
     create_code(string),
     % based on parser definitions ..............................................
     create_code(apiHiddenAnnotation),
@@ -136,6 +137,8 @@ create_code() ->
     create_code(objectPrivilegeAnnotation),
     create_code(parameterRef),
     create_code(pipelinedClause),
+    create_code(pragmaParameterExceptionInit),
+    create_code(pragmaParameterRestrictReferences),
     create_code(refCursorTypeDefinition),
     create_code(systemPrivilegeAnnotation),
 
@@ -151,6 +154,7 @@ create_code() ->
     create_code(assocArrayTypeDef),
     create_code(columnRefCommaList),
     create_code(dataSourceCommaList),
+    create_code(pragmaDeclaration),
     create_code(privilegeAnnotationList),
     create_code(subtypeDefinition),
     create_code(varrayTypeDef),
@@ -2675,6 +2679,111 @@ create_code(plsqlPackageSourceAttributeList = Rule) ->
     ?CREATE_CODE_END;
 
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% pragmaDeclaration ::= 'PRAGMA' ( 'EXCEPTION_INIT' pragmaParameterExceptionInit
+%%                               | 'RESTRICT_REFERENCES' pragmaParameterRestrictReferences
+%%                               | 'SERIALLY_REUSABLE'
+%%                               | 'UDF' )
+%% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+create_code(pragmaDeclaration = Rule) ->
+    ?CREATE_CODE_START,
+    [{pragmaParameterExceptionInit, PragmaParameterExceptionInit}] =
+        ets:lookup(?CODE_TEMPLATES, pragmaParameterExceptionInit),
+    PragmaParameterExceptionInit_Length = length(PragmaParameterExceptionInit),
+    [{pragmaParameterRestrictReferences, PragmaParameterRestrictReferences}] =
+        ets:lookup(?CODE_TEMPLATES, pragmaParameterRestrictReferences),
+    PragmaParameterRestrictReferences_Length =
+        length(PragmaParameterRestrictReferences),
+
+    Code =
+        [
+            "Pragma Serially_reusable",
+            "Pragma Udf"
+        ] ++
+        [
+                "Pragma "
+                ++ case rand:uniform(2) rem 2 of
+                       1 -> "Exception_init" ++ lists:nth(
+                           rand:uniform(PragmaParameterExceptionInit_Length),
+                           PragmaParameterExceptionInit);
+                       _ -> "Restrict_references" ++ lists:nth(rand:uniform(
+                           PragmaParameterRestrictReferences_Length),
+                           PragmaParameterRestrictReferences)
+
+                   end
+            || _ <- lists:seq(1, ?MAX_BASIC * 2)
+        ],
+    store_code(Rule, Code, ?MAX_BASIC, false),
+    store_code(itemDeclaration, Code, ?MAX_BASIC, false),
+    ?CREATE_CODE_END;
+
+
+%% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% pragmaParameterExceptionInit ::= '(' NAME ',' '-'? INTNUM ')'
+%% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+create_code(pragmaParameterExceptionInit = Rule) ->
+    ?CREATE_CODE_START,
+    [{intnum, Intnum}] = ets:lookup(?CODE_TEMPLATES, intnum),
+    Intnum_Length = length(Intnum),
+    [{name, Name}] = ets:lookup(?CODE_TEMPLATES, name),
+    Name_Length = length(Name),
+
+    Code =
+        [
+            lists:append(
+                [
+                    "(",
+                    lists:nth(rand:uniform(Name_Length), Name),
+                    ",",
+                    case rand:uniform(5) rem 5 of
+                        1 -> lists:nth(rand:uniform(Intnum_Length), Intnum);
+                        _ -> "-" ++
+                        lists:nth(rand:uniform(Intnum_Length), Intnum)
+                    end,
+                    ")"
+                ])
+            || _ <- lists:seq(1, ?MAX_BASIC * 2)
+        ],
+    store_code(Rule, Code, ?MAX_BASIC, false),
+    ?CREATE_CODE_END;
+
+
+%% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% pragmaParameterRestrictReferences ::= '(' ( 'DEFAULT' | NAME ) ',' restrictReferencesList ')'
+%% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+create_code(pragmaParameterRestrictReferences = Rule) ->
+    ?CREATE_CODE_START,
+    [{name, Name}] = ets:lookup(?CODE_TEMPLATES, name),
+    Name_Length = length(Name),
+    [{restrictReferencesList, RestrictReferencesList}] =
+        ets:lookup(?CODE_TEMPLATES, restrictReferencesList),
+    RestrictReferencesList_Length = length(RestrictReferencesList),
+
+    Code =
+        [
+            lists:append(
+                [
+                    "(",
+                    case rand:uniform(5) rem 5 of
+                        1 -> "Default";
+                        _ -> lists:nth(rand:uniform(Name_Length),
+                            Name)
+                    end,
+                    ",",
+                    lists:nth(
+                        rand:uniform(RestrictReferencesList_Length),
+                        RestrictReferencesList),
+                    ")"
+                ])
+            || _ <- lists:seq(1, ?MAX_BASIC * 2)
+        ],
+    store_code(Rule, Code, ?MAX_BASIC, false),
+    ?CREATE_CODE_END;
+
+
+%% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% privilegeAnnotationList ::= ( apiGroupAnnotation | objectPrivilegeAnnotation | systemPrivilegeAnnotation )+
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -2884,6 +2993,73 @@ create_code(refCursorTypeDefinition = Rule) ->
                     end,
                     ";"
                 ])
+            || _ <- lists:seq(1, ?MAX_BASIC * 2)
+        ],
+    store_code(Rule, Code, ?MAX_BASIC, false),
+    ?CREATE_CODE_END;
+
+%% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% restrictReferencesList ::= ( ( 'RNDS' | 'RNPS' | 'TRUST' | 'WNDS' | 'WNPS' ) ','? )+
+%% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+create_code(restrictReferencesList = Rule) ->
+    ?CREATE_CODE_START,
+    RestrictReferences =
+        [
+            "Rnds",
+            "Rnps",
+            "Trust",
+            "Wnds",
+            "Wnps"
+        ],
+    RestrictReferences_Length = length(RestrictReferences),
+
+    Code =
+        [
+            case rand:uniform(3) rem 3 of
+                1 -> lists:append(
+                    [
+                        lists:nth(rand:uniform(RestrictReferences_Length),
+                            RestrictReferences),
+                        case rand:uniform(2) rem 2 of
+                            1 -> ",";
+                            _ -> " "
+                        end,
+                        lists:nth(rand:uniform(RestrictReferences_Length),
+                            RestrictReferences),
+                        case rand:uniform(2) rem 2 of
+                            1 -> ",";
+                            _ -> " "
+                        end,
+                        lists:nth(rand:uniform(RestrictReferences_Length),
+                            RestrictReferences),
+                        case rand:uniform(2) rem 2 of
+                            1 -> ",";
+                            _ -> []
+                        end
+                    ]);
+                2 -> lists:append(
+                    [
+                        lists:nth(rand:uniform(RestrictReferences_Length),
+                            RestrictReferences),
+                        case rand:uniform(2) rem 2 of
+                            1 -> ",";
+                            _ -> " "
+                        end,
+                        lists:nth(rand:uniform(RestrictReferences_Length),
+                            RestrictReferences),
+                        case rand:uniform(2) rem 2 of
+                            1 -> ",";
+                            _ -> []
+                        end
+                    ]);
+                _ -> lists:nth(rand:uniform(RestrictReferences_Length),
+                    RestrictReferences)
+                ++ case rand:uniform(2) rem 2 of
+                       1 -> ",";
+                       _ -> []
+                   end
+            end
             || _ <- lists:seq(1, ?MAX_BASIC * 2)
         ],
     store_code(Rule, Code, ?MAX_BASIC, false),

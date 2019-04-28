@@ -100,10 +100,10 @@ fold_i(Fun, LOpts, FunState, Ctx, #{accessor := _Value} = PTree) ->
     ?FOLD_RESULT(NewCtxE);
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% accessorCommaList & columnRefCommaList & dataSourceCommaList & 
+% accessorCommaList & columnRefCommaList & dataSourceCommaList &
 % fieldDefinitionCommaList, functionArgCommaList & packageItemList &
 % parameterDeclarationCommaList & plsqlPackageSourceAttributeList & plsqlUnit &
-% privilegeAnnotationList
+% privilegeAnnotationList & restrictReferencesList
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 fold_i(Fun, LOpts, FunState, Ctx, {Rule, Pos, PTree})
@@ -112,7 +112,7 @@ fold_i(Fun, LOpts, FunState, Ctx, {Rule, Pos, PTree})
          Rule == functionArgCommaList;Rule == packageItemList;
          Rule == parameterDeclarationCommaList;
          Rule == plsqlPackageSourceAttributeList;Rule == plsqlUnit;
-         Rule == privilegeAnnotationList ->
+         Rule == privilegeAnnotationList;Rule == restrictReferencesList ->
     ?FOLD_INIT(FunState, Ctx, PTree),
     NewCtxS = Fun(LOpts, FunState, Ctx, PTree, {Rule, start, Pos}),
     NewCtx1 = fold_i(Fun, LOpts, FunState, NewCtxS, PTree),
@@ -158,8 +158,7 @@ fold_i(Fun, LOpts, FunState, Ctx, #{assocArrayTypeDef := Value} = PTree) ->
                           maps:get(notNull@, Value));
                   _ -> NewCtx1
               end,
-    NewCtx3 = case maps:is_key(dataTypeIndex@,
-        Value) of
+    NewCtx3 = case maps:is_key(dataTypeIndex@, Value) of
                   true ->
                       fold_i(Fun, LOpts, FunState, NewCtx2,
                           maps:get(dataTypeIndex@, Value));
@@ -178,8 +177,7 @@ fold_i(Fun, LOpts, FunStateIn, Ctx, #{collectionTypeDefinition := Value} =
     FunState = ?FOLD_INIT_STMNT(FunStateIn, Ctx, PTree, Rule),
     NewCtxS = Fun(LOpts, FunState, Ctx, PTree, {Rule, start}),
     NewCtx1 = fold_i(Fun, LOpts, FunState, NewCtxS, maps:get(typeName@, Value)),
-    NewCtx2 = case maps:is_key(assocArrayTypeDef@,
-        Value) of
+    NewCtx2 = case maps:is_key(assocArrayTypeDef@, Value) of
                   true ->
                       fold_i(Fun, LOpts, FunState, NewCtx1,
                           maps:get(assocArrayTypeDef@, Value));
@@ -226,8 +224,7 @@ fold_i(Fun, LOpts, FunStateIn, Ctx, #{constantDeclaration := Value} = PTree) ->
     NewCtx1 =
         fold_i(Fun, LOpts, FunState, NewCtxS, maps:get(constantName@, Value)),
     NewCtx2 = fold_i(Fun, LOpts, FunState, NewCtx1, maps:get(dataType@, Value)),
-    NewCtx3 = case maps:is_key(notNull@,
-        Value) of
+    NewCtx3 = case maps:is_key(notNull@, Value) of
                   true ->
                       fold_i(Fun, LOpts, FunState, NewCtx2,
                           maps:get(notNull@, Value));
@@ -437,8 +434,7 @@ fold_i(Fun, LOpts, FunState, Ctx, #{fieldDefinition := Value} = PTree) ->
     Rule = fieldDefinition,
     NewCtxS = Fun(LOpts, FunState, Ctx, PTree, {Rule, start}),
     NewCtx1 = fold_i(Fun, LOpts, FunState, NewCtxS, maps:get(dataType@, Value)),
-    NewCtx2 = case maps:is_key(notNull@,
-        Value) of
+    NewCtx2 = case maps:is_key(notNull@, Value) of
                   true ->
                       fold_i(Fun, LOpts, FunState, NewCtx1,
                           maps:get(notNull@, Value));
@@ -609,15 +605,13 @@ fold_i(Fun, LOpts, FunStateIn, Ctx, #{packageFunctionDeclaration := Value} =
     Rule = packageFunctionDeclaration,
     FunState = ?FOLD_INIT_STMNT(FunStateIn, Ctx, PTree, Rule),
     NewCtxS = Fun(LOpts, FunState, Ctx, PTree, {Rule, start}),
-    NewCtx1 = case maps:is_key(apiHiddenAnnotation@,
-        Value) of
+    NewCtx1 = case maps:is_key(apiHiddenAnnotation@, Value) of
                   true ->
                       fold_i(Fun, LOpts, FunState, NewCtxS,
                           maps:get(apiHiddenAnnotation@, Value));
                   _ -> NewCtxS
               end,
-    NewCtx2 = case maps:is_key(functionAnnotation@,
-        Value) of
+    NewCtx2 = case maps:is_key(functionAnnotation@, Value) of
                   true ->
                       fold_i(Fun, LOpts, FunState, NewCtx1,
                           maps:get(functionAnnotation@, Value));
@@ -625,15 +619,15 @@ fold_i(Fun, LOpts, FunStateIn, Ctx, #{packageFunctionDeclaration := Value} =
               end,
     NewCtx3 = fold_i(Fun, LOpts, FunState, NewCtx2,
         maps:get(functionHeading@, Value)),
-    NewCtx4 = case maps:is_key(packageFunctionDeclarationAttributeList@,
-        Value) of
-                  true ->
-                      list_elem_ext_rule(Fun, LOpts, FunState, NewCtx3,
-                          packageFunctionDeclarationAttributeList,
-                          maps:get(packageFunctionDeclarationAttributeList@,
-                              Value));
-                  _ -> NewCtx3
-              end,
+    NewCtx4 =
+        case maps:is_key(packageFunctionDeclarationAttributeList@, Value) of
+            true ->
+                list_elem_ext_rule(Fun, LOpts, FunState, NewCtx3,
+                    packageFunctionDeclarationAttributeList,
+                    maps:get(packageFunctionDeclarationAttributeList@,
+                        Value));
+            _ -> NewCtx3
+        end,
     NewCtxE = Fun(LOpts, FunState, NewCtx4, PTree, {Rule, 'end'}),
     ?FOLD_RESULT(NewCtxE);
 
@@ -680,8 +674,7 @@ fold_i(Fun, LOpts, FunState, Ctx, #{packageItemConditional := Value} = PTree) ->
     ?FOLD_INIT(FunState, Ctx, PTree),
     Rule = packageItemConditional,
     NewCtxS = Fun(LOpts, FunState, Ctx, PTree, {Rule, start}),
-    NewCtx1 = case maps:is_key(expression@,
-        Value) of
+    NewCtx1 = case maps:is_key(expression@, Value) of
                   true ->
                       fold_i(Fun, LOpts, FunState, NewCtxS,
                           #{thenExpression@_@ => maps:get(expression@, Value)});
@@ -700,8 +693,7 @@ fold_i(Fun, LOpts, FunState, Ctx, #{packageItemList@_@ := Value} = PTree) ->
     ?FOLD_INIT(FunState, Ctx, PTree),
     Rule = packageItemList@_@,
     NewCtxS = Fun(LOpts, FunState, Ctx, PTree, {Rule, start}),
-    NewCtx1 = case maps:is_key(packageItemList@,
-        Value) of
+    NewCtx1 = case maps:is_key(packageItemList@, Value) of
                   true ->
                       list_elem_ext_rule(Fun, LOpts, FunState, NewCtxS,
                           packageItemList, maps:get(packageItemList@, Value));
@@ -732,15 +724,13 @@ fold_i(Fun, LOpts, FunStateIn, Ctx, #{packageProcedureDeclaration := Value} =
     Rule = packageProcedureDeclaration,
     FunState = ?FOLD_INIT_STMNT(FunStateIn, Ctx, PTree, Rule),
     NewCtxS = Fun(LOpts, FunState, Ctx, PTree, {Rule, start}),
-    NewCtx1 = case maps:is_key(apiHiddenAnnotation@,
-        Value) of
+    NewCtx1 = case maps:is_key(apiHiddenAnnotation@, Value) of
                   true ->
                       fold_i(Fun, LOpts, FunState, NewCtxS,
                           maps:get(apiHiddenAnnotation@, Value));
                   _ -> NewCtxS
               end,
-    NewCtx2 = case maps:is_key(procedureAnnotation@,
-        Value) of
+    NewCtx2 = case maps:is_key(procedureAnnotation@, Value) of
                   true ->
                       fold_i(Fun, LOpts, FunState, NewCtx1,
                           maps:get(procedureAnnotation@, Value));
@@ -913,6 +903,41 @@ fold_i(Fun, LOpts, FunState, Ctx, [#{plsqlUnit := Value} = PTree]) ->
     ?FOLD_RESULT(NewCtxE);
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% pragmaDefinition
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+fold_i(Fun, LOpts, FunStateIn, Ctx, #{pragmaDeclaration := Value} = PTree) ->
+    Rule = pragmaDeclaration,
+    FunState = ?FOLD_INIT_STMNT(FunStateIn, Ctx, PTree, Rule),
+    NewCtxS = Fun(LOpts, FunState, Ctx, PTree, {Rule, start}),
+    NewCtx1 = case maps:is_key(pragmaParameter@, Value) of
+                  true ->
+                      fold_i(Fun, LOpts, FunState, NewCtxS,
+                          maps:get(pragmaParameter@, Value));
+                  _ -> NewCtxS
+              end,
+    NewCtxE = Fun(LOpts, FunState, NewCtx1, PTree, {Rule, 'end'}),
+    ?FOLD_RESULT(NewCtxE);
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% pragmaParameter
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+fold_i(Fun, LOpts, FunState, Ctx, #{pragmaParameter := Value} = PTree) ->
+    ?FOLD_INIT(FunState, Ctx, PTree),
+    Rule = pragmaParameter,
+    NewCtxS = Fun(LOpts, FunState, Ctx, PTree, {Rule, start}),
+    NewCtx1 = case maps:is_key(restrictReferencesList@, Value) of
+                  true ->
+                      fold_i(Fun, LOpts, FunState, NewCtxS,
+                          {restrictReferencesList@_@, maps:get(
+                              restrictReferencesList@, Value)});
+                  _ -> NewCtxS
+              end,
+    NewCtxE = Fun(LOpts, FunState, NewCtx1, PTree, {Rule, 'end'}),
+    ?FOLD_RESULT(NewCtxE);
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % privilegeAnnotationList@_@
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -993,6 +1018,31 @@ fold_i(Fun, LOpts, FunStateIn, Ctx, #{refCursorTypeDefinition := _Value} =
     FunState = ?FOLD_INIT_STMNT(FunStateIn, Ctx, PTree, Rule),
     NewCtxS = Fun(LOpts, FunState, Ctx, PTree, {Rule, start}),
     NewCtxE = Fun(LOpts, FunState, NewCtxS, PTree, {Rule, 'end'}),
+    ?FOLD_RESULT(NewCtxE);
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% restrictReferences
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+fold_i(Fun, LOpts, FunState, Ctx, #{restrictReferences := _Value} = PTree) ->
+    ?FOLD_INIT(FunState, Ctx, PTree),
+    Rule = restrictReferences,
+    NewCtxS = Fun(LOpts, FunState, Ctx, PTree, {Rule, start}),
+    NewCtxE = Fun(LOpts, FunState, NewCtxS, PTree, {Rule, 'end'}),
+    ?FOLD_RESULT(NewCtxE);
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% restrictReferencesList@_@
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+fold_i(Fun, LOpts, FunState, Ctx, {restrictReferencesList@_@, Value} =
+    PTree) ->
+    ?FOLD_INIT(FunState, Ctx, PTree),
+    Rule = restrictReferencesList@_@,
+    NewCtxS = Fun(LOpts, FunState, Ctx, PTree, {Rule, start}),
+    NewCtx1 = list_elem_ext_rule(Fun, LOpts, FunState, NewCtxS,
+        restrictReferencesList, Value),
+    NewCtxE = Fun(LOpts, FunState, NewCtx1, PTree, {Rule, 'end'}),
     ?FOLD_RESULT(NewCtxE);
 
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1082,8 +1132,7 @@ fold_i(Fun, LOpts, FunStateIn, Ctx, #{subtypeDefinition := Value} = PTree) ->
     NewCtx1 =
         fold_i(Fun, LOpts, FunState, NewCtxS, maps:get(subtypeName@, Value)),
     NewCtx2 = fold_i(Fun, LOpts, FunState, NewCtx1, maps:get(dataType@, Value)),
-    NewCtx3 = case maps:is_key(notNull@,
-        Value) of
+    NewCtx3 = case maps:is_key(notNull@, Value) of
                   true ->
                       fold_i(Fun, LOpts, FunState, NewCtx2,
                           maps:get(notNull@, Value));
@@ -1158,15 +1207,13 @@ fold_i(Fun, LOpts, FunStateIn, Ctx, #{variableDeclaration := Value} = PTree) ->
     FunState = ?FOLD_INIT_STMNT(FunStateIn, Ctx, PTree, Rule),
     NewCtxS = Fun(LOpts, FunState, Ctx, PTree, {Rule, start}),
     NewCtx1 = fold_i(Fun, LOpts, FunState, NewCtxS, maps:get(dataType@, Value)),
-    NewCtx2 = case maps:is_key(notNull@,
-        Value) of
+    NewCtx2 = case maps:is_key(notNull@, Value) of
                   true ->
                       fold_i(Fun, LOpts, FunState, NewCtx1,
                           maps:get(notNull@, Value));
                   _ -> NewCtx1
               end,
-    NewCtx3 = case maps:is_key(default@,
-        Value) of
+    NewCtx3 = case maps:is_key(default@, Value) of
                   true ->
                       fold_i(Fun, LOpts, FunState, NewCtx2,
                           maps:get(default@, Value));
@@ -1211,8 +1258,7 @@ fold_i(Fun, LOpts, FunState, Ctx, #{varrayTypeDef := Value} = PTree) ->
         fold_i(Fun, LOpts, FunState, NewCtx1, maps:get(size@, Value)),
     NewCtx3 =
         fold_i(Fun, LOpts, FunState, NewCtx2, maps:get(dataType@, Value)),
-    NewCtx4 = case maps:is_key(notNull@,
-        Value) of
+    NewCtx4 = case maps:is_key(notNull@, Value) of
                   true ->
                       fold_i(Fun, LOpts, FunState, NewCtx3,
                           maps:get(notNull@, Value));
@@ -1285,6 +1331,7 @@ list_elem_ext_rule(Fun, LOpts, FunState, Ctx, Rule, [Head | Tail], Counter, Leng
 %     exceptionDeclaration
 %     packageFunctionDeclaration
 %     packageProcedureDeclaration
+%     pragmaDeclaration
 %     recordTypeDefinition
 %     refCursorTypeDefinition
 %     subtypeDefinition
