@@ -37,7 +37,7 @@
 % top-down processing.
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
--spec top_down(Module :: atom(), PLSQLParseTree :: binary()|list(), Params :: any()) -> binary()|tuple().
+-spec top_down(Module :: atom(), PLSQLParseTree :: list()|[#{plsqlUnit:=map(), _=>_}], Params :: any()) -> binary()|tuple().
 top_down(Module, PLSQLParseTree, Params) ->
     ?D("Start~n Module: ~p~n SQL: ~p~n Params: ~p~n",
         [Module, PLSQLParseTree, Params]),
