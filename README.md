@@ -5,7 +5,7 @@
 ![GitHub](https://img.shields.io/github/license/K2InformaticsGmbH/plsql_parser.svg)
 ![GitHub release](https://img.shields.io/github/release/K2InformaticsGmbH/plsql_parser.svg)
 ![GitHub Release Date](https://img.shields.io/github/release-date/K2InformaticsGmbH/plsql_parser.svg)
-![GitHub commits since latest release](https://img.shields.io/github/commits-since/K2InformaticsGmbH/plsql_parser/1.3.0.svg)
+![GitHub commits since latest release](https://img.shields.io/github/commits-since/K2InformaticsGmbH/plsql_parser/1.3.1.svg)
 
 **plsql_parser** is a production-ready SQL parser written in pure Erlang. **plsql_parser** is aligned to the Oracle PL/SQL language and enriched with some specific features.
 
