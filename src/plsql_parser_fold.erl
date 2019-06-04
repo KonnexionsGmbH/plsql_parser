@@ -37,7 +37,7 @@
 % top-down processing.
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
--spec top_down(Module :: atom(), PLSQLParseTree :: list()|map(), Params :: any()) -> binary()|tuple().
+-spec top_down(Module :: atom(), PLSQLParseTree :: list()|[map()], Params :: any()) -> binary()|tuple().
 top_down(Module, PLSQLParseTree, Params) ->
     ?D("Start~n Module: ~p~n SQL: ~p~n Params: ~p~n",
         [Module, PLSQLParseTree, Params]),
@@ -47,7 +47,7 @@ top_down(Module, PLSQLParseTree, Params) ->
 % common processing.
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
--spec fold_state_common(Module :: atom(), PLSQLParseTree :: list()|map(), Params :: any()) -> binary()|tuple().
+-spec fold_state_common(Module :: atom(), PLSQLParseTree :: list()|[map()], Params :: any()) -> binary()|tuple().
 fold_state_common(Module, PLSQLParseTree, Params) ->
     ParseTree = case PLSQLParseTree of
                     [PT | _] when is_map(PT) -> PLSQLParseTree;
@@ -63,7 +63,7 @@ fold_state_common(Module, PLSQLParseTree, Params) ->
 % Folder starting method.
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
--spec fold(Fun :: fun(), LOpts :: term(), FunState :: tuple(), PTree :: list()|map(), Ctx :: term()) ->
+-spec fold(Fun :: fun(), LOpts :: term(), FunState :: tuple(), PTree :: list()|[map()], Ctx :: term()) ->
     Ctx :: term().
 fold(Fun, LOpts, FunState, PTree, CtxIn) ->
     ?D("Start~n LOpts: ~p~n FunState: ~p~n PTree: ~p~n CtxIn: ~p~n",
