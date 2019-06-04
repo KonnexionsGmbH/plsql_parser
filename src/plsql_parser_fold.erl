@@ -37,7 +37,7 @@
 % top-down processing.
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
--spec top_down(Module :: atom(), PLSQLParseTree :: list()|[tuple()], Params :: any()) -> binary()|tuple().
+-spec top_down(Module :: atom(), PLSQLParseTree :: list(), Params :: any()) -> binary()|tuple().
 top_down(Module, PLSQLParseTree, Params) ->
     ?D("Start~n Module: ~p~n SQL: ~p~n Params: ~p~n",
         [Module, PLSQLParseTree, Params]),
@@ -47,15 +47,13 @@ top_down(Module, PLSQLParseTree, Params) ->
 % common processing.
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
--spec fold_state_common(Module :: atom(), PLSQLParseTree :: list()|[tuple()], Params :: any()) -> binary()|tuple().
+-spec fold_state_common(Module :: atom(), PLSQLParseTree :: list(), Params :: any()) -> binary()|tuple().
 fold_state_common(Module, PLSQLParseTree, Params) ->
-    ?E("wwe~n PLSQLParseTree: ~p~n",[PLSQLParseTree]),
     ParseTree = case PLSQLParseTree of
-                    [PT | _] when is_map(PT) -> PLSQLParseTree;
+                    [PT | _] when is_map(PT) -> lists:flatten(PLSQLParseTree, []);
                     _ -> {ok, PT} = plsql_parser:parsetree(PLSQLParseTree),
-                        PT
+                        lists:flatten(PT, [])
                 end,
-    ?E("wwe~n ParseTree:      ~p~n",[ParseTree]),
     ParamsInitialized = Module:init(Params),
     {ok, Sql} = fold(fun Module:fold/5, ParamsInitialized, #fstate{}, ParseTree,
         []),
@@ -65,7 +63,7 @@ fold_state_common(Module, PLSQLParseTree, Params) ->
 % Folder starting method.
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
--spec fold(Fun :: fun(), LOpts :: term(), FunState :: tuple(), PTree :: list()|[tuple()], Ctx :: term()) ->
+-spec fold(Fun :: fun(), LOpts :: term(), FunState :: tuple(), PTree :: list(), Ctx :: term()) ->
     Ctx :: term().
 fold(Fun, LOpts, FunState, PTree, CtxIn) ->
     ?D("Start~n LOpts: ~p~n FunState: ~p~n PTree: ~p~n CtxIn: ~p~n",
