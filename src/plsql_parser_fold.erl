@@ -37,7 +37,7 @@
 % top-down processing.
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
--spec top_down(Module :: atom(), PLSQLParseTree :: binary()|list(), Params :: any()) -> any().
+-spec top_down(Module :: atom(), PLSQLParseTree :: binary()|list(), Params :: any()) -> binary()|tuple().
 top_down(Module, PLSQLParseTree, Params) ->
     ?D("Start~n Module: ~p~n SQL: ~p~n Params: ~p~n",
         [Module, PLSQLParseTree, Params]),
@@ -47,6 +47,7 @@ top_down(Module, PLSQLParseTree, Params) ->
 % common processing.
 % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+-spec fold_state_common(Module :: atom(), PLSQLParseTree :: binary()|list(), Params :: any()) -> binary()|tuple().
 fold_state_common(Module, PLSQLParseTree, Params) ->
     ParseTree = case PLSQLParseTree of
                     [PT | _] when is_map(PT) -> PLSQLParseTree;
