@@ -49,11 +49,13 @@ top_down(Module, PLSQLParseTree, Params) ->
 
 -spec fold_state_common(Module :: atom(), PLSQLParseTree :: list()|[tuple()], Params :: any()) -> binary()|tuple().
 fold_state_common(Module, PLSQLParseTree, Params) ->
+    ?E("wwe~n PLSQLParseTree: ~p~n",[PLSQLParseTree]),
     ParseTree = case PLSQLParseTree of
                     [PT | _] when is_map(PT) -> PLSQLParseTree;
                     _ -> {ok, PT} = plsql_parser:parsetree(PLSQLParseTree),
                         PT
                 end,
+    ?E("wwe~n ParseTree:      ~p~n",[ParseTree]),
     ParamsInitialized = Module:init(Params),
     {ok, Sql} = fold(fun Module:fold/5, ParamsInitialized, #fstate{}, ParseTree,
         []),
