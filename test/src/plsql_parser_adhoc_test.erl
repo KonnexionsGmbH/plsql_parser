@@ -10,18 +10,18 @@
 
 -export([eunit_test_source/1]).
 
--define(LOPTS, [
-]).
-
+-define(LOPTS, []).
 -define(NODEBUG, true).
 
 %% Possible values:
 %%  - dbss,
 %%  - flat,
 %%  - full (= default value)
+
 -define(TEST_VERSION, full).
 
 -include_lib("eunit/include/eunit.hrl").
+
 -include("plsql_parser.hrl").
 -include("plsql_parser_test.hrl").
 
@@ -30,150 +30,185 @@
 %%------------------------------------------------------------------------------
 
 eunit_test_() ->
-    ?D("Start~n"),
+  ?D("Start~n"),
+  {ok, Cwd} = file:get_cwd(),
+  RootPath = lists:reverse(filename:split(Cwd)),
+  TestDir = filename:join(lists:reverse(["test" | RootPath])),
+  TestFile = filename:join(TestDir, ?MODULE_STRING ++ ?ENV_VAR_FILE_TYPE),
+  {ok, [Opts | Tests]} = file:consult(TestFile),
+  {ok, TestFileBin} = file:read_file(TestFile),
+  TestLines =
+    [
+      begin
+        TRe0 =
+          re:replace(T, "(.*)(\")(.*)", "\\1\\\\\"\\3", [{return, list}, ungreedy, global, dotall]),
+        TRe = list_to_binary(io_lib:format("~p", [TRe0])),
+        case binary:match(TestFileBin, TRe) of
+          {I1, _} ->
+            <<Head:I1/binary, _/binary>> = TestFileBin,
+            case re:run(Head, ".*[\r\n]", [global]) of
+              {match, Matches} -> length(Matches) + 1;
 
-    {ok, Cwd} = file:get_cwd(),
-    RootPath = lists:reverse(filename:split(Cwd)),
-    TestDir = filename:join(lists:reverse(["test" | RootPath])),
-    TestFile = filename:join(TestDir, ?MODULE_STRING ++ ?ENV_VAR_FILE_TYPE),
+              nomatch ->
+                io:format(
+                  user,
+                  "~p~n"
+                  ">>>>>>>>>>> HEAD ~p <<<<<<<<<<<~n"
+                  "Opts ~p~n"
+                  "Tests ~p~n"
+                  "T ~p~n"
+                  "TRe ~p~n",
+                  [TestFile, Head, Opts, Tests, T, TRe]
+                ),
+                error(nomatch)
+            end;
 
-    {ok, [Opts | Tests]} = file:consult(TestFile),
-    {ok, TestFileBin} = file:read_file(TestFile),
-    TestLines = [begin
-                     TRe0 = re:replace(T, "(.*)(\")(.*)", "\\1\\\\\"\\3",
-                         [{return, list}, ungreedy, global, dotall]),
-                     TRe = list_to_binary(io_lib:format("~p", [TRe0])),
-                     case binary:match(TestFileBin, TRe) of
-                         {I1, _} ->
-                             <<Head:I1/binary, _/binary>> = TestFileBin,
-                             case re:run(Head, ".*[\r\n]",
-                                 [global]) of
-                                 {match, Matches} -> length(Matches) + 1;
-                                 nomatch ->
-                                     io:format(user,
-                                         "~p~n"
-                                         ">>>>>>>>>>> HEAD ~p <<<<<<<<<<<~n"
-                                         "Opts ~p~n"
-                                         "Tests ~p~n"
-                                         "T ~p~n"
-                                         "TRe ~p~n"
-                                         ,
-                                         [TestFile, Head, Opts, Tests, T, TRe]),
-                                     error(nomatch)
-                             end;
-                         nomatch -> I
-                     end
-                 end
-        || {I, T} <- lists:zip(lists:seq(1, length(Tests)), Tests)],
-    AugTests = lists:zip(TestLines, Tests),
-    tests_gen(AugTests, Opts).
+          nomatch -> I
+        end
+      end || {I, T} <- lists:zip(lists:seq(1, length(Tests)), Tests)
+    ],
+  AugTests = lists:zip(TestLines, Tests),
+  tests_gen(AugTests, Opts).
 
 %%------------------------------------------------------------------------------
 %% EUnit Test Driver - Processing Test Cases.
 %%------------------------------------------------------------------------------
 
 eunit_test_source(Source) ->
-    ?D("Start~n Source: ~p~n", [Source]),
-    io:format(user, "~n", []),
-    io:format(user, ?MODULE_STRING ++
+  ?D("Start~n Source: ~p~n", [Source]),
+  io:format(user, "~n", []),
+  io:format(
+    user,
+    ?MODULE_STRING
+    ++
     " : ===========================================>           Test version:~n~ts~n~n",
-        [?TEST_VERSION]),
-    io:format(user, "~n", []),
-    io:format(user, ?MODULE_STRING ++
+    [?TEST_VERSION]
+  ),
+  io:format(user, "~n", []),
+  io:format(
+    user,
+    ?MODULE_STRING
+    ++
     " : ===========================================>     Input statement(s):~n~ts~n~n",
-        [Source]),
+    [Source]
+  ),
+  try {ok, ParseTree} = plsql_parser:parsetree(Source), ?D("~n ParseTree: ~p~n", [ParseTree]), case
+  ?TEST_VERSION of
+    dbss -> binary_to_list(plsql_parser_fold:top_down(plsql_parser_format_dbss, ParseTree, []));
+    full -> plsql_parser_test_utils:eunit_test(Source);
+    _ -> binary_to_list(plsql_parser_fold:top_down(plsql_parser_format_flat, ParseTree, []))
+  end of
+    {error, Reason} ->
+      io:format(user, "~n", []),
+      io:format(
+        user,
+        ?MODULE_STRING
+        ++
+        " : -------------------------------------------> Statement error reason:~n~p~n~n",
+        [Reason]
+      ),
+      erlang:error(Reason);
 
-    try
-        {ok, ParseTree} = plsql_parser:parsetree(Source),
-        ?D("~n ParseTree: ~p~n", [ParseTree]),
-        case ?TEST_VERSION of
-            dbss ->
-                binary_to_list(
-                    plsql_parser_fold:top_down(plsql_parser_format_dbss,
-                        ParseTree, []));
-            full ->
-                plsql_parser_test_utils:eunit_test(Source);
+    {ok, Result} ->
+      io:format(user, "~n", []),
+      io:format(
+        user,
+        ?MODULE_STRING
+        ++
+        " : ------------------------------------------->    Output statement(s):~n~ts~n~n",
+        [Result]
+      ),
+      case ?TEST_VERSION of
+        dbss -> ok;
+
+        _ ->
+          {ok, ParseTree1} = plsql_parser:parsetree(Source),
+          {ok, ParseTree2} = plsql_parser:parsetree(Result),
+          case ParseTree1 == ParseTree2 of
+            true -> true;
+
             _ ->
-                binary_to_list(
-                    plsql_parser_fold:top_down(plsql_parser_format_flat,
-                        ParseTree, []))
-        end
-    of
-        {error, Reason} ->
-            io:format(user, "~n", []),
-            io:format(user, ?MODULE_STRING ++
-            " : -------------------------------------------> Statement error reason:~n~p~n~n",
-                [Reason]),
-            erlang:error(Reason);
-        {ok, Result} ->
-            io:format(user, "~n", []),
-            io:format(user, ?MODULE_STRING ++
-            " : ------------------------------------------->    Output statement(s):~n~ts~n~n",
-                [Result]),
-            case ?TEST_VERSION of
-                dbss -> ok;
-                _ -> {ok, ParseTree1} = plsql_parser:parsetree(Source),
-                    {ok, ParseTree2} = plsql_parser:parsetree(Result),
-                    case ParseTree1 == ParseTree2 of
-                        true -> true;
-                        _ ->
-                            ?E(
-                                "ParseTree1 /= ParseTree2 ===>~n ParseTree1: ~p~n ParseTree2: ~p~n",
-                                [ParseTree1, ParseTree2]),
-                            ParseTree1 = ParseTree2
-                    end
-            end;
-        Result ->
-            io:format(user, "~n", []),
-            io:format(user, ?MODULE_STRING ++
-            " : ------------------------------------------->    Output statement(s):~n~ts~n~n",
-                [Result]),
-            case ?TEST_VERSION of
-                dbss -> ok;
-                _ ->
-                    {ok, ParseTree1} = plsql_parser:parsetree(Source),
-                    {ok, ParseTree2} = plsql_parser:parsetree(Result),
-                    case ParseTree1 == ParseTree2 of
-                        true -> true;
-                        _ ->
-                            ?E(
-                                "ParseTree1 /= ParseTree2 ===>~n ParseTree1: ~p~n ParseTree2: ~p~n",
-                                [ParseTree1, ParseTree2]),
-                            ParseTree1 = ParseTree2
-                    end
-            end
-    catch
-        error:Reason:Stacktrace ->
-            io:format(user, "~n", []),
-            io:format(user, ?MODULE_STRING ++
-            " : -------------------------------------------> Statement catch reason:~n~p~n~n",
-                [Reason]),
-            io:format(user, ?MODULE_STRING ++
-            " : -------------------------------------------> Current stacktrace:~n~p~n~n",
-                [Stacktrace]),
-            erlang:error(Reason)
-    end.
+              ?E(
+                "ParseTree1 /= ParseTree2 ===>~n ParseTree1: ~p~n ParseTree2: ~p~n",
+                [ParseTree1, ParseTree2]
+              ),
+              ParseTree1 = ParseTree2
+          end
+      end;
+
+    Result ->
+      io:format(user, "~n", []),
+      io:format(
+        user,
+        ?MODULE_STRING
+        ++
+        " : ------------------------------------------->    Output statement(s):~n~ts~n~n",
+        [Result]
+      ),
+      case ?TEST_VERSION of
+        dbss -> ok;
+
+        _ ->
+          {ok, ParseTree1} = plsql_parser:parsetree(Source),
+          {ok, ParseTree2} = plsql_parser:parsetree(Result),
+          case ParseTree1 == ParseTree2 of
+            true -> true;
+
+            _ ->
+              ?E(
+                "ParseTree1 /= ParseTree2 ===>~n ParseTree1: ~p~n ParseTree2: ~p~n",
+                [ParseTree1, ParseTree2]
+              ),
+              ParseTree1 = ParseTree2
+          end
+      end
+  catch
+    error : Reason:Stacktrace ->
+      io:format(user, "~n", []),
+      io:format(
+        user,
+        ?MODULE_STRING
+        ++
+        " : -------------------------------------------> Statement catch reason:~n~p~n~n",
+        [Reason]
+      ),
+      io:format(
+        user,
+        ?MODULE_STRING
+        ++
+        " : -------------------------------------------> Current stacktrace:~n~p~n~n",
+        [Stacktrace]
+      ),
+      erlang:error(Reason)
+  end.
 
 %%------------------------------------------------------------------------------
 %% EUnit Test Driver - Processing Groups.
 %%------------------------------------------------------------------------------
 
 tests_gen(Tests, Opts) ->
-    ?D("Start~n Tests: ~p~n Opts: ~p~n", [Tests, Opts]),
-    SelTests = case proplists:get_value(tests, Opts) of
-                   St when St =:= undefined; St =:= [] ->
-                       {Indices, _} = lists:unzip(Tests),
-                       Indices;
-                   St -> St
-               end,
-    tests_gen(Tests, SelTests, []).
+  ?D("Start~n Tests: ~p~n Opts: ~p~n", [Tests, Opts]),
+  SelTests =
+    case proplists:get_value(tests, Opts) of
+      St when St =:= undefined; St =:= [] ->
+        {Indices, _} = lists:unzip(Tests),
+        Indices;
 
-tests_gen([], _SelTests, Acc) ->
-    {inorder, lists:reverse(Acc)};
+      St -> St
+    end,
+  tests_gen(Tests, SelTests, []).
+
+
+tests_gen([], _SelTests, Acc) -> {inorder, lists:reverse(Acc)};
+
 tests_gen([{I, T} | Tests], SelTests, Acc) ->
-    case lists:member(I, SelTests) of
-        true ->
-            tests_gen(Tests, SelTests, [{I, fun() ->
-                {timeout, ?TIMEOUT, eunit_test_source(T)} end} | Acc]);
-        _ -> Acc
-    end.
+  case lists:member(I, SelTests) of
+    true ->
+      tests_gen(
+        Tests,
+        SelTests,
+        [{I, fun () -> {timeout, ?TIMEOUT, eunit_test_source(T)} end} | Acc]
+      );
+
+    _ -> Acc
+  end.
