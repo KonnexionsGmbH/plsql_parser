@@ -1,11 +1,11 @@
 # plsql_parser - LALR grammar based PL/SQL parser
 
-![Travis (.org)](https://img.shields.io/travis/K2InformaticsGmbH/plsql_parser.svg)
-![Coveralls github](https://img.shields.io/coveralls/github/K2InformaticsGmbH/plsql_parser.svg)
-![GitHub](https://img.shields.io/github/license/K2InformaticsGmbH/plsql_parser.svg)
-![GitHub release](https://img.shields.io/github/release/K2InformaticsGmbH/plsql_parser.svg)
-![GitHub Release Date](https://img.shields.io/github/release-date/K2InformaticsGmbH/plsql_parser.svg)
-![GitHub commits since latest release](https://img.shields.io/github/commits-since/K2InformaticsGmbH/plsql_parser/1.3.1.svg)
+![Travis (.org)](https://img.shields.io/travis/KonnexionsGmbH/plsql_parser.svg)
+![Coveralls github](https://img.shields.io/coveralls/github/KonnexionsGmbH/plsql_parser.svg)
+![GitHub](https://img.shields.io/github/license/KonnexionsGmbH/plsql_parser.svg)
+![GitHub release](https://img.shields.io/github/release/KonnexionsGmbH/plsql_parser.svg)
+![GitHub Release Date](https://img.shields.io/github/release-date/KonnexionsGmbH/plsql_parser.svg)
+![GitHub commits since latest release](https://img.shields.io/github/commits-since/KonnexionsGmbH/plsql_parser/1.3.1.svg)
 
 **plsql_parser** is a production-ready SQL parser written in pure Erlang. **plsql_parser** is aligned to the Oracle PL/SQL language and enriched with some specific features.
 
@@ -112,7 +112,7 @@ END my_package;
 
 ## 2. Documentation
 
-The documentation for **plsql_parser** is available here: [Wiki](https://github.com/K2InformaticsGmbH/plsql_parser/wiki).
+The documentation for **plsql_parser** is available here: [Wiki](https://github.com/KonnexionsGmbH/plsql_parser/wiki).
 
 ## 3. Contributing
 

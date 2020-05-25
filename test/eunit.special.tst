@@ -307,7 +307,7 @@ IS
     </FILENAME>
 
     <AUTHOR>
-       K2 Infornatics GmbH
+       Konnexions GmbH
     </AUTHOR>
 
     <SUMMARY>
