@@ -6,13 +6,13 @@
 %%
 %% -----------------------------------------------------------------------------
 
-{application, plsql_parser,
-    [
-        {description, "A LALR PL/SQL parser and compiler"},
-        {vsn, "1.3.2"},
-        {applications, [
-            kernel,
-            stdlib
-        ]},
-        {modules, [plsql_parser]}
-    ]}.
+{
+  application,
+  plsql_parser,
+  [
+    {description, "A LALR PL/SQL parser and compiler"},
+    {vsn, "1.3.3"},
+    {applications, [kernel, stdlib]},
+    {modules, [plsql_parser]}
+  ]
+}.
