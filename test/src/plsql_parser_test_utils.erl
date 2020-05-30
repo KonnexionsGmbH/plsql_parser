@@ -188,7 +188,7 @@ eunit_test(Source, LOpts, Type) ->
       {
         ok,
         case Type of
-          dbss -> Source_FORMAT;
+          dbss -> binary:replace(Source_FORMAT, <<"\r\n">>, <<"\n">>, [global]);
           _ -> Source_TD
         end
       };
