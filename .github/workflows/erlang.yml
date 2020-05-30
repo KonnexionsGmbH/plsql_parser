@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
 
     container:
-      image: erlang:23.0.1
+      image: erlang:22.0.7
 
     steps:
     - uses: actions/checkout@v2
@@ -24,7 +24,7 @@ jobs:
     - name: Run enuit tests
       run: rebar3 eunit
     - name: Prepare scripts
-      run: chmod +x test/*.sh
+      run: chmod +x test/gen_tests.sh
     - name: Generate CT tests
       env:
         GENERATE_COMPACTED: true
