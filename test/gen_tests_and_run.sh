@@ -11,11 +11,13 @@ sleep .1
 #
 # ------------------------------------------------------------------------------
 
-timestamp() {
-  date +"%T"
-}
-
-echo "$(timestamp) Start Test Data Generation and Run"
+echo "========================================================================="
+echo "Start $0"
+echo "-------------------------------------------------------------------------"
+echo "Start Test Data Generation and Run"
+echo "-------------------------------------------------------------------------"
+date +"DATE TIME : %d.%m.%Y %H:%M:%S"
+echo "-------------------------------------------------------------------------"
 
 # Setting plsql_parser options .................................................
 # "true": compacted / "false": detailed.
@@ -47,6 +49,10 @@ rebar3 dialyzer
 echo "$(timestamp) Start geas (Guess Erlang Application Scattering)"
 rebar3 as test geas
 
-echo "$(timestamp) End   Test Data Generation and Run"
+echo "-------------------------------------------------------------------------"
+date +"DATE TIME : %d.%m.%Y %H:%M:%S"
+echo "-------------------------------------------------------------------------"
+echo "End   $0"
+echo "========================================================================="
 
 exit 0

@@ -11,7 +11,13 @@ SETLOCAL enableDelayedExpansion
 
 > gen_tests_and_run.log (
 
-    ECHO !time! Start Test Data Generation and Run
+    ECHO =======================================================================
+    ECHO Start %0
+    ECHO -----------------------------------------------------------------------
+    ECHO Start Test Data Generation and Run
+    ECHO -----------------------------------------------------------------------
+    ECHO:| TIME
+    ECHO -----------------------------------------------------------------------
 
     REM Setting plsql_parser options ...........................................
     REM true: compacted / false: detailed.
@@ -43,6 +49,10 @@ SETLOCAL enableDelayedExpansion
     ECHO !time! geas (Guess Erlang Application Scattering)
     CALL rebar3 as test geas
 
-    ECHO !time! End   Test Data Generation and Run
+    ECHO -----------------------------------------------------------------------
+    ECHO:| TIME
+    ECHO -----------------------------------------------------------------------
+    ECHO End   %0
+    ECHO =======================================================================
 
 )
