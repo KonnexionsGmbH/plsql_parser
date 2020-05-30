@@ -23,6 +23,8 @@ jobs:
       run: rebar3 compile
     - name: Run enuit tests
       run: rebar3 eunit
+    - name: Prepare scripts
+      run: chmod +x /test/*.sh
     - name: Generate CT tests
       env:
         GENERATE_COMPACTED: true
