@@ -1,11 +1,12 @@
 # plsql_parser - LALR grammar based PL/SQL parser
 
-![Travis (.org)](https://img.shields.io/travis/KonnexionsGmbH/plsql_parser.svg)
+![build](https://github.com/KonnexionsGmbH/plsql_parser/workflows/Erlang%20CI/badge.svg)
+![Hex.pm](https://img.shields.io/hexpm/v/plsql_parser.svg)
 ![Coveralls github](https://img.shields.io/coveralls/github/KonnexionsGmbH/plsql_parser.svg)
 ![GitHub](https://img.shields.io/github/license/KonnexionsGmbH/plsql_parser.svg)
 ![GitHub release](https://img.shields.io/github/release/KonnexionsGmbH/plsql_parser.svg)
 ![GitHub Release Date](https://img.shields.io/github/release-date/KonnexionsGmbH/plsql_parser.svg)
-![GitHub commits since latest release](https://img.shields.io/github/commits-since/KonnexionsGmbH/plsql_parser/1.3.1.svg)
+![GitHub commits since latest release](https://img.shields.io/github/commits-since/KonnexionsGmbH/plsql_parser/1.3.3.svg)
 
 **plsql_parser** is a production-ready SQL parser written in pure Erlang. **plsql_parser** is aligned to the Oracle PL/SQL language and enriched with some specific features.
 
